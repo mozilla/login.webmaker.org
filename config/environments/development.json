@@ -1,0 +1,8 @@
+{
+  "logger": {
+    "level": "silly"
+  },
+  "bind_to": {
+    "port": 3000
+  }
+}

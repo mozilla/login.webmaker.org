@@ -1,0 +1,31 @@
+{
+  "author": "Simon C. Wex <swex@mozilla.com>",
+  "name": "login.webmaker.org",
+  "version": "0.0.0",
+  "homepage": "https://github.com/mozilla/login.webmaker.org",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:mozilla/login.webmaker.org.git"
+  },
+  "dependencies": {
+    "express-persona": "latest",
+    "express": "latest",
+    "socket.io": "latest",
+    "redis": "latest",
+    "connect": "latest",
+    "connect-redis": "latest",
+    "sha1": "latest",
+    "winston": "latest",
+    "ejs": "latest",
+    "semver": "latest",
+    "convict": "latest",
+    "cjson": "latest",
+    "node-uuid": "latest",
+    "hashish": "latest"
+  },
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
