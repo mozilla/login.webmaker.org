@@ -1,13 +1,6 @@
 login.webmaker.org
 ==================
 
-TODO: 
-
- - Running the dev instance info:
-    foreman start -f Procfile.dev
-
-
-
 ALLOWED_DOMAINS='["*.webmaker.org"]'
 
 # Getting the Server Up and Running
