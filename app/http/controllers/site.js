@@ -6,5 +6,12 @@
  * GET home page.
  */
 exports.index = function(req, res){
-  res.render('site/index', { user: req.user });
+  res.render('site/index');
+};
+
+/*
+ * GET sign-in link.
+ */
+exports.signin = function(req, res){
+  res.render('site/signin', { user: req.session.email, layout: null });
 };

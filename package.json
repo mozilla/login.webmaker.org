@@ -8,7 +8,7 @@
     "url": "git@github.com:mozilla/login.webmaker.org.git"
   },
   "dependencies": {
-    "express-persona": "latest",
+    "express-persona": "git://github.com/simonwex/express-persona.git",
     "express": "latest",
     "socket.io": "latest",
     "redis": "latest",
@@ -18,6 +18,7 @@
     "winston": "latest",
     "ejs": "latest",
     "semver": "latest",
+    "habitat": "latest",
     "convict": "latest",
     "cjson": "latest",
     "node-uuid": "latest",

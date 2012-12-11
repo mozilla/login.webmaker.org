@@ -1,0 +1,97 @@
+<!doctype html>
+<head>
+  <title></title>
+  <link rel="stylesheet" href="/persona-buttons.css" />
+
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+  <script src="https://persona.org/include.js"></script>
+  <script type="text/javascript">
+    var currentUser = "<%= typeof(user) === 'string' ? user : ''%>";
+
+    function displaySignin(){
+      $("#signout").hide();
+      $("#signin").show();
+      $('.email').text(currentUser);
+    }
+    function displaySignout(){
+      $("#signin").hide();
+      $("#signout").show();
+      $('.email').text(currentUser);
+    }
+    
+    var origin = decodeURIComponent(document.location.href.split("?", 2)[1]);
+
+    // TODO: Make sure origin is in ALLOWED_ORIGINS
+
+    function emit(topic, data){
+      parent.postMessage(JSON.stringify({"topic": topic, "data": data}), origin);
+    }
+
+    $(function(){
+      $('#signin').click(function(){navigator.id.request(); return false;});
+      $('#signout').click(function(){navigator.id.logout(); return false;});
+      
+      emit('onready');
+
+      if (currentUser != ''){
+        displaySignout();
+      }
+      else{
+        displaySignin();
+      }
+
+      navigator.id.watch({
+        loggedInUser: currentUser,
+        onlogin: function(assertion) {
+          // A user has logged in! Here you need to:
+          // 1. Send the assertion to your backend for verification and to create a session.
+          // 2. Update your UI.
+          
+          $.ajax({ /* <-- This example uses jQuery, but you can use whatever you'd like */
+            type: 'POST',
+            url: '/persona/verify', // This is a URL on your website.
+            data: {assertion: assertion},
+            success: function(res, status, xhr) {
+              currentUser = res.email;
+              displaySignout();
+              console.log("Success!");
+
+              emit("onlogin", {loggedInUser: currentUser, 'assertion': assertion});
+              // TODO: postMessage to parent
+            },
+            error: function(res, status, xhr) { 
+              currentUser = '';
+              displaySignin();
+              alert("login failure" + res); 
+            }
+          });
+        },
+        onlogout: function() {
+          emit("onlogout");
+          // A user has logged out! Here you need to:
+          // Tear down the user's session by redirecting the user or making a call to your backend.
+          // Also, make that loggedInUser will get set to null on the next page load.
+          // (That's a literal JavaScript null. Not false, 0, or undefined. null.)
+          $.ajax({
+            type: 'POST',
+            url: '/persona/logout', // This is a URL on your website.
+            success: function(res, status, xhr) { 
+              currentUser = '';
+              displaySignin();
+            },
+            error: function(res, status, xhr) { 
+              displaySignout();
+              alert("logout failure" + res); 
+            }
+          });
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+  <a href="#" id="signin" class="persona-button" style="display:none"><span>Sign in</span></a>
+  <a href="#" id="signout" class="persona-button dark" style="display:none"><span>Sign out</span></a>
+  <span class="email"></span>
+</body>
+</html>

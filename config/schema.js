@@ -14,15 +14,15 @@ module.exports = {
     level: {
       doc: "The log level",
       format: 'string ["silent", "win", "error", "warn", "http", "info", "verbose", "silly"] = "info"',
-      env: 'LOG_LEVEL'
+      env: 'SSO_LOG_LEVEL'
     }
   },
+  ignore_vcap_service_creds: {
+    doc: "Ignore creds discovered via VCAP_SERVICES environment variable",
+    format: 'boolean = false',
+    env: 'SSO_IGNORE_VCAP_SERVICES'
+  },
   redis: {
-    ignore_vcap_service_creds: {
-      doc: "Ignore creds discovered via VCAP_SERVICES environment variable",
-      format: 'boolean = false',
-      env: 'REDIS_IGNORE_VCAP_SERVICES'
-    },
     host: {
       doc: "The host where redis is listening",
       format: 'string = "localhost"',

@@ -15,30 +15,30 @@ connect     = require('connect'),
 RedisStore  = require('connect-redis')(connect),
 application = require('./controllers/application'),
 persona     = require("express-persona"),
-config      = require('../../lib/configuration');
+env         = require('../../config/environment');
 
 var http = express();
 
-var redisConfig = config.get('redis');
-var sessionStore = new RedisStore({
-  host: redisConfig.host,
-  port: redisConfig.port,
-  maxAge: (30).days
-});
+var redisStoreConfig = env.get('redis');
+
+redisStoreConfig.maxAge = (30).days
+
+var sessionStore = new RedisStore(redisStoreConfig);
 
 // Express Configuration
 http.configure(function(){
   http.set('views', __dirname + '/views');
   http.set('view engine', 'ejs');
-
+  http.use(application.allowCorsRequests);
   http.use(express.logger());
   http.use(express.static(__dirname + '/public'));
   http.use(express.cookieParser());
   http.use(express.bodyParser());
   http.use(express.methodOverride());
-  //TODO: Load secret from config/env var
+  
+
   http.use(express.session({
-    secret: "I feed lunch meat to my neighbour's \"vegan\" dog.",
+    secret: env.get('SESSION_SECRET'),
     key: 'express.sid',
     store: sessionStore,
     cookie: {maxAge: (365).days()}
@@ -53,7 +53,7 @@ http.configure(function(){
 });
 
 persona(http, {
-  audience: "http://localhost:3000" // Must match your browser's address bar
+  audience: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002']
 });
 
 http.configure('development', function(){
@@ -70,12 +70,13 @@ routes = {
 };
 
 http.get('/', routes.site.index);
+http.get('/signin', routes.site.signin);
 
 process.on('uncaughtException', function(err) {
   logger.error(err);
 });
 
-var port = config.get('bind_to').port;
-http.listen(config.get('bind_to').port);
+var port = env.get('port');
+http.listen(port);
 
 logger.info("HTTP server listening on port " + port + ".");
