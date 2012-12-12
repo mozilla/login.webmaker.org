@@ -40,7 +40,7 @@ For running the dev instances do:
 foreman start -f Procfile.dev
 ```
 
-Then visit http://localhost:3001/ and sign in. If you visit http://localhost:3002/ you'll notice that you're signed in there too. Magic.
+Then visit <a href="http://localhost:3001/">http://localhost:3001/</a> and sign in. If you visit <a href="http://localhost:3002/">http://localhost:3002/</a> you'll notice that you're signed in there too. Magic.
 
 In fact, if you have them both open at the same time, they update with a short delay.
 
