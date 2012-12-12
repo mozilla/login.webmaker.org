@@ -1,8 +1,6 @@
 login.webmaker.org
 ==================
 
-ALLOWED_DOMAINS='["*.webmaker.org"]'
-
 # Getting the Server Up and Running
 
 ## Configuration
@@ -42,8 +40,10 @@ For running the dev instances do:
 foreman start -f Procfile.dev
 ```
 
+Then visit http://localhost:3001/ and sign in. If you visit http://localhost:3002/ you'll notice that you're signed in there too. Magic.
+
+In fact, if you have them both open at the same time, they update with a short delay.
 
 ## Integration
 
 See app/dev/public/index.html for application usage.
-
