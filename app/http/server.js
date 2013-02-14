@@ -53,7 +53,7 @@ http.configure(function(){
 });
 
 persona(http, {
-  audience: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002']
+  audience: env.get('audience')
 });
 
 http.configure('development', function(){
