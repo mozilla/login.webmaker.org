@@ -15,9 +15,13 @@
 
       navigator.personaSSO.init($("#SSO")[0], function(){console.log("onready");});
       navigator.personaSSO.id.watch({
-        loggedInUser: null, // we don't think anyone's authenticated because we don't hold state 
-        onlogin: function(){console.log("Looks like we logged in.")},
-        onlogout: function(){console.log("Looks like we've logged out.")}
+        loggedInUser: null, // we don't think anyone's authenticated because we don't hold state in this HTML-only version
+        onlogin: function(){
+          $('p').text("Looks like we be logged in!");
+        },
+        onlogout: function(){
+          $('p').text("Looks like we be logged out.");
+        }
       });
     });
   </script>
@@ -25,5 +29,6 @@
 <body>
   <h1></h1>
   <iframe id="SSO"></iframe>
+  <p></p>
 </body>
 </html>
