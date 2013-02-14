@@ -38,7 +38,7 @@ navigator.personaSSO = {
 
     // Listen to message from child window
     eventer(messageEvent, function(e){
-      console.log(e.data);
+      debug(e.data);
       try {
 
         var e = JSON.parse(e.data);
