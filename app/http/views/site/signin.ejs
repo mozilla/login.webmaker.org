@@ -11,7 +11,7 @@
     function displaySignin(){
       $("#signout").hide();
       $("#signin").show();
-      $('.email').text(currentUser);
+      $('.email').text('');
     }
     function displaySignout(){
       $("#signin").hide();
@@ -46,24 +46,34 @@
           // A user has logged in! Here you need to:
           // 1. Send the assertion to your backend for verification and to create a session.
           // 2. Update your UI.
+
+          console.log(assertion);
+
+          var errorHandler = function(res, status, xhr){
+            currentUser = '';
+            displaySignin();
+            alert("Login failure. Check the console for more info.");
+            console.log(res);
+          };
           
           $.ajax({ /* <-- This example uses jQuery, but you can use whatever you'd like */
             type: 'POST',
             url: '/persona/verify', // This is a URL on your website.
             data: {assertion: assertion},
             success: function(res, status, xhr) {
-              currentUser = res.email;
-              displaySignout();
-              console.log("Success!");
+              if (res.status === "okay"){
+                currentUser = res.email;
+                console.log(res);
+                displaySignout();
+                console.log("Success!");
 
-              emit("onlogin", {loggedInUser: currentUser, 'assertion': assertion});
-              // TODO: postMessage to parent
+                emit("onlogin", {loggedInUser: currentUser, 'assertion': assertion});
+              }
+              else{
+                errorHandler(res, status, xhr);
+              }
             },
-            error: function(res, status, xhr) { 
-              currentUser = '';
-              displaySignin();
-              alert("login failure" + res); 
-            }
+            error: errorHandler
           });
         },
         onlogout: function() {
