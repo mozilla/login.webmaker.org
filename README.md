@@ -1,11 +1,15 @@
 login.webmaker.org
 ==================
 
+This is currently demo implementation of Single Sign-on using <a href="http://persona.org">Persona</a>. The end goal is for it to be the SSO server for the webmaker.org applications.
+
+There are a few TODOs that make this not ready for an actual deployment. -- See <a href="https://github.com/mozilla/login.webmaker.org/issues">Issues</a>.
+
 # Getting the Server Up and Running
 
 ## Configuration
 
-login.webmaker.org attempts to conform to the <a href="http://www.12factor.net">twelve factor methodology</a>.
+login.webmaker.org attempts to conform to the <a href="http://www.12factor.net">twelve factor methodology</a>. If using <a href="http://blog.daviddollar.org/2011/05/06/introducing-foreman.html">foreman</a>, create a .env file and populate with the following variables:
 
 ###LOG_LEVEL
 
@@ -23,6 +27,10 @@ Port for the HTTPD to listen on, use 3000 for development
 
 Any Gobbledygook will do, bonus points for humor.
 
+###AUDIENCE
+
+This is the persona audience of the SSO server. For dev mode, use "http://localhost:3000"
+
 ###ALLOWED_DOMAINS
 
 If using the dev servers in development mode, use: 
@@ -31,6 +39,16 @@ If using the dev servers in development mode, use:
 Otherwise something like: 
 
 ALLOWED_DOMAINS='["*.webmaker.org"]'
+
+## Installing Dependencies
+
+Packages are managed using npm, so:
+
+```
+npm install
+```
+
+The only other requirement is <a href="http://redis.io/">Redis</a>. Install it and ensure it's running.
 
 ## Foreman
 
