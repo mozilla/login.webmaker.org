@@ -15,7 +15,7 @@ There are *three* things you need to do to get this running:
 
 ## Configuration
 
-Create a file named `.env` in the project root (next to package.json)
+tl;dr: Copy the `.env.sample` file in the project root to `.env`. 
 
 login.webmaker.org attempts to conform to the <a href="http://www.12factor.net">twelve factor methodology</a>. If using <a href="http://blog.daviddollar.org/2011/05/06/introducing-foreman.html">foreman</a>, create a .env file and populate with the following variables:
 
