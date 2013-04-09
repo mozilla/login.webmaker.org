@@ -7,7 +7,15 @@ There are a few TODOs that make this not ready for an actual deployment. -- See 
 
 # Getting the Server Up and Running
 
+There are *three* things you need to do to get this running:
+
+1. Create and configure a `.env` file.
+2. Run a `redis-server` instance
+3. Run foreman
+
 ## Configuration
+
+Create a file named `.env` in the project root (next to package.json)
 
 login.webmaker.org attempts to conform to the <a href="http://www.12factor.net">twelve factor methodology</a>. If using <a href="http://blog.daviddollar.org/2011/05/06/introducing-foreman.html">foreman</a>, create a .env file and populate with the following variables:
 
