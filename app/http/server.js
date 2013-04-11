@@ -15,7 +15,8 @@ connect     = require('connect'),
 RedisStore  = require('connect-redis')(connect),
 application = require('./controllers/application'),
 persona     = require("express-persona"),
-env         = require('../../config/environment');
+env         = require('../../config/environment'),
+route = require('./routes');
 
 var http = express();
 
@@ -64,18 +65,12 @@ http.configure('production', function(){
   http.use(express.errorHandler());
 });
 
-// HTTP Routes
-routes = {
-  site: require('./controllers/site')
-};
-
-http.get('/', routes.site.index);
-http.get('/signin', routes.site.signin);
-http.get('/js/sso.js', routes.site.sso);
-
 process.on('uncaughtException', function(err) {
   logger.error(err);
 });
+
+// HTTP Routes
+route(http);
 
 var port = env.get('port');
 http.listen(port);
