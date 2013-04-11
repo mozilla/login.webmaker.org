@@ -71,6 +71,7 @@ routes = {
 
 http.get('/', routes.site.index);
 http.get('/signin', routes.site.signin);
+http.get('/js/sso.js', routes.site.sso);
 
 process.on('uncaughtException', function(err) {
   logger.error(err);
