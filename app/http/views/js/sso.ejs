@@ -16,8 +16,7 @@ navigator.personaSSO = {
   },
   handlers: {},
   init: function(element, onready){
-    // TODO: configure the login.webmaker.org url:
-    element.src = "http://localhost:3000/signin?" + encodeURIComponent(window.location.protocol + "//" + window.location.host);
+    element.src = "<%= process.env.AUDIENCE %>/signin?" + encodeURIComponent(window.location.protocol + "//" + window.location.host);
 
     var handlers = {
       "onready": onready,

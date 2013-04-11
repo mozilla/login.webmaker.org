@@ -22,81 +22,84 @@
     var origin = decodeURIComponent(document.location.href.split("?", 2)[1]);
 
     // TODO: Make sure origin is in ALLOWED_ORIGINS
+    var allowedDomains = "<%= process.env.ALLOWED_DOMAINS %>".split(' ');
 
-    function emit(topic, data){
-      parent.postMessage(JSON.stringify({"topic": topic, "data": data}), origin);
-    }
-
-    $(function(){
-      $('#signin').click(function(){navigator.id.request(); return false;});
-      $('#signout').click(function(){navigator.id.logout(); return false;});
-      
-      emit('onready');
-
-      if (currentUser != ''){
-        displaySignout();
-      }
-      else{
-        displaySignin();
+    if ( $.inArray(origin, allowedDomains) != -1 ) {
+      function emit(topic, data){
+        parent.postMessage(JSON.stringify({"topic": topic, "data": data}), origin);
       }
 
-      navigator.id.watch({
-        loggedInUser: currentUser,
-        onlogin: function(assertion) {
-          // A user has logged in! Here you need to:
-          // 1. Send the assertion to your backend for verification and to create a session.
-          // 2. Update your UI.
+      $(function(){
+        $('#signin').click(function(){navigator.id.request(); return false;});
+        $('#signout').click(function(){navigator.id.logout(); return false;});
+        
+        emit('onready');
 
-          console.log(assertion);
+        if (currentUser != ''){
+          displaySignout();
+        }
+        else{
+          displaySignin();
+        }
 
-          var errorHandler = function(res, status, xhr){
-            currentUser = '';
-            displaySignin();
-            alert("Login failure. Check the console for more info.");
-            console.log(res);
-          };
-          
-          $.ajax({ /* <-- This example uses jQuery, but you can use whatever you'd like */
-            type: 'POST',
-            url: '/persona/verify', // This is a URL on your website.
-            data: {assertion: assertion},
-            success: function(res, status, xhr) {
-              if (res.status === "okay"){
-                currentUser = res.email;
-                console.log(res);
-                displaySignout();
-                console.log("Success!");
+        navigator.id.watch({
+          loggedInUser: currentUser,
+          onlogin: function(assertion) {
+            // A user has logged in! Here you need to:
+            // 1. Send the assertion to your backend for verification and to create a session.
+            // 2. Update your UI.
 
-                emit("onlogin", {loggedInUser: currentUser, 'assertion': assertion});
-              }
-              else{
-                errorHandler(res, status, xhr);
-              }
-            },
-            error: errorHandler
-          });
-        },
-        onlogout: function() {
-          emit("onlogout");
-          // A user has logged out! Here you need to:
-          // Tear down the user's session by redirecting the user or making a call to your backend.
-          // Also, make that loggedInUser will get set to null on the next page load.
-          // (That's a literal JavaScript null. Not false, 0, or undefined. null.)
-          $.ajax({
-            type: 'POST',
-            url: '/persona/logout', // This is a URL on your website.
-            success: function(res, status, xhr) { 
+            console.log(assertion);
+
+            var errorHandler = function(res, status, xhr){
               currentUser = '';
               displaySignin();
-            },
-            error: function(res, status, xhr) { 
-              displaySignout();
-              alert("logout failure" + res); 
-            }
-          });
-        }
+              alert("Login failure. Check the console for more info.");
+              console.log(res);
+            };
+            
+            $.ajax({ /* <-- This example uses jQuery, but you can use whatever you'd like */
+              type: 'POST',
+              url: '/persona/verify', // This is a URL on your website.
+              data: {assertion: assertion},
+              success: function(res, status, xhr) {
+                if (res.status === "okay"){
+                  currentUser = res.email;
+                  console.log(res);
+                  displaySignout();
+                  console.log("Success!");
+
+                  emit("onlogin", {loggedInUser: currentUser, 'assertion': assertion});
+                }
+                else{
+                  errorHandler(res, status, xhr);
+                }
+              },
+              error: errorHandler
+            });
+          },
+          onlogout: function() {
+            emit("onlogout");
+            // A user has logged out! Here you need to:
+            // Tear down the user's session by redirecting the user or making a call to your backend.
+            // Also, make that loggedInUser will get set to null on the next page load.
+            // (That's a literal JavaScript null. Not false, 0, or undefined. null.)
+            $.ajax({
+              type: 'POST',
+              url: '/persona/logout', // This is a URL on your website.
+              success: function(res, status, xhr) { 
+                currentUser = '';
+                displaySignin();
+              },
+              error: function(res, status, xhr) { 
+                displaySignout();
+                alert("logout failure" + res); 
+              }
+            });
+          }
+        });
       });
-    });
+    } // END-IF Origin check
   </script>
 </head>
 <body>

@@ -15,3 +15,8 @@ exports.index = function(req, res){
 exports.signin = function(req, res){
   res.render('site/signin', { user: req.session.email, layout: null });
 };
+
+exports.sso = function(req,res) {
+	res.set('Content-Type', 'application/javascript');
+	res.render('js/sso');
+}
