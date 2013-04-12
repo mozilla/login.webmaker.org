@@ -14,6 +14,7 @@ util        = require('util'),
 connect     = require('connect'),
 RedisStore  = require('connect-redis')(connect),
 application = require('./controllers/application'),
+users       = require('../models/user'),
 persona     = require("express-persona"),
 env         = require('../../config/environment'),
 route = require('./routes');
@@ -54,7 +55,32 @@ http.configure(function(){
 });
 
 persona(http, {
-  audience: env.get('audience')
+  audience: env.get('audience'),
+  verifyResponse: function(err, req, res, email) {
+    var userInfo = {};
+
+    if (err) {
+      userInfo.status = "failure";
+      userInfo.reason = "you suck";
+    }
+    else {
+      userInfo.status = "okay";
+      userInfo.email = email;
+    }
+
+    users.find( { "email" : email }, function (err, users) {
+      if (!users.length) {
+        userInfo.exists = false;
+      }
+      else {
+        userInfo.exists = true;
+        userInfo.data = users[0];
+      } 
+
+      res.send(userInfo);
+    });
+
+  } // end verify response
 });
 
 http.configure('development', function(){

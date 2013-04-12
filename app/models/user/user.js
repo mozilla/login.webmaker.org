@@ -1,5 +1,5 @@
-var mongoose = require('../../lib/mongoose.js'),
-    mongooseValidator = require('mongoose-validator').validate;
+var mongoose = require('../../../lib/mongoose.js'),
+    validate = require('mongoose-validator').validate;
 
 var schema = new mongoose.Schema({
     _id: {
@@ -33,6 +33,6 @@ var schema = new mongoose.Schema({
     }
 });
 
-var UserFactory = mongoose.model('User', schema);
+var User = mongoose.model('User', schema);
 
-module.exports = UserFactory;
+module.exports = User;
