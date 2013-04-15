@@ -65,11 +65,8 @@
               success: function(res, status, xhr) {
                 if (res.status === "okay"){
                   currentUser = res.email;
-                  console.log(res);
                   displaySignout();
-                  console.log("Success!");
-
-                  emit("onlogin", {loggedInUser: currentUser, 'assertion': assertion});
+                  emit("onlogin", {"loggedInUser": currentUser, "assertion": assertion, "exists": res.exists });
                 }
                 else{
                   errorHandler(res, status, xhr);

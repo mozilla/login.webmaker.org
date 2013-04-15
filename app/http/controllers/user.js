@@ -23,5 +23,31 @@ exports.create = function (req, res) {
 			data.displayName = thisUser.displayName;
 		}
 		res.send(data);
-	})
+	});
+};
+
+exports.userForm = function(req,res) {
+	res.render('ajax/forms/new_user');
+};
+
+/*
+You can post stuff to this like so:
+$.ajax({
+	type: "POST",
+	url: "http://localhost:3000/dev/delete"
+});
+Obviously this should never go anywhere near production - but it's helpful for now, and at least for me
+*/
+exports.devDelete = function(req, res) {
+	var email = [
+		"ross@mozillafoundation.org",
+		"ross@ross-eats.co.uk",
+		"rossbruniges10@yahoo.co.uk",
+		"rossbruniges@gmail.com"
+	],
+		Users    = require("../../models/user");
+
+	email.forEach(function(m) {
+		Users.find({ email:m }).remove();
+	});
 };

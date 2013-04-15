@@ -1,20 +1,74 @@
-if (window.location.host != 'login.webmaker.org'){
-  function debug(s){
-    console.log(s);
-  }
-}
-else { 
-  function debug(){}
-}
 navigator.personaSSO = {
   id: {
     watch: function(opts){
+      console.log(opts);
       navigator.personaSSO.loggedInUser = opts.loggedInUser;
       navigator.personaSSO.handlers.onlogin = opts.onlogin;
       navigator.personaSSO.handlers.onlogout = opts.onlogout;
     }
   },
   handlers: {},
+  ui: {
+    newMaker: function(userID, formAnchor) {
+      /*
+       - load in HTML include containing the HTML form
+       - display form
+         - munge values into form
+       - attach submit handlers to the form
+       - AJAX post to createMaker API
+       - remove form and listeners once everything is sorted
+      */
+      $.get("<%= process.env.AUDIENCE %>/ajax/forms/new_user.html", function(html) {
+        form_html = $(html);
+        form_frag = $(form_html).prependTo(formAnchor);
+        form_frag.submit(function(data) {
+          $.ajax({
+            type: "POST",
+            url: "<%= process.env.AUDIENCE %>/user/create/",
+            dataType: "json",
+            data: {
+              "_id": userID,
+              "email": userID,
+              "displayName": $('#nick').val()
+            },
+            success: function(resp) {
+              console.log(resp);
+              console.log(resp.displayName, 'sso.js - succ');
+              navigator.personaSSO.ui.existingMaker(userID, resp.displayName);
+              form_frag.css({"height": 0});
+              window.setTimeout(function() {
+                form_frag.remove();
+              }, 2000);
+            },
+            error: function(resp) {
+              // TODO - handle errors
+              console.log('failure');
+              console.log(resp);
+              return false;
+            }
+          });
+          return false;
+        });
+      });
+    },
+    existingMaker: function(userID, displayName) {
+      console.log(userID);
+      console.log(displayName, 'existing maker function');
+      /*
+       - API call to the getUserData API
+       - display logged in user data in the UI (where to be defined)
+      */
+      // TODO - code for when we're not passed a displayName
+      $("<p id='identity'>Weclome " + displayName + " - we have been expecting you</p>").insertBefore($('#SSO'));
+    },
+    loggedOut: function() {
+      /*
+       - remove logged in user data from the UI
+       - remove any listeners we have attached
+      */
+      $("#identity").remove();
+    }
+  },
   init: function(element, onready){
     element.src = "<%= process.env.AUDIENCE %>/signin?" + encodeURIComponent(window.location.protocol + "//" + window.location.host);
 
@@ -25,10 +79,11 @@ navigator.personaSSO = {
         navigator.personaSSO.id.handlers.onlogout();
       },
       "onlogin": function(data){
-        navigator.personaSSO.id.loggedInUser = data.loggedInUser
+        console.log('hello - onlogin, sso.js');
+        navigator.personaSSO.id.loggedInUser = data.loggedInUser;
         navigator.personaSSO.id.handlers.onlogin(data.assertion);
       }
-    }
+    };
 
     // Create IE + others compatible event handler
     var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
@@ -37,27 +92,29 @@ navigator.personaSSO = {
 
     // Listen to message from child window
     eventer(messageEvent, function(e){
-      debug(e.data);
       try {
 
         var e = JSON.parse(e.data);
+        console.log(e, 'sso.js - JSON.parse');
         
         try {
           var handle = navigator.personaSSO.handlers[e.topic];
+          console.log(handle, 'sso.js - handle');
           
           if (typeof(handle) == 'function'){
-            handle(e.topic, e.message);
+            console.log(e.data);
+            handle(e.topic, e.data);
           }
         }
         catch(e){
           console.log("Error in handler.");
           console.log(e.message);
         }
-      } 
+      }
       catch(e){
         console.log("Error parsing event: " + event.data);
       }
     }, false);
 
   }
-}
+};

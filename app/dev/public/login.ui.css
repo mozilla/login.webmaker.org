@@ -1,0 +1,11 @@
+#sso_create {
+    overflow: hidden;
+    background: yellow;
+}
+#sso_create label {
+    text-transform: lowercase;
+    margin-right: 10px;
+}
+#sso_create .inline {
+    display: inline-block;
+}

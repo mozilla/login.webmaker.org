@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <title></title>
   <meta name="description" content="">
+  <link rel="stylesheet" href="login.ui.css" />
   <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
   <script src="http://localhost:3000/js/sso.js"></script>
   <script type="text/javascript">
@@ -16,11 +17,15 @@
       navigator.personaSSO.init($("#SSO")[0], function(){console.log("onready");});
       navigator.personaSSO.id.watch({
         loggedInUser: null, // we don't think anyone's authenticated because we don't hold state in this HTML-only version
-        onlogin: function(){
-          $('p').text("Looks like we be logged in!");
+        onlogin: function(topic, data){
+          if (data.exists) {
+            console.log("we have a webmaker");
+          } else {
+            navigator.personaSSO.ui.newMaker(data.loggedInUser, $('body'));
+          }
         },
         onlogout: function(){
-          $('p').text("Looks like we be logged out.");
+          navigator.personaSSO.ui.loggedOut();
         }
       });
     });
@@ -29,6 +34,5 @@
 <body>
   <h1></h1>
   <iframe id="SSO"></iframe>
-  <p></p>
 </body>
 </html>
