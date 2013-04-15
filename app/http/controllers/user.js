@@ -43,11 +43,14 @@ exports.devDelete = function(req, res) {
 		"ross@mozillafoundation.org",
 		"ross@ross-eats.co.uk",
 		"rossbruniges10@yahoo.co.uk",
-		"rossbruniges@gmail.com"
+		"rossbruniges@gmail.com",
+		"kieran.sedgwick@gmail.com"
 	],
 		Users    = require("../../models/user");
 
 	email.forEach(function(m) {
 		Users.find({ email:m }).remove();
 	});
+
+	res.send("Deleted!");
 };

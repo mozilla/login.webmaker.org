@@ -9,9 +9,7 @@ navigator.personaSSO = {
   },
   handlers: {},
   ui: {
-<<<<<<< HEAD
     newMaker: function(userID, formAnchor) {
-=======
       /*
        - load in HTML include containing the HTML form
        - display form
@@ -20,7 +18,6 @@ navigator.personaSSO = {
        - AJAX post to createMaker API
        - remove form and listeners once everything is sorted
       */
-<<<<<<< HEAD
       $.get("<%= process.env.AUDIENCE %>/ajax/forms/new_user.html", function(html) {
         form_html = $(html);
         form_frag = $(form_html).appendTo(formAnchor);
