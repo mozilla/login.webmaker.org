@@ -1,6 +1,11 @@
 #sso_create {
     overflow: hidden;
     background: yellow;
+    -moz-transition: height 2s;
+    -webkit-transition: height 2s;
+    -o-transition: height 2s;
+    transition: height 2s;
+    display: block;
 }
 #sso_create label {
     text-transform: lowercase;
@@ -8,4 +13,12 @@
 }
 #sso_create .inline {
     display: inline-block;
+}
+#SSO {
+    height: 60px;
+    width: 106px;
+    background: transparent;
+    color: #fff;
+    border: none;
+    margin-top: 3px;
 }

@@ -11,12 +11,11 @@
     function displaySignin(){
       $("#signout").hide();
       $("#signin").show();
-      $('.email').text('');
     }
     function displaySignout(){
       $("#signin").hide();
       $("#signout").show();
-      $('.email').text(currentUser);
+      $("#signout").attr("title", currentUser);
     }
     
     var origin = decodeURIComponent(document.location.href.split("?", 2)[1]);
@@ -98,10 +97,10 @@
       });
     } // END-IF Origin check
   </script>
+  <style type="text/css">body { padding: 0; margin: 0; }</style>
 </head>
 <body>
   <a href="#" id="signin" class="persona-button" style="display:none"><span>Sign in</span></a>
   <a href="#" id="signout" class="persona-button dark" style="display:none"><span>Sign out</span></a>
-  <span class="email"></span>
 </body>
 </html>
