@@ -1,0 +1,544 @@
+/*********************************************************
+* Webmaker nav
+*/
+/* Note -- this file is compiled from webmakernav.less */
+.wm-button {
+  display: inline-block;
+  padding: 0 12px;
+  white-space: nowrap;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  height: 36px;
+  line-height: 34px;
+  border-radius: 2px;
+  font-size: 12px;
+  cursor: pointer;
+  background: #d6d8d7;
+  color: #777;
+  border: 1px solid #959a97;
+  box-shadow: 0 5px 3px -4px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+.wm-button:hover {
+  background: #F5F5F5;
+  box-shadow: 0 4px 6px -4px rgba(0, 0, 0, 0.4), inset 0 0 0 1px #959a97;
+}
+.wm-button.wm-button-blue {
+  filter: progid:DXImageTransform.Microsoft.Gradient(startColorstr='#68a2f1', endColorstr='#3985ed', GradientType=0);
+  background: -webkit-gradient(linear, top, bottom, color-stop(0%, #68a2f1), color-stop(100%, #3985ed));
+  background: -webkit-linear-gradient(top, #68a2f1 0%, #3985ed 100%);
+  background: -moz-linear-gradient(top, #68a2f1 0%, #3985ed 100%);
+  background: -ms-linear-gradient(top, #68a2f1 0%, #3985ed 100%);
+  background: -o-linear-gradient(top, #68a2f1 0%, #3985ed 100%);
+  background: linear-gradient(top, #68a2f1);
+  border-color: #2679eb;
+  color: #FFF;
+}
+.wm-button.wm-button-blue:hover {
+  filter: progid:DXImageTransform.Microsoft.Gradient(startColorstr='#7fb0f3', endColorstr='#5093ef', GradientType=0);
+  background: -webkit-gradient(linear, top, bottom, color-stop(0%, #7fb0f3), color-stop(100%, #5093ef));
+  background: -webkit-linear-gradient(top, #7fb0f3 0%, #5093ef 100%);
+  background: -moz-linear-gradient(top, #7fb0f3 0%, #5093ef 100%);
+  background: -ms-linear-gradient(top, #7fb0f3 0%, #5093ef 100%);
+  background: -o-linear-gradient(top, #7fb0f3 0%, #5093ef 100%);
+  background: linear-gradient(top, #7fb0f3);
+  border-color: #2277eb;
+  box-shadow: 0 4px 7px -4px rgba(0, 0, 0, 0.6);
+}
+.wm-button.wm-button-green {
+  background: #3fb58e;
+  border-color: #328f70;
+  box-shadow: 0 5px 3px -4px rgba(0, 0, 0, 0.2);
+  color: #FFF;
+}
+.wm-button.wm-button-green:hover {
+  background: #49c098;
+  border-color: #328f70;
+  box-shadow: 0 4px 7px -4px rgba(0, 0, 0, 0.6);
+}
+/* The font family/weight/style of these rules is taken from Tabzilla's CSS:
+   https://raw.github.com/mozilla/tabzilla/master/media/css/tabzilla.css
+   
+   This is done to ensure that smart browsers won't load two separate
+   sets of fonts if webmaker-nav is used on the same page as Tabzilla. */
+@font-face {
+  font-family: 'Open Sans';
+  src: url('../fonts/OpenSans-Regular-webfont.eot');
+  src: url('../fonts/OpenSans-Regular-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/OpenSans-Regular-webfont.woff') format('woff'), url('../fonts/OpenSans-Regular-webfont.ttf') format('truetype'), url('../fonts/OpenSans-Regular-webfont.svg#OpenSansRegular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Open Sans';
+  src: url('../fonts/OpenSans-Semibold-webfont.eot');
+  src: url('../fonts/OpenSans-Semibold-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/OpenSans-Semibold-webfont.woff') format('woff'), url('../fonts/OpenSans-Semibold-webfont.ttf') format('truetype'), url('../fonts/OpenSans-Semibold-webfont.svg#OpenSansSemibold') format('svg');
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Open Sans Light';
+  src: url('../fonts/OpenSans-Light-webfont.eot');
+  src: url('../fonts/OpenSans-Light-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/OpenSans-Light-webfont.woff') format('woff'), url('../fonts/OpenSans-Light-webfont.ttf') format('truetype'), url('../fonts/OpenSans-Light-webfont.svg#OpenSansSemibold') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+.webmaker-nav-container {
+  font-family: "Open Sans", "Helvetica Neue", sans-serif;
+  font-size: 12px;
+  border-bottom: 1px solid #2d2f2f;
+}
+.webmaker-nav-container a {
+  color: #FFF;
+}
+.webmaker-nav-container a:hover {
+  color: #3fb58e;
+}
+.webmaker-nav-top {
+  background: #3a3c3c;
+  height: 29px;
+}
+.webmaker-nav {
+  height: 29px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  line-height: 29px;
+  font-size: 1em;
+  color: #FFF;
+}
+.webmaker-nav > li {
+  float: left;
+}
+.webmaker-nav > li > a,
+.webmaker-nav > li > .link {
+  position: relative;
+  display: block;
+  height: 100%;
+  background: #3a3c3c;
+  padding: 0 15px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-transition: top 0.1s ease;
+  -moz-transition: top 0.1s ease;
+  -o-transition: top 0.1s ease;
+  -ms-transition: top 0.1s ease;
+  transition: top 0.1s ease;
+  color: rgba(255, 255, 255, 0.5);
+}
+.webmaker-nav > li > a:hover,
+.webmaker-nav > li > .link:hover,
+.webmaker-nav > li > a.on,
+.webmaker-nav > li > .link.on {
+  color: #FFF;
+}
+.webmaker-nav > li > a.webmaker-btn-active,
+.webmaker-nav > li > .link.webmaker-btn-active {
+  color: #FFF;
+  border-bottom-width: 1px;
+  border-top: 1px solid #494c4c;
+  background: #3a3c3c;
+  top: 4px;
+  box-shadow: 0 -6px 0 1px #2d2f2f, 1px -8px 10px -2px #212222;
+  z-index: 10000;
+}
+/*********************************************************
+* Primary menu
+*/
+.primary {
+  float: left;
+}
+.primary > li {
+  border-right: 1px solid #474949;
+  border-left: 1px solid #2d2f2f;
+}
+.webmaker-expanded .primary > li {
+  border-color: transparent;
+}
+.primary > li:last-child {
+  border-right-color: transparent;
+}
+.primary > li a:hover {
+  background: #3f4141;
+}
+/*********************************************************
+* User/Login Styles
+*/
+.user {
+  min-width: 150px;
+}
+.user-info {
+  float: right;
+  margin-right: 150px;
+}
+.user-info li {
+  border-right: none;
+}
+.wm-login-container {
+  cursor: pointer;
+  position: relative;
+}
+.wm-login-btn {
+  color: #FFF;
+  line-height: 22px;
+  top: 3px;
+  display: block;
+  position: relative;
+  background: #535656;
+  border: 1px solid #333;
+  box-shadow: inset 0 1px 0 0 #797d7d;
+  padding: 0 12px 0 37px;
+  border-radius: 3px;
+  margin-right: 5px;
+  overflow: hidden;
+}
+.wm-login-btn:after {
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAPCAYAAAA/I0V3AAAA4klEQVR42o2RWaqEMBRE3YaCiDjPwQGcd9CrysLv4wTyoLFD90dxqbp1EgdPRB7Kskznea6Zn/aPoKoqUUrJOI5m4l2QBfSyLHKep1zXZSae3An1fS/7vst931bGkzuhaZrsLVbGkzuheZ7lOI6HyJ2QUkqv6yrbtv0LT+6E7G0UrfBfP3lZlpoXH4ZBmHgn5Pv+KwxDfqp0XQdgJp6c/RsUBIGOokiSJDE/s21bACbe5Ozp0TdAHMdSFIXUdS1N01C2wpObPT36HifwCJzI0iX29Oh7XP0E3CB9L01TzM+i/wePv4ZE5RtAngAAAABJRU5ErkJggg==") 10px center no-repeat;
+  content: "";
+  display: block;
+  width: 31px;
+  position: absolute;
+  bottom: 0;
+  left: -5px;
+  top: 0;
+  z-index: 10;
+}
+.wm-login-btn:before {
+  content: "";
+  display: block;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  left: -5px;
+  top: -4px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.4);
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+  box-shadow: 1px 0 0 2px rgba(0, 0, 0, 0.05);
+}
+.wm-login-btn:hover {
+  background: #606363;
+}
+.tooltip.wm-join-tooltip,
+.tooltip.wm-login-error-tooltip {
+  pointer-events: auto;
+  top: 100%;
+  margin-top: 15px;
+  width: 220px;
+  margin-left: -110px;
+}
+.tooltip.wm-join-tooltip h3,
+.tooltip.wm-login-error-tooltip h3 {
+  margin: 0;
+  font-size: 1.3em;
+  line-height: 1.3;
+}
+.tooltip.wm-join-tooltip img,
+.tooltip.wm-login-error-tooltip img {
+  width: 40px;
+}
+.tooltip.wm-join-tooltip p,
+.tooltip.wm-login-error-tooltip p {
+  text-align: left;
+}
+.user-info > .notification-badge > a {
+  display: none;
+  height: 15px;
+  width: 15px;
+  padding: 0;
+  border-radius: 5px;
+  margin-top: 8px;
+  border: 5px solid #606363;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  opacity: 0.7;
+}
+.user-info > .notification-badge > a:hover {
+  opacity: 1;
+}
+.webmaker-nav > .user {
+  position: relative;
+}
+.webmaker-nav > .user > a {
+  padding-left: 8px;
+}
+/*********************************************************
+* Tabs
+*/
+.webmaker-tabs {
+  height: 0;
+}
+.webmaker-expanded .webmaker-tabs {
+  height: auto;
+}
+.webmaker-tabs,
+.webmaker-tab {
+  background: #3a3c3c;
+}
+.webmaker-tab {
+  position: relative;
+  width: 100%;
+  color: #FFF;
+  overflow: hidden;
+  box-shadow: inset 0 1px 0 0 #535656, 0 -1px 0 0 #2d2f2f;
+  height: 0;
+  -webkit-transition: height 0.1s ease;
+  -moz-transition: height 0.1s ease;
+  -o-transition: height 0.1s ease;
+  -ms-transition: height 0.1s ease;
+  transition: height 0.1s ease;
+}
+.webmaker-tab li {
+  border-right: none;
+  line-height: 50px;
+}
+.webmaker-tab li > a {
+  background: none;
+  font-size: 1.25em;
+}
+.webmaker-tab.webmaker-tab-active {
+  height: 50px;
+}
+.tab-webmaker.webmaker-tab-active {
+  height: 100px;
+}
+.tab-webmaker .tab-inner {
+  height: 100%;
+}
+.tab-webmaker .secondary-info {
+  float: left;
+  width: 460px;
+  padding: 20px;
+  border-left: 1px solid #535656;
+  height: 100%;
+  font-size: 1.15em;
+  line-height: 1.3;
+}
+.tab-webmaker .secondary-info p {
+  margin: 0;
+}
+.tab-webmaker .webmaker-logo {
+  float: left;
+  margin: 11px 0 0 15px;
+  opacity: 1;
+  margin-top: 11px;
+  width: 70px;
+  height: 70px;
+  background: url(../img/webmaker-logo.png ) no-repeat;
+}
+.tab-webmaker .webmaker-slogan {
+  width: 420px;
+  padding: 20px;
+  margin: 0;
+  font-size: 1.3em;
+  line-height: 1.4;
+  float: left;
+  padding-right: 30px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+}
+/*********************************************************
+* Blocks
+*/
+.wm-unit:after {
+  /* Clearfix */
+
+  content: "";
+  display: table;
+  clear: both;
+}
+.wm-unit-side {
+  float: left;
+  margin-right: 10px;
+}
+.wm-unit-side-r {
+  float: right;
+  margin-left: 10px;
+}
+.wm-unit-body {
+  display: table;
+}
+/*********************************************************
+* Tooltip
+*/
+*:hover > .tooltip:not(.tooltip-no-hover) {
+  opacity: 1;
+  visibility: visible;
+  -webkit-transition: opacity 0.3s ease 0.5s;
+  -moz-transition: opacity 0.3s ease 0.5s;
+  -o-transition: opacity 0.3s ease 0.5s;
+  -ms-transition: opacity 0.3s ease 0.5s;
+  transition: opacity 0.3s ease 0.5s;
+}
+.tooltip {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-top: -7px;
+  margin-left: -55px;
+  z-index: 1000000;
+  width: 110px;
+  padding: 10px;
+  background: #FFF;
+  text-shadow: none;
+  color: #555;
+  line-height: 15px;
+  font-size: 11px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  border-radius: 2px;
+  text-align: center;
+  border: 1px solid #CCC;
+  box-shadow: 0 5px 6px -5px rgba(0, 0, 0, 0.3);
+  -webkit-transition: opacity 0.3s ease 0;
+  -moz-transition: opacity 0.3s ease 0;
+  -o-transition: opacity 0.3s ease 0;
+  -ms-transition: opacity 0.3s ease 0;
+  transition: opacity 0.3s ease 0;
+}
+.tooltip.tooltip-on {
+  opacity: 1;
+  visibility: visible;
+  -webkit-transition: opacity 0.3s ease 0.5s;
+  -moz-transition: opacity 0.3s ease 0.5s;
+  -o-transition: opacity 0.3s ease 0.5s;
+  -ms-transition: opacity 0.3s ease 0.5s;
+  transition: opacity 0.3s ease 0.5s;
+}
+.tooltip.tooltip-no-transition-on {
+  opacity: 1;
+  visibility: visible;
+}
+.tooltip.tooltip-error {
+  color: red;
+}
+.tooltip:after,
+.tooltip:before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  margin-left: -5px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid #FFF;
+}
+.tooltip:after {
+  z-index: 1000001;
+}
+.tooltip:before {
+  top: -6px;
+  border-bottom: 5px solid #CCC;
+}
+.tooltip.tooltip-user {
+  background: #3a3c3c;
+  border: none;
+  color: #FFF;
+  border-radius: 0;
+  margin-top: 0;
+  left: 0;
+  right: 0;
+  width: auto;
+  margin-left: 0;
+  padding: 0;
+  text-align: left;
+  border-radius: 0 0 2px 2px;
+  pointer-events: auto;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.4);
+}
+.tooltip.tooltip-user:after,
+.tooltip.tooltip-user:before {
+  display: none;
+}
+.tooltip.tooltip-user ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.tooltip.tooltip-user ul > li {
+  padding: 10px;
+  padding-left: 10px;
+  border-bottom: 1px solid #535656;
+  box-shadow: inset 0 -1px 0 0px rgba(0, 0, 0, 0.2);
+}
+.tooltip.tooltip-user ul > li:last-child {
+  border-bottom: none;
+}
+.tooltip.tooltip-user ul > li a {
+  display: block;
+  cursor: pointer;
+  text-decoration: none;
+}
+/*********************************************************
+* Tooltip big
+*/
+.tooltip.tooltip-big {
+  width: 250px;
+  left: 0;
+  margin-top: 9px;
+  margin-left: -25px;
+  text-align: left;
+  padding: 0;
+}
+.tooltip.tooltip-big:after,
+.tooltip.tooltip-big:before {
+  left: 33px;
+}
+.tooltip-big-heading {
+  padding: 10px 20px;
+  font-size: 1.2em;
+  font-weight: 700;
+}
+.tooltip-big-inner {
+  padding: 10px 20px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.tooltip.tooltip-big ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+/*********************************************************
+* Typography
+*/
+.webmaker-txt-light {
+  font-family: "Open Sans Light", "Open Sans", sans-serif;
+}
+.webmaker-h3,
+.webmaker-h4 {
+  margin: 1em 0 0.5em 0;
+}
+.webmaker-h3 {
+  font-size: 1.4em;
+}
+.webmaker-h4 {
+  font-size: 1.2em;
+}
+/* Login states */
+.webmaker-nav-container:not(.logged-in) .user {
+  display: none;
+}
+.webmaker-nav-container.logged-in .wm-login-container {
+  display: none;
+}
