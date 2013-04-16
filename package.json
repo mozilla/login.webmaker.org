@@ -19,7 +19,9 @@
     "habitat": "~0.4.0",
     "cjson": "~0.2.1",
     "node-uuid": "~1.4.0",
-    "hashish": "0.0.4"
+    "hashish": "0.0.4",
+    "mongoose": "~3.6.4",
+    "mongoose-validator": "~0.2.1"
   },
   "devDependencies": {},
   "optionalDependencies": {},

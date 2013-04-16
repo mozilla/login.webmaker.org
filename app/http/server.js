@@ -14,6 +14,7 @@ util        = require('util'),
 connect     = require('connect'),
 RedisStore  = require('connect-redis')(connect),
 application = require('./controllers/application'),
+User       = require('../models/user'),
 persona     = require("express-persona"),
 env         = require('../../config/environment'),
 route = require('./routes');
@@ -22,7 +23,7 @@ var http = express();
 
 var redisStoreConfig = env.get('redis');
 
-redisStoreConfig.maxAge = (30).days
+redisStoreConfig.maxAge = (30).days;
 
 var sessionStore = new RedisStore(redisStoreConfig);
 
@@ -54,7 +55,30 @@ http.configure(function(){
 });
 
 persona(http, {
-  audience: env.get('audience')
+  audience: env.get('audience'),
+  verifyResponse: function(err, req, res, email) {
+    var userInfo = {};
+
+    if (err) {
+      userInfo.status = "failure";
+      userInfo.reason = "you suck";
+    } else {
+      userInfo.status = "okay";
+      userInfo.email = email;
+    }
+
+    User.find( { "email" : email }, function (err, User) {
+      if (!User.length) {
+        userInfo.exists = false;
+      } else {
+        userInfo.exists = true;
+        userInfo.data = User[0];
+      }
+
+      res.send(userInfo);
+    });
+
+  } // end verify response
 });
 
 http.configure('development', function(){
