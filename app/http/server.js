@@ -14,16 +14,16 @@ util        = require('util'),
 connect     = require('connect'),
 RedisStore  = require('connect-redis')(connect),
 application = require('./controllers/application'),
-users       = require('../models/user'),
+userHandle  = require('../models/user'),
 persona     = require("express-persona"),
 env         = require('../../config/environment'),
-route = require('./routes');
+route       = require('./routes');
 
 var http = express();
 
 var redisStoreConfig = env.get('redis');
 
-redisStoreConfig.maxAge = (30).days
+redisStoreConfig.maxAge = (30).days;
 
 var sessionStore = new RedisStore(redisStoreConfig);
 
@@ -54,6 +54,7 @@ http.configure(function(){
   http.use(http.router);
 });
 
+// Persona-Express Configuration & Webmaker Check
 persona(http, {
   audience: env.get('audience'),
   verifyResponse: function(err, req, res, email) {
@@ -61,14 +62,14 @@ persona(http, {
 
     if (err) {
       userInfo.status = "failure";
-      userInfo.reason = "you suck";
+      userInfo.reason = err;
     }
     else {
       userInfo.status = "okay";
       userInfo.email = email;
     }
 
-    users.find( { "email" : email }, function (err, users) {
+    userHandle.find( { "email" : email }, function (err, users) {
       if (!users.length) {
         userInfo.exists = false;
       }

@@ -36,3 +36,6 @@ var schema = new mongoose.Schema({
 var User = mongoose.model('User', schema);
 
 module.exports = User;
+
+
+
