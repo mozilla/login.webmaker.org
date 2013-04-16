@@ -54,7 +54,8 @@ persona(http, {
     if (err) {
       userInfo.status = "failure";
       userInfo.reason = err;
-    } else {
+    }
+    else {
       userInfo.status = "okay";
       userInfo.email = email;
     }
