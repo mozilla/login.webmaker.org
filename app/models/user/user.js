@@ -31,6 +31,8 @@ var schema = new mongoose.Schema({
             default: false
         }
     }
+    // TODO: Avatar support
+
 });
 
 var User = mongoose.model('User', schema);
