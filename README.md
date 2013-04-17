@@ -42,11 +42,19 @@ This is the persona audience of the SSO server. For dev mode, use "http://localh
 ###ALLOWED_DOMAINS
 
 If using the dev servers in development mode, use: 
-'["http://localhost:3001", "http://localhost:3002"]'
+"http://localhost:3001", "http://localhost:3002"
 
 Otherwise something like: 
 
 ALLOWED_DOMAINS='["*.webmaker.org"]'
+
+###MONGO_URL
+
+Connection string for local MongoDB instance and DB
+
+For example:
+
+MONGO_URL="mongodb://localhost:27017/local_webmakers"
 
 ## Installing Dependencies
 

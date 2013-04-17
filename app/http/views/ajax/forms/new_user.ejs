@@ -1,0 +1,12 @@
+<form id="sso_create" action="<%= process.env.AUDIENCE %>/user/create/" method="POST">
+    <p><strong>Welcome new Webmaker</strong> - tell us a little bit about you so we can provide a personal experience.</p>
+    <div class="row">
+        <label for="nick">Display name</label>
+        <input type="text" name="nick" id="nick" required />
+    </div>
+    <div class="row">
+        <input type="checkbox" name="terms" id="terms" class="inline" required />
+        <label for="terms" class="inline">I agree to your terms and conditions</label>
+    </div>
+    <input type="submit" value="Create my account" />
+</form>

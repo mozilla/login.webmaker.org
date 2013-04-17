@@ -11,12 +11,11 @@
     function displaySignin(){
       $("#signout").hide();
       $("#signin").show();
-      $('.email').text('');
     }
     function displaySignout(){
       $("#signin").hide();
       $("#signout").show();
-      $('.email').text(currentUser);
+      $("#signout").attr("title", currentUser);
     }
     
     var origin = decodeURIComponent(document.location.href.split("?", 2)[1]);
@@ -65,11 +64,8 @@
               success: function(res, status, xhr) {
                 if (res.status === "okay"){
                   currentUser = res.email;
-                  console.log(res);
                   displaySignout();
-                  console.log("Success!");
-
-                  emit("onlogin", {loggedInUser: currentUser, 'assertion': assertion});
+                  emit("onlogin", {"loggedInUser": currentUser, "assertion": assertion, "exists": res.exists });
                 }
                 else{
                   errorHandler(res, status, xhr);
@@ -101,10 +97,10 @@
       });
     } // END-IF Origin check
   </script>
+  <style type="text/css">body { padding: 0; margin: 0; }</style>
 </head>
 <body>
   <a href="#" id="signin" class="persona-button" style="display:none"><span>Sign in</span></a>
   <a href="#" id="signout" class="persona-button dark" style="display:none"><span>Sign out</span></a>
-  <span class="email"></span>
 </body>
 </html>
