@@ -11,9 +11,9 @@ exports.allowCorsRequests = function(req, resp, next){
    * Browsers don't support passing a single list so we have to loop
    * and return a single domain when we detect a match
    */
-  allowed.forEach(function(i) {
-    if (origin === allowed[i]) {
-      resp.header('Access-Control-Allow-Origin', allowed[i]);
+  allowed.forEach(function(el, index, array) {
+    if (origin === el) {
+      resp.header('Access-Control-Allow-Origin', el);
     }
   });
   resp.header('Access-Control-Allow-Methods', 'POST');
