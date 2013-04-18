@@ -48,6 +48,8 @@ http.configure(function(){
 
   http.use(function (req, res, next) {
     res.removeHeader("X-Powered-By");
+    res.header( "Access-Control-Allow-Origin", "*" );
+    res.header( "Access-Control-Allow-Headers", "Content-Type" );
     next();
   });
 
