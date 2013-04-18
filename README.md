@@ -15,17 +15,13 @@ There are *three* things you need to do to get this running:
 
 ## Configuration
 
-tl;dr: Copy the `.env.sample` file in the project root to `.env`. 
+tl;dr: Copy the `.env.sample` file in the project root to `.env`.
 
 login.webmaker.org attempts to conform to the <a href="http://www.12factor.net">twelve factor methodology</a>. If using <a href="http://blog.daviddollar.org/2011/05/06/introducing-foreman.html">foreman</a>, create a .env file and populate with the following variables:
 
 ###LOG_LEVEL
 
 Standard Winston log levels
-
-###REDIS_HOST & REDIS_PORT
-
-Used as a session store
 
 ###PORT
 
@@ -41,10 +37,10 @@ This is the persona audience of the SSO server. For dev mode, use "http://localh
 
 ###ALLOWED_DOMAINS
 
-If using the dev servers in development mode, use: 
+If using the dev servers in development mode, use:
 "http://localhost:3001", "http://localhost:3002"
 
-Otherwise something like: 
+Otherwise something like:
 
 ALLOWED_DOMAINS='["*.webmaker.org"]'
 
@@ -63,8 +59,6 @@ Packages are managed using npm, so:
 ```
 npm install
 ```
-
-The only other requirement is <a href="http://redis.io/">Redis</a>. Install it and ensure it's running.
 
 ## Foreman
 
