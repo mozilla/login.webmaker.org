@@ -7,15 +7,14 @@
 // Module dependencies.
 require('../../lib/extensions/number');
 
-const
-express     = require('express'),
-logger      = require('../../lib/logger'),
-util        = require('util'),
-application = require('./controllers/application'),
-User       = require('../models/user'),
-persona     = require("express-persona"),
-env         = require('../../config/environment'),
-route = require('./routes');
+var express     = require('express'),
+    logger      = require('../../lib/logger'),
+    util        = require('util'),
+    application = require('./controllers/application'),
+    User       = require('../models/user'),
+    persona     = require("express-persona"),
+    env         = require('../../config/environment'),
+    route = require('./routes');
 
 var http = express();
 
@@ -48,7 +47,7 @@ persona(http, {
 
     if (err) {
       userInfo.status = "failure";
-      userInfo.reason = "you suck";
+      userInfo.reason = "we shall find out";
     } else {
       userInfo.status = "okay";
       userInfo.email = email;

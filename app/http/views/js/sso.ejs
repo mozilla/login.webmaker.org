@@ -72,7 +72,6 @@ navigator.personaSSO = {
         navigator.personaSSO.id.handlers.onlogout();
       },
       "onlogin": function(data){
-        console.log('hello - onlogin, sso.js');
         navigator.personaSSO.id.loggedInUser = data.loggedInUser;
         navigator.personaSSO.id.handlers.onlogin(data.assertion);
       }
@@ -87,24 +86,24 @@ navigator.personaSSO = {
     eventer(messageEvent, function(e){
       try {
 
-        var e = JSON.parse(e.data);
-        console.log(e, 'sso.js - JSON.parse');
+        var jsonData = JSON.parse(e.data);
+        console.log(jsonData, 'sso.js - JSON.parse');
         
         try {
-          var handle = navigator.personaSSO.handlers[e.topic];
+          var handle = navigator.personaSSO.handlers[jsonData.topic];
           console.log(handle, 'sso.js - handle');
           
           if (typeof(handle) == 'function'){
-            console.log(e.data);
-            handle(e.topic, e.data);
+            console.log(jsonData.data);
+            handle(jsonData.topic, jsonData.data);
           }
         }
-        catch(e){
+        catch(err){
           console.log("Error in handler.");
-          console.log(e.message);
+          console.log(err.message);
         }
       }
-      catch(e){
+      catch(err){
         console.log("Error parsing event: " + event.data);
       }
     }, false);
