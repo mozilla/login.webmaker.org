@@ -16,9 +16,16 @@
     "mongoose": "~3.6.4",
     "mongoose-validator": "~0.2.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-csslint": "~0.1.2",
+    "grunt-contrib-jshint": "~0.4.3" 
+  },
   "optionalDependencies": {},
   "engines": {
     "node": "*"
+  },
+  "scripts": {
+    "test": "grunt travis --verbose"
   }
 }

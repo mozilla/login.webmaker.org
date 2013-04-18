@@ -19,16 +19,16 @@ var schema = new mongoose.Schema({
     createdAt: {
         type: Date,
         required: true,
-        default: Date.now
+        "default": Date.now
     },
     flags: {
         verifiedEmail: {
             type: Boolean,
-            default: false
+            "default": false
         },
         isAdmin: {
             type: Boolean,
-            default: false
+            "default": false
         }
     }
 });
