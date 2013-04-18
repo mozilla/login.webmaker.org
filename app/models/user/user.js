@@ -17,9 +17,9 @@ var schema = new mongoose.Schema({
         validate: validate('isAlphanumeric')
     },
     subdomain: {
-        type: STring,
+        type: String,
         required: true
-    }
+    },
     createdAt: {
         type: Date,
         required: true,

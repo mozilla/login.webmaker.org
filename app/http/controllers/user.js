@@ -7,71 +7,79 @@ var UserHandle    = require("../../models/user")
 
 exports.create = function (req, res) { 
 	var userInfo = req.body
+	  , code     = 200 
 	  , out      = {
 	  	error: null,
-	  	displayName: null
+	  	user: null
 	  };
 
-	userInfo._id = userInfo.email;
+	userInfo._id = userInfo.email || undefined;
 
 	var user = new UserHandle(userInfo);
 
-	console.log("UserInfo: ", userInfo);
-
+	// Delegates all validation to mongoose during this step
 	user.save( function(err, thisUser) {
 		if (err) {
-			out.error = err;
+			out.error = err; 
+			code = 500;
 		}
 		else {
-			out.displayName = thisUser.displayName;
+			out.user = thisUser;
 		}
-		res.send(out);
+		res.send(code, out);
 	});
 };
 
 exports.get = function (req, res) { 
 	var id   = req.params.id
-	  , out  = {};
+	  , code = 200
+	  , out  = {
+	  	error: null,
+	  	user: null
+	  };
 
-	UserHandle.find( { _id : id }, function (err, user) {
+	UserHandle.findById( id, function (err, user) {
 		if (!user.length || err) {
-			out.error = err || "User not found for ID: " + id;
+			out.error = err || "User not found for ID: " + id; // TODO: Find approprite error codes
+			code = 500;
 		}
 		else {
 			out.data = user[0];
 		}
-		res.send(out);
+		res.send(code, out);
 	})
 };
 
 exports.update = function (req, res) {
-	// Overwrites all information, and thus expects all information
-	// Also, this call acts to suspend an accounthttp://mongoosejs.com/docs/api.html#model_Model.findOneAndUpdate 
-
-
-	// TODO: Examine client-side implications of this approach,
-	//       including nested return information (see [out] var definition 
-    //       below)
-
 	var userInfo = req.body
 	  , id       = req.params.id
+	  , code     = 200
 	  , out      = {
-	  	user: userInfo,
+	  	user: null,
 	  	error: null
 	  };
 
-	UserHandle.update( { _id : id }, userInfo, function (err, num, raw) {
-		if (err || !num) {
+	UserHandle.findByIdAndUpdate(id, userInfo, function (err, user) {
+		if (err || !user) {
 			out.error = err || "User not found for ID: " + id;
+			code = 500;
+		} 
+		else {
+			out.user = user;
 		}
 
-		req.send(out);
+		if (userInfo.isSuspended) {
+			// Suspension logic here, calls to MakeAPI?
+		}
+
+		res.send(code, out); // TODO: Find approprite error codes
 	}); 
 }
 
 exports.del = function (req, res) {
-	var id = req.params.id
-	  , out = {
+	var id   = req.params.id
+	  , code = 200
+	  , out  = {
 	  	error: null,
 	  	success: true
 	  }
@@ -79,14 +87,15 @@ exports.del = function (req, res) {
 	UserHandle.findByIdAndRemove(id , function (err, user) {
 		if (!user || !user.length) {
 			out.error = err || "User not found for ID: " + id;
-			out.success = false;
+			out.success = false; // TODO: Find approprite error codes
+			code = 500;
 		} else {
 			// Cascading content deletion logic here
 
 			// TODO: Investigate cascading purge of user content
 		}
 
-		res.send(out);
+		res.send(code, out);
 	});
 };
 

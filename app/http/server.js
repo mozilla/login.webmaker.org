@@ -58,7 +58,12 @@ http.configure(function(){
 persona(http, {
   audience: env.get('audience'),
   verifyResponse: function(err, req, res, email) {
-    var userInfo = {};
+    var userInfo = {
+      status: null,
+      reason: null,
+      user: null,
+      exists: null
+    };
 
     if (err) {
       userInfo.status = "failure";
@@ -75,7 +80,7 @@ persona(http, {
       }
       else {
         userInfo.exists = true;
-        userInfo.data = users[0];
+        userInfo.user = users[0];
       } 
 
       res.send(userInfo);
