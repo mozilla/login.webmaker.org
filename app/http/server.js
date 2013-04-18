@@ -7,12 +7,10 @@
 // Module dependencies.
 require('../../lib/extensions/number');
 
-const 
+const
 express     = require('express'),
 logger      = require('../../lib/logger'),
 util        = require('util'),
-connect     = require('connect'),
-RedisStore  = require('connect-redis')(connect),
 application = require('./controllers/application'),
 User       = require('../models/user'),
 persona     = require("express-persona"),
@@ -21,36 +19,25 @@ route = require('./routes');
 
 var http = express();
 
-var redisStoreConfig = env.get('redis');
-
-redisStoreConfig.maxAge = (30).days;
-
-var sessionStore = new RedisStore(redisStoreConfig);
-
 // Express Configuration
 http.configure(function(){
   http.set('views', __dirname + '/views');
   http.set('view engine', 'ejs');
+  http.disable("x-powered-by");
   http.use(application.allowCorsRequests);
   http.use(express.logger());
   http.use(express.static(__dirname + '/public'));
   http.use(express.cookieParser());
   http.use(express.bodyParser());
   http.use(express.methodOverride());
-  
-
-  http.use(express.session({
-    secret: env.get('SESSION_SECRET'),
+  http.use(express.cookieSession({
     key: 'express.sid',
-    store: sessionStore,
-    cookie: {maxAge: (365).days()}
+    secret: env.get('SESSION_SECRET'),
+    cookie: {
+      maxAge: 2678400000 // 31 days
+    },
+    proxy: true
   }));
-
-  http.use(function (req, res, next) {
-    res.removeHeader("X-Powered-By");
-    next();
-  });
-
   http.use(http.router);
 });
 
