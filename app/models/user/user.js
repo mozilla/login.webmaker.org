@@ -23,7 +23,7 @@ var schema = new mongoose.Schema({
     createdAt: {
         type: Date,
         required: true,
-        default: Date.now
+        "default": Date.now
     },
     updatedAt: {
         type: Date,

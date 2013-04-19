@@ -4,7 +4,6 @@
 
 var UserHandle    = require("../../models/user")
 
-
 exports.create = function (req, res) { 
 	var userInfo = req.body
 	  , code     = 200 
@@ -103,14 +102,14 @@ exports.userForm = function(req,res) {
 	res.render('ajax/forms/new_user');
 };
 
-/*
-You can post stuff to this like so:
-$.ajax({
-	type: "POST",
-	url: "http://localhost:3000/dev/delete"
-});
-Obviously this should never go anywhere near production - but it's helpful for now, and at least for me
-*/
+/**
+ * You can post stuff to this like so:
+ * $.ajax({
+ *   type: "POST",
+ *   url: "http://localhost:3000/dev/delete"
+ * });
+ * Obviously this should never go anywhere near production - but it's helpful for now, and at least for me
+ */
 exports.devDelete = function(req, res) {
 	var email = [
 		"ross@mozillafoundation.org",
@@ -119,10 +118,10 @@ exports.devDelete = function(req, res) {
 		"rossbruniges@gmail.com",
 		"kieran.sedgwick@gmail.com"
 	],
-		Users    = require("../../models/user");
+		User = require('../../models/user');
 
 	email.forEach(function(m) {
-		Users.find({ email:m }).remove();
+		User.find({ email:m }).remove();
 	});
 
 	res.send("Deleted!");

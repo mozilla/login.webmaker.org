@@ -1,7 +1,7 @@
 navigator.personaSSO = {
   id: {
     watch: function(opts){
-      console.log(opts);
+      console.log(opts, "navigator.personaSSO options");
       navigator.personaSSO.loggedInUser = opts.loggedInUser;
       navigator.personaSSO.handlers.onlogin = opts.onlogin;
       navigator.personaSSO.handlers.onlogout = opts.onlogout;
@@ -10,14 +10,14 @@ navigator.personaSSO = {
   handlers: {},
   ui: {
     newMaker: function(userID, formAnchor) {
-      /*
-       - load in HTML include containing the HTML form
-       - display form
-         - munge values into form
-       - attach submit handlers to the form
-       - AJAX post to createMaker API
-       - remove form and listeners once everything is sorted
-      */
+      /**
+       * load in HTML include containing the HTML form
+       * display form
+       * munge values into form
+       * attach submit handlers to the form
+       * AJAX post to createMaker API
+       * remove form and listeners once everything is sorted
+       */
       $.get("<%= process.env.AUDIENCE %>/ajax/forms/new_user.html", function(html) {
         form_html = $(html);
         form_frag = $(form_html).appendTo(formAnchor);
@@ -32,18 +32,13 @@ navigator.personaSSO = {
               "displayName": $('#nick').val()
             },
             success: function(resp) {
-              console.log(resp);
-              console.log(resp.displayName, 'sso.js - succ');
               navigator.personaSSO.ui.existingMaker(userID, resp.displayName);
               form_frag.css({"height": 0});
-              window.setTimeout(function() {
-                form_frag.remove();
-              }, 2000);
+              form_frag.remove();
             },
             error: function(resp) {
               // TODO - handle errors
-              console.log('failure');
-              console.log(resp);
+              console.log(resp, 'failure');
               return false;
             }
           });
@@ -52,18 +47,18 @@ navigator.personaSSO = {
       });
     },
     existingMaker: function(userID, displayName) {
-      /*
-       - API call to the getUserData API
-       - display logged in user data in the UI (where to be defined)
-      */
+      /**
+       * API call to the getUserData API
+       * display logged in user data in the UI (where to be defined)
+       */
       // TODO - code for when we're not passed a displayName
       $("#identity").text(displayName);
     },
     loggedOut: function() {
-      /*
-       - remove logged in user data from the UI
-       - remove any listeners we have attached
-      */
+      /**
+       * remove logged in user data from the UI
+       * remove any listeners we have attached
+       */
       $("#identity").text('');
     }
   },
@@ -77,7 +72,6 @@ navigator.personaSSO = {
         navigator.personaSSO.id.handlers.onlogout();
       },
       "onlogin": function(data){
-        console.log('hello - onlogin, sso.js');
         navigator.personaSSO.id.loggedInUser = data.loggedInUser;
         navigator.personaSSO.id.handlers.onlogin(data.assertion);
       }
@@ -92,24 +86,24 @@ navigator.personaSSO = {
     eventer(messageEvent, function(e){
       try {
 
-        var e = JSON.parse(e.data);
-        console.log(e, 'sso.js - JSON.parse');
+        var jsonData = JSON.parse(e.data);
+        console.log(jsonData, 'sso.js - JSON.parse');
         
         try {
-          var handle = navigator.personaSSO.handlers[e.topic];
+          var handle = navigator.personaSSO.handlers[jsonData.topic];
           console.log(handle, 'sso.js - handle');
           
           if (typeof(handle) == 'function'){
-            console.log(e.data);
-            handle(e.topic, e.data);
+            console.log(jsonData.data);
+            handle(jsonData.topic, jsonData.data);
           }
         }
-        catch(e){
+        catch(err){
           console.log("Error in handler.");
-          console.log(e.message);
+          console.log(err.message);
         }
       }
-      catch(e){
+      catch(err){
         console.log("Error parsing event: " + event.data);
       }
     }, false);

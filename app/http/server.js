@@ -7,50 +7,36 @@
 // Module dependencies.
 require('../../lib/extensions/number');
 
-const 
-express     = require('express'),
-logger      = require('../../lib/logger'),
-util        = require('util'),
-connect     = require('connect'),
-RedisStore  = require('connect-redis')(connect),
-application = require('./controllers/application'),
-userHandle  = require('../models/user'),
-persona     = require("express-persona"),
-env         = require('../../config/environment'),
-route       = require('./routes');
+var express     = require('express'),
+    logger      = require('../../lib/logger'),
+    util        = require('util'),
+    application = require('./controllers/application'),
+    User       = require('../models/user'),
+    persona     = require("express-persona"),
+    env         = require('../../config/environment'),
+    route = require('./routes');
 
 var http = express();
-
-var redisStoreConfig = env.get('redis');
-
-redisStoreConfig.maxAge = (30).days;
-
-var sessionStore = new RedisStore(redisStoreConfig);
 
 // Express Configuration
 http.configure(function(){
   http.set('views', __dirname + '/views');
   http.set('view engine', 'ejs');
+  http.disable("x-powered-by");
   http.use(application.allowCorsRequests);
   http.use(express.logger());
   http.use(express.static(__dirname + '/public'));
   http.use(express.cookieParser());
   http.use(express.bodyParser());
   http.use(express.methodOverride());
-  
-
-  http.use(express.session({
-    secret: env.get('SESSION_SECRET'),
+  http.use(express.cookieSession({
     key: 'express.sid',
-    store: sessionStore,
-    cookie: {maxAge: (365).days()}
+    secret: env.get('SESSION_SECRET'),
+    cookie: {
+      maxAge: 2678400000 // 31 days
+    },
+    proxy: true
   }));
-
-  http.use(function (req, res, next) {
-    res.removeHeader("X-Powered-By");
-    next();
-  });
-
   http.use(http.router);
 });
 
@@ -67,21 +53,19 @@ persona(http, {
 
     if (err) {
       userInfo.status = "failure";
-      userInfo.reason = err;
-    }
-    else {
+      userInfo.reason = "we shall find out";
+    } else {
       userInfo.status = "okay";
       userInfo.email = email;
     }
 
-    userHandle.find( { "email" : email }, function (err, users) {
-      if (!users.length) {
+    User.find( { "email" : email }, function (err, User) {
+      if (!User.length) {
         userInfo.exists = false;
-      }
-      else {
+      } else {
         userInfo.exists = true;
-        userInfo.user = users[0];
-      } 
+        userInfo.data = User[0];
+      }
 
       res.send(userInfo);
     });

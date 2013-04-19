@@ -4,29 +4,30 @@
   <meta charset="utf-8">
   <title></title>
   <meta name="description" content="">
-  <link rel="stylesheet" href="webmaker-nav.css" />
+  <link rel="stylesheet" href="ext/webmaker-nav.css" />
   <link rel="stylesheet" href="login.ui.css" />
   <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
   <script src="http://localhost:3000/js/sso.js"></script>
   <script type="text/javascript">
     $(function(){
       // App 1 / App 2 differences
-      var appNumber = (document.location.port - 3000);
+      var appNumber = (document.location.port - 3000),
+          personaSSO = navigator.personaSSO;
       document.title = "App " + appNumber;
       $('h1').html(document.title);
 
-      navigator.personaSSO.init($("#SSO")[0], function(){console.log("onready");});
-      navigator.personaSSO.id.watch({
+      personaSSO.init($("#SSO")[0], function(){console.log("onready");});
+      personaSSO.id.watch({
         loggedInUser: null, // we don't think anyone's authenticated because we don't hold state in this HTML-only version
         onlogin: function(topic, data){
           if (data.exists) {
             console.log("we have a webmaker");
           } else {
-            navigator.personaSSO.ui.newMaker(data.loggedInUser, $('#webmaker-nav'));
+            personaSSO.ui.newMaker(data.loggedInUser, $('#webmaker-nav'));
           }
         },
         onlogout: function(){
-          navigator.personaSSO.ui.loggedOut();
+          personaSSO.ui.loggedOut();
         }
       });
     });
