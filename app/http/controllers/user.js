@@ -5,97 +5,69 @@
 var UserHandle    = require("../../models/user");
 
 exports.create = function (req, res) { 
-    var userInfo = req.body,
-        code     = 200, 
-        out      = {
-            error: null,
-            user: null
-        };
+    var userInfo = req.body;
 
-	userInfo._id = userInfo.email || undefined;
+	userInfo._id = userInfo.email || null;
 
 	var user = new UserHandle(userInfo);
 
 	// Delegates all validation to mongoose during this step
 	user.save( function(err, thisUser) {
 		if (err) {
-			out.error = err; 
-			code = 500;
-			console.log("ERROR: ", err);
+            res.JSON( 500, { error: err, user: null } );
+            return;
 		}
-		else {
-			out.user = thisUser;
-		}
-		res.send(code, out);
+
+		res.JSON( 200, { error: null, user: thisUser } );
 	});
 };
 
 exports.get = function (req, res) { 
-	var id   = req.params.id,
-        code = 200,
-        out  = {
-            error: null,
-            user: null
-        };
+	var id = req.params.id;
 
 	UserHandle.findById( id, function (err, user) {
 		if (!user.length || err) {
-			out.error = err || "User not found for ID: " + id; // TODO: Find approprite error codes
-			code = 500;
+            res.JSON( 500, { error: err || "User not found for ID: " + id, user: null} );
+            return;
 		}
-		else {
-			out.data = user[0];
-		}
-		res.send(code, out);
+
+        res.JSON( 200, { error: null, user: user } );
 	});
 };
 
 exports.update = function (req, res) {
 	var userInfo = req.body,
-        id       = req.params.id,
-        code     = 200,
-        out      = {
-            user: null,
-            error: null
-        };
-
+        id       = req.params.id;
+  
 	UserHandle.findByIdAndUpdate(id, userInfo, function (err, user) {
 		if (err || !user) {
-			out.error = err || "User not found for ID: " + id;
-			code = 500;
+            res.JSON( 500, { error: err || "User not found for ID: " + id, user: null} );
+            return;
 		} 
-		else {
-			out.user = user;
-		}
 
 		if (userInfo.isSuspended) {
 			// Suspension logic here, calls to MakeAPI?
 		}
 
-		res.send(code, out); // TODO: Find approprite error codes
+        res.JSON(200, { error: null, user: user } );
 	}); 
 };
 
 exports.del = function (req, res) {
-	var id   = req.params.id,
-        code = 200,
-        out  = {
-            error: null,
-            success: true
-        };
+	var id   = req.params.id;
 
 	UserHandle.findByIdAndRemove(id , function (err, user) {
 		if (!user || !user.length) {
-			out.error = err || "User not found for ID: " + id;
-			out.success = false; // TODO: Find approprite error codes
-			code = 500;
-		} else {
+            res.JSON( 500, { error: err || "User not found for ID: " + id, user: null} );
+            return;
+		}
+        else {
 			// Cascading content deletion logic here
 
 			// TODO: Investigate cascading purge of user content
 		}
 
-		res.send(code, out);
+		res.JSON(200, { error: null, user: user });
 	});
 };
 
