@@ -2,15 +2,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-var UserHandle    = require("../../models/user")
+var UserHandle    = require("../../models/user");
 
 exports.create = function (req, res) { 
-	var userInfo = req.body
-	  , code     = 200 
-	  , out      = {
-	  	error: null,
-	  	user: null
-	  };
+    var userInfo = req.body
+      , code     = 200 
+      , out      = {
+            error: null,
+            user: null
+        };
 
 	userInfo._id = userInfo.email || undefined;
 
@@ -21,6 +21,7 @@ exports.create = function (req, res) {
 		if (err) {
 			out.error = err; 
 			code = 500;
+			console.log("ERROR: ", err);
 		}
 		else {
 			out.user = thisUser;
@@ -31,11 +32,11 @@ exports.create = function (req, res) {
 
 exports.get = function (req, res) { 
 	var id   = req.params.id
-	  , code = 200
-	  , out  = {
-	  	error: null,
-	  	user: null
-	  };
+      , code = 200
+      , out  = {
+            error: null,
+            user: null
+        };
 
 	UserHandle.findById( id, function (err, user) {
 		if (!user.length || err) {
@@ -46,17 +47,17 @@ exports.get = function (req, res) {
 			out.data = user[0];
 		}
 		res.send(code, out);
-	})
+	});
 };
 
 exports.update = function (req, res) {
 	var userInfo = req.body
-	  , id       = req.params.id
-	  , code     = 200
-	  , out      = {
-	  	user: null,
-	  	error: null
-	  };
+      , id       = req.params.id
+      , code     = 200
+      , out      = {
+            user: null,
+            error: null
+        };
 
 	UserHandle.findByIdAndUpdate(id, userInfo, function (err, user) {
 		if (err || !user) {
@@ -73,15 +74,15 @@ exports.update = function (req, res) {
 
 		res.send(code, out); // TODO: Find approprite error codes
 	}); 
-}
+};
 
 exports.del = function (req, res) {
 	var id   = req.params.id
-	  , code = 200
-	  , out  = {
-	  	error: null,
-	  	success: true
-	  }
+      , code = 200
+      , out  = {
+            error: null,
+            success: true
+        };
 
 	UserHandle.findByIdAndRemove(id , function (err, user) {
 		if (!user || !user.length) {

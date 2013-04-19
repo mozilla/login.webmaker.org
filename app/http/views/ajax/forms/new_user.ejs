@@ -1,8 +1,12 @@
-<form id="sso_create" action="<%= process.env.AUDIENCE %>/user/create" method="POST">
+<form id="sso_create" action="<%= process.env.AUDIENCE %>/user" method="POST">
     <p><strong>Welcome new Webmaker</strong> - tell us a little bit about you so we can provide a personal experience.</p>
     <div class="row">
         <label for="nick">Display name</label>
         <input type="text" name="nick" id="nick" required />
+    </div>
+    <div class="row">
+        <label for="subdomain">Subdomain</label>
+        <input type="text" name="subdomain" id="subdomain" required />
     </div>
     <div class="row">
         <input type="checkbox" name="terms" id="terms" class="inline" required />

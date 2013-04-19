@@ -53,7 +53,7 @@ persona(http, {
 
     if (err) {
       userInfo.status = "failure";
-      userInfo.reason = "we shall find out";
+      userInfo.reason = err;
     } else {
       userInfo.status = "okay";
       userInfo.email = email;
@@ -64,7 +64,7 @@ persona(http, {
         userInfo.exists = false;
       } else {
         userInfo.exists = true;
-        userInfo.data = User[0];
+        userInfo.user = User[0];
       }
 
       res.send(userInfo);

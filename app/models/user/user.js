@@ -28,23 +28,23 @@ var schema = new mongoose.Schema({
     updatedAt: {
         type: Date,
         required: true,
-        default: Date.now
+        "default": Date.now
     },
     deletedAt:{
         type: Date,
-        required: false,
+        required: false
     },
     verifiedEmail: {
         type: Boolean,
-        default: false
+        "default": false
     },
     isAdmin: {
         type: Boolean,
-        default: false
+        "default": false
     },
     isSuspended: {
         type: Boolean,
-        default: false
+        "default": false
     }
     // TODO: Avatar support
 

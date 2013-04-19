@@ -63,7 +63,7 @@
               data: {assertion: assertion},
               success: function(res, status, xhr) {
                 if (res.status === "okay"){
-                  currentUser = res.user.email;
+                  currentUser = res.email;
                   displaySignout();
                   emit("onlogin", {"loggedInUser": currentUser, "assertion": assertion, "exists": res.exists });
                 }

@@ -29,10 +29,11 @@ navigator.personaSSO = {
             data: {
               "_id": userID,
               "email": userID,
-              "displayName": $('#nick').val()
+              "displayName": $('#nick').val(),
+              "subdomain": $('#subdomain').val()
             },
             success: function(resp) {
-              navigator.personaSSO.ui.existingMaker(userID, resp.displayName);
+              navigator.personaSSO.ui.existingMaker(userID, resp.user.displayName);
               form_frag.css({"height": 0});
               form_frag.remove();
             },
