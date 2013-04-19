@@ -5,9 +5,9 @@
 var UserHandle    = require("../../models/user");
 
 exports.create = function (req, res) { 
-    var userInfo = req.body
-      , code     = 200 
-      , out      = {
+    var userInfo = req.body,
+        code     = 200, 
+        out      = {
             error: null,
             user: null
         };
@@ -31,9 +31,9 @@ exports.create = function (req, res) {
 };
 
 exports.get = function (req, res) { 
-	var id   = req.params.id
-      , code = 200
-      , out  = {
+	var id   = req.params.id,
+        code = 200,
+        out  = {
             error: null,
             user: null
         };
@@ -51,10 +51,10 @@ exports.get = function (req, res) {
 };
 
 exports.update = function (req, res) {
-	var userInfo = req.body
-      , id       = req.params.id
-      , code     = 200
-      , out      = {
+	var userInfo = req.body,
+        id       = req.params.id,
+        code     = 200,
+        out      = {
             user: null,
             error: null
         };
@@ -77,9 +77,9 @@ exports.update = function (req, res) {
 };
 
 exports.del = function (req, res) {
-	var id   = req.params.id
-      , code = 200
-      , out  = {
+	var id   = req.params.id,
+        code = 200,
+        out  = {
             error: null,
             success: true
         };
