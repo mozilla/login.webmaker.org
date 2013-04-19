@@ -9,7 +9,17 @@ module.exports = function(http){
     http.get('/signin', routes.site.signin);
     http.get('/js/sso.js', routes.site.sso);
     http.get('/ajax/forms/new_user.html', routes.user.userForm);
-    http.post('/user/create', routes.user.create);
+    
+    http.post('/user', routes.user.create);
+    http.put('/user/:id/', routes.user.update);
+    http.get('/user/:id/', routes.user.get);
+    http.del('/user/:id/', routes.user.del);
+
+
+    // TODO: display name taken
+    // http.get('/info/displayName', routes.info.displayName);
+
+
     // delete this as soon as we hit prod, PLEASE!!
-    http.post('/dev/delete', routes.user.devDelete);
+    http.get('/dev/delete', routes.user.devDelete);
 };

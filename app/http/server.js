@@ -40,15 +40,22 @@ http.configure(function(){
   http.use(http.router);
 });
 
+// Persona-Express Configuration & Webmaker Check
 persona(http, {
   audience: env.get('audience'),
   verifyResponse: function(err, req, res, email) {
-    var userInfo = {};
+    var userInfo = {
+      status: null,
+      reason: null,
+      user: null,
+      exists: null
+    };
 
     if (err) {
       userInfo.status = "failure";
-      userInfo.reason = "we shall find out";
-    } else {
+      userInfo.reason = err;
+    }
+    else {
       userInfo.status = "okay";
       userInfo.email = email;
     }
@@ -58,7 +65,7 @@ persona(http, {
         userInfo.exists = false;
       } else {
         userInfo.exists = true;
-        userInfo.data = User[0];
+        userInfo.user = User[0];
       }
 
       res.send(userInfo);

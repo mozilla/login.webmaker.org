@@ -16,23 +16,43 @@ var schema = new mongoose.Schema({
         required: true,
         validate: validate('isAlphanumeric')
     },
+    subdomain: {
+        type: String,
+        required: true
+    },
     createdAt: {
         type: Date,
         required: true,
         "default": Date.now
     },
-    flags: {
-        verifiedEmail: {
-            type: Boolean,
-            "default": false
-        },
-        isAdmin: {
-            type: Boolean,
-            "default": false
-        }
+    updatedAt: {
+        type: Date,
+        required: true,
+        "default": Date.now
+    },
+    deletedAt:{
+        type: Date,
+        required: false
+    },
+    verifiedEmail: {
+        type: Boolean,
+        "default": false
+    },
+    isAdmin: {
+        type: Boolean,
+        "default": false
+    },
+    isSuspended: {
+        type: Boolean,
+        "default": false
     }
+    // TODO: Avatar support
+
 });
 
 var User = mongoose.model('User', schema);
 
 module.exports = User;
+
+
+
