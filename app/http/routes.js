@@ -12,4 +12,5 @@ module.exports = function(http){
     http.post('/user/create', routes.user.create);
     // delete this as soon as we hit prod, PLEASE!!
     http.post('/dev/delete', routes.user.devDelete);
+    http.get('/healthcheck', routes.site.healthcheck);
 };
