@@ -23,3 +23,10 @@ exports.sso = function(req,res) {
 	res.set('Content-Type', 'application/javascript');
 	res.render('js/sso');
 };
+
+/**
+ * GET health check for app
+ */
+exports.healthcheck = function(req, res){
+  res.json({ http: 'okay' });
+};
