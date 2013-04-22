@@ -10,8 +10,7 @@ There are a few TODOs that make this not ready for an actual deployment. -- See 
 There are *three* things you need to do to get this running:
 
 1. Create and configure a `.env` file.
-2. Run a `redis-server` instance
-3. Run foreman
+2. Run foreman
 
 ## Configuration
 
