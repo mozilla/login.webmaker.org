@@ -1,50 +1,92 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+* License, v. 2.0. If a copy of the MPL was not distributed with this file,
+* You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+var UserHandle    = require( "../../models/user" );
 
-exports.create = function (req, res) {
-	var User    = require('../../models/user'),
-		userInfo = req.body,
-		data     = {};
+exports.create = function ( req, res ) { 
+  var userInfo = req.body;
 
-	userInfo._id = userInfo.email;
+  userInfo._id = userInfo.email;
 
-	var user = new User(userInfo);
+  var user = new UserHandle( userInfo );
 
-	user.save( function(err, thisUser) {
-		if (err) {
-			data.error = err;
-		} else {
-			data.error = null;
-			data.displayName = thisUser.displayName;
-		}
-		res.send(data);
-	});
+  // Delegates all validation to mongoose during this step
+  user.save( function( err, thisUser ) {
+    if ( err ) {
+      res.json( 500, { error: err, user: null } );
+      return;
+    }
+
+    res.json( { error: null, user: thisUser } );
+  });
 };
 
-exports.userForm = function(req,res) {
-	res.render('ajax/forms/new_user');
+exports.get = function ( req, res ) { 
+  var id = req.params.id;
+
+  UserHandle.findById( id, function ( err, user ) {
+    if ( err || !user ) {
+      res.json( 500, { error: err || "User not found for ID: " + id, user: null } );
+      return;
+    }
+
+    res.json( { error: null, user: user } );
+  });
+};
+
+exports.update = function ( req, res ) {
+  var userInfo = req.body,
+      id = req.params.id;
+
+  UserHandle.findByIdAndUpdate( id, userInfo, function ( err, user ) {
+    if ( err || !user ) {
+      res.json( 500, { error: err || "User not found for ID: " + id, user: null } );
+      return;
+    } 
+
+    res.json( { error: null, user: user } );
+  }); 
+};
+
+exports.del = function ( req, res ) {
+  var id = req.params.id;
+
+  UserHandle.findByIdAndRemove( id , function ( err, user ) {
+    if ( err || !user ) {
+      res.json( 500, { error: err || "User not found for ID: " + id, user: null } );
+      return;
+    }
+
+    res.json( { error: null, user: user } );
+  });
+};
+
+exports.userForm = function( req, res ) {
+  res.render( 'ajax/forms/new_user' );
 };
 
 /**
- * You can post stuff to this like so:
- * $.ajax({
- *   type: "POST",
- *   url: "http://localhost:3000/dev/delete"
- * });
- * Obviously this should never go anywhere near production - but it's helpful for now, and at least for me
- */
+* You can post stuff to this like so:
+* $.ajax({
+*   type: "POST",
+*   url: "http://localhost:3000/dev/delete"
+* });
+* Obviously this should never go anywhere near production - but it's helpful for now, and at least for me
+*/
 exports.devDelete = function(req, res) {
-	var email = [
-		'ross@mozillafoundation.org',
-		'ross@ross-eats.co.uk',
-		'rossbruniges10@yahoo.co.uk',
-		'rossbruniges@gmail.com'
-	],
-		User = require('../../models/user');
+  var email = [
+    'ross@mozillafoundation.org',
+    'ross@ross-eats.co.uk',
+    'rossbruniges10@yahoo.co.uk',
+    'rossbruniges@gmail.com',
+    'kieran.sedgwick@gmail.com'
+  ],
+  User = require('../../models/user');
 
-	email.forEach(function(m) {
-		User.find({ email:m }).remove();
-	});
+  email.forEach(function(m) {
+    User.find({ email:m }).remove();
+  });
+
+  res.send("DELETED!!!");
 };
