@@ -1,7 +1,7 @@
 {
   "author": "Simon C. Wex <swex@mozilla.com>",
   "name": "login.webmaker.org",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "homepage": "https://github.com/mozilla/login.webmaker.org",
   "repository": {
     "type": "git",
@@ -19,7 +19,7 @@
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-csslint": "~0.1.2",
-    "grunt-contrib-jshint": "~0.4.3" 
+    "grunt-contrib-jshint": "~0.4.3"
   },
   "optionalDependencies": {},
   "scripts": {
