@@ -8,6 +8,10 @@
   <script type="text/javascript">
     var currentUser = "<%= typeof(user) === 'string' ? user : ''%>";
 
+    function emit(topic, data){
+        parent.postMessage(JSON.stringify({"topic": topic, "data": data}), origin);
+      }
+
     function displaySignin(){
       $("#signout").hide();
       $("#signin").show();
@@ -24,18 +28,14 @@
     var allowedDomains = "<%= process.env.ALLOWED_DOMAINS %>".split(' ');
 
     if ( $.inArray(origin, allowedDomains) != -1 ) {
-      function emit(topic, data){
-        parent.postMessage(JSON.stringify({"topic": topic, "data": data}), origin);
-      }
 
       $(function(){
         $('#signin').click(function(){navigator.id.request(); return false;});
         $('#signout').click(function(){navigator.id.logout(); return false;});
         
-        emit('onready');
-
         if (currentUser != ''){
           displaySignout();
+          emit("onlogin", {"loggedInUser": currentUser });
         }
         else{
           displaySignin();

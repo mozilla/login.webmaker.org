@@ -1,12 +1,12 @@
 var mongoose = require('../../../lib/mongoose.js'),
 mongoose_validator = require('mongoose-validator');
 
-// Custom validation  
+// Custom validation
 mongoose_validator.extend( 'isDomain', function () {
   var str = this.str;
 
-  return ( "string" === typeof( str ) && 
-    ( str.length <= 20 && str.length >= 1 ) && 
+  return ( "string" === typeof( str ) &&
+    ( str.length <= 20 && str.length >= 1 ) &&
     str.search(/^[a-zA-Z0-9\-\_]+$/) !== -1
   );
 }, "Invalid name.  All names must be between 1-20 characters, and only include \"-\", \"_\" and alphanumeric characters");

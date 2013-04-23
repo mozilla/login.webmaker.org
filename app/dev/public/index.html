@@ -15,16 +15,10 @@
           personaSSO = navigator.personaSSO;
       document.title = "App " + appNumber;
       $('h1').html(document.title);
-
-      personaSSO.init($("#SSO")[0], function(){console.log("onready");});
+      personaSSO.init($("#SSO")[0]);
       personaSSO.id.watch({
-        loggedInUser: null, // we don't think anyone's authenticated because we don't hold state in this HTML-only version
         onlogin: function(topic, data){
-          if (data.exists) {
-            console.log("we have a webmaker");
-          } else {
-            personaSSO.ui.newMaker(data.loggedInUser, $('#webmaker-nav'));
-          }
+          personaSSO.ui.checkMaker(data, $('#webmaker-nav'));
         },
         onlogout: function(){
           personaSSO.ui.loggedOut();
