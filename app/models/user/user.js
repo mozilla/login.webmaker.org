@@ -32,10 +32,6 @@ var schema = new mongoose.Schema({
     type: Date,
     required: false
   },
-  verifiedEmail: {
-    type: Boolean,
-    "default": false
-  },
   isAdmin: {
     type: Boolean,
     "default": false
