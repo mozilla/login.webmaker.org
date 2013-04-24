@@ -14,7 +14,7 @@ exports.create = function ( req, res ) {
   // Delegates all validation to mongoose during this step
   user.save( function( err, thisUser ) {
     if ( err ) {
-      res.json( 500, { error: err, user: null } );
+      res.json( 400, { error: err, user: null } );
       return;
     }
 
@@ -27,7 +27,7 @@ exports.get = function ( req, res ) {
 
   UserHandle.findById( id, function ( err, user ) {
     if ( err || !user ) {
-      res.json( 500, { error: err || "User not found for ID: " + id, user: null } );
+      res.json( 400, { error: err || "User not found for ID: " + id, user: null } );
       return;
     }
 
@@ -41,7 +41,7 @@ exports.update = function ( req, res ) {
 
   UserHandle.findByIdAndUpdate( id, userInfo, function ( err, user ) {
     if ( err || !user ) {
-      res.json( 500, { error: err || "User not found for ID: " + id, user: null } );
+      res.json( 400, { error: err || "User not found for ID: " + id, user: null } );
       return;
     } 
 
@@ -54,7 +54,7 @@ exports.del = function ( req, res ) {
 
   UserHandle.findByIdAndRemove( id , function ( err, user ) {
     if ( err || !user ) {
-      res.json( 500, { error: err || "User not found for ID: " + id, user: null } );
+      res.json( 400, { error: err || "User not found for ID: " + id, user: null } );
       return;
     }
 
