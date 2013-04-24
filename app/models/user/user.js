@@ -1,15 +1,17 @@
 var mongoose = require('../../../lib/mongoose.js'),
-validate = require('mongoose-validator').validate;
+mongoose_validator = require('mongoose-validator');
 
 // Custom validation  
-validate.extend( 'isDomain', function () {
+mongoose_validator.extend( 'isDomain', function () {
   var str = this.str;
 
-  return ( "string" === typeof( str ) 
-    && ( str.length <= 20 && str.length >= 1 )
-    && str.search(/^[a-zA-Z0-9\-\_]+$/) !== -1
+  return ( "string" === typeof( str ) && 
+    ( str.length <= 20 && str.length >= 1 ) && 
+    str.search(/^[a-zA-Z0-9\-\_]+$/) !== -1
   );
-}, "Invalid name.  All names must be between 3-20 characters, and only include \"-\", \"_\" and alphanumeric characters");
+}, "Invalid name.  All names must be between 1-20 characters, and only include \"-\", \"_\" and alphanumeric characters");
+
+var validate = mongoose_validator.validate;
 
 var schema = new mongoose.Schema({
   _id: {
