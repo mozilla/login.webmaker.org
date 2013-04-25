@@ -1,21 +1,18 @@
 /*********************************************************
 * Webmaker nav
 */
-.webmaker-nav-container {
+#webmaker-nav {
   font-family: "Open Sans", "Helvetica Neue", sans-serif;
   font-size: 12px;
-  border-bottom: 1px solid #2d2f2f;
+  width: 100%;
 }
-.webmaker-nav-container a {
-  color: #FFF;
-}
-.webmaker-nav-container a:hover {
-  color: #3fb58e;
-}
-.webmaker-nav-top {
-  background: #3a3c3c;
+.webmaker-nav-container {
   height: 29px;
+  background: #3a3c3c;
+  border-bottom: 1px solid #2d2f2f;
+  width: 100%;
 }
+
 .webmaker-nav {
   height: 29px;
   padding: 0;
@@ -25,12 +22,8 @@
   font-size: 1em;
   color: #FFF;
 }
-.webmaker-nav > li {
-  float: left;
-}
-.webmaker-nav > li > a,
-.webmaker-nav > li > .link {
-  position: relative;
+
+.webmaker-nav > li > a {
   display: block;
   height: 100%;
   background: #3a3c3c;
@@ -38,35 +31,15 @@
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
-  -webkit-transition: top 0.1s ease;
-  -moz-transition: top 0.1s ease;
-  -o-transition: top 0.1s ease;
-  -ms-transition: top 0.1s ease;
-  transition: top 0.1s ease;
   color: rgb(255, 255, 255);
   color: rgba(255, 255, 255, 0.5);
 }
-.webmaker-nav > li > a:hover,
-.webmaker-nav > li > .link:hover,
-.webmaker-nav > li > a.on,
-.webmaker-nav > li > .link.on {
+
+.webmaker-nav > li > a:hover {
   color: #FFF;
 }
-.webmaker-nav > li > a.webmaker-btn-active,
-.webmaker-nav > li > .link.webmaker-btn-active {
-  color: #FFF;
-  border-bottom-width: 1px;
-  border-top: 1px solid #494c4c;
-  background: #3a3c3c;
-  top: 4px;
-  box-shadow: 0 -6px 0 1px #2d2f2f, 1px -8px 10px -2px #212222;
-  z-index: 10000;
-}
+
 /*********************************************************
 * Primary menu
 */
@@ -76,9 +49,7 @@
 .primary > li {
   border-right: 1px solid #474949;
   border-left: 1px solid #2d2f2f;
-}
-.webmaker-expanded .primary > li {
-  border-color: transparent;
+  float: left;
 }
 .primary > li:last-child {
   border-right-color: transparent;
@@ -89,59 +60,19 @@
 /*********************************************************
 * User/Login Styles
 */
-.user {
-  min-width: 150px;
-}
 .user-info {
   float: right;
-  margin-right: 150px;
+  text-align: right;
 }
-.user-info li {
+
+.user {
+  line-height: 29px;
+  margin-right: 20px;
+}
+
+.user-info > li {
+  float: left;
   border-right: none;
+  height: 100%;
 }
-.user-info > .notification-badge > a {
-  display: none;
-  height: 15px;
-  width: 15px;
-  padding: 0;
-  border-radius: 5px;
-  margin-top: 8px;
-  border: 5px solid #606363;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  box-sizing: border-box;
-  opacity: 0.7;
-}
-.user-info > .notification-badge > a:hover {
-  opacity: 1;
-}
-.webmaker-nav > .user {
-  position: relative;
-}
-.webmaker-nav > .user > a {
-  padding-left: 8px;
-}
-/*********************************************************
-* Typography
-*/
-.webmaker-txt-light {
-  font-family: "Open Sans Light", "Open Sans", sans-serif;
-}
-.webmaker-h3,
-.webmaker-h4 {
-  margin: 1em 0 0.5em 0;
-}
-.webmaker-h3 {
-  font-size: 1.4em;
-}
-.webmaker-h4 {
-  font-size: 1.2em;
-}
-/* Login states */
-.webmaker-nav-container:not(.logged-in) .user {
-  display: none;
-}
-.webmaker-nav-container.logged-in .wm-login-container {
-  display: none;
-}
+

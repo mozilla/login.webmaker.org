@@ -39,33 +39,43 @@ navigator.personaSSO = {
        * AJAX post to createMaker API
        * remove form and listeners once everything is sorted
        */
-      $.get("<%= ssoAudience %>/ajax/forms/new_user.html", function(html) {
-        form_html = $(html);
-        form_frag = $(form_html).appendTo(formAnchor);
-        form_frag.submit(function(data) {
-          $.ajax({
-            type: "POST",
-            url: "<%= ssoAudience %>/user",
-            dataType: "json",
-            data: {
-              "_id": userID,
-              "email": userID,
-              "name": $('#name').val()
-            },
-            success: function(resp) {
-              navigator.personaSSO.ui.existingMaker(resp.user.name);
-              form_frag.css({"height": 0});
-              form_frag.remove();
-            },
-            error: function(resp) {
-              // TODO - handle errors
-              console.log(resp, 'failure');
-              return false;
-            }
+
+      var $formContainer,
+          $formFrag;
+
+      $formContainer = $(".webmaker-create-user", formAnchor);
+      if ( !$formContainer.length ) {
+        $.get("<%= ssoAudience %>/ajax/forms/new_user.html", function(html) {
+          $formContainer = $(html).appendTo( $("#webmaker-nav"));
+          $formContainer.slideDown();
+          $formFrag = $("#sso_create", formAnchor );
+          $formFrag.submit( function(data) {
+            $.ajax({
+              type: "POST",
+              url: "<%= ssoAudience %>/user",
+              dataType: "json",
+              data: {
+                "_id": userID,
+                "email": userID,
+                "name": $('#name').val()
+              },
+              success: function(resp) {
+                navigator.personaSSO.ui.existingMaker(resp.user.name);
+                $formContainer.slideUp();
+
+              },
+              error: function(resp) {
+                // TODO - handle errors
+                console.log(resp, 'failure');
+                return false;
+              }
+            });
+            return false;
           });
-          return false;
         });
-      });
+      } else {
+        $formContainer.slideDown();
+      }
     },
     existingMaker: function(displayName) {
       /**
@@ -80,8 +90,10 @@ navigator.personaSSO = {
        * remove any listeners we have attached
        */
       navigator.personaSSO.ui.displayLogin('');
+      $(".webmaker-create-user").slideUp();
     }
   },
+
   init: function(element, onready){
     element.src = "<%= ssoAudience %>/signin?" + encodeURIComponent(window.location.protocol + "//" + window.location.host);
 
@@ -105,10 +117,10 @@ navigator.personaSSO = {
       try {
 
         var jsonData = JSON.parse(e.data);
-        
+
         try {
           var handle = navigator.personaSSO.handlers[jsonData.topic];
-          
+
           if (typeof(handle) == 'function'){
             handle(jsonData.topic, jsonData.data || {});
           }

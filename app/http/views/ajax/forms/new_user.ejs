@@ -1,12 +1,14 @@
-<form id="sso_create" action="<%= ssoAudience %>/user" method="POST">
-  <p><strong>Welcome new Webmaker</strong> - tell us a little bit about you so we can provide a personal experience.</p>
-  <div class="row">
-    <label for="name">Display name</label>
-    <input type="text" name="name" id="name" required />
-  </div>
-  <div class="row">
-    <input type="checkbox" name="terms" id="terms" class="inline" required />
-    <label for="terms" class="inline">I agree to your terms and conditions</label>
-  </div>
-  <input type="submit" value="Create my account" />
-</form>
+<div class="webmaker-create-user">
+  <form id="sso_create" action="<%= process.env.AUDIENCE %>/user" method="POST">
+    <legend>Claim your webmaker space</legend>
+    <div class="display-name-container row">
+      <label for="name" class="visually-hidden">Display name</label>
+      <input class="display-name-input" type="text" name="name" id="name" required> .webmaker.org
+    </div>
+    <div class="row">
+      <input type="checkbox" name="terms" id="terms" class="inline" required>
+      <label for="terms" class="inline">I agree to your terms and conditions</label>
+    </div>
+    <input class="create-user-submit" type="submit" value="Create my account">
+  </form>
+</div>
