@@ -2,9 +2,10 @@
 * License, v. 2.0. If a copy of the MPL was not distributed with this file,
 * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-var UserHandle    = require( "../../models/user" );
+var UserHandle    = require( "../../models/user" ),
+    env = require('../../../config/environment');
 
-exports.create = function ( req, res ) { 
+exports.create = function ( req, res ) {
   var userInfo = req.body;
 
   userInfo._id = userInfo.email;
@@ -22,7 +23,7 @@ exports.create = function ( req, res ) {
   });
 };
 
-exports.get = function ( req, res ) { 
+exports.get = function ( req, res ) {
   var id = req.params.id;
 
   UserHandle.findById( id, function ( err, user ) {
@@ -63,7 +64,9 @@ exports.del = function ( req, res ) {
 };
 
 exports.userForm = function( req, res ) {
-  res.render( 'ajax/forms/new_user' );
+  res.render( 'ajax/forms/new_user', {
+    ssoAudience: env.get('AUDIENCE')
+  } );
 };
 
 /**
