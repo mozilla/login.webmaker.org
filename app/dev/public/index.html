@@ -13,26 +13,6 @@
       padding: 0 15px;
     }
   </style>
-  <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
-  <script src="http://localhost:3000/js/sso.js"></script>
-  <script type="text/javascript">
-    $(function(){
-      // App 1 / App 2 differences
-      var appNumber = (document.location.port - 3000),
-          personaSSO = navigator.personaSSO;
-      document.title = "App " + appNumber;
-      $('h1').html(document.title);
-      personaSSO.init( document.getElementById("SSO") );
-      personaSSO.id.watch({
-        onlogin: function(topic, data){
-          personaSSO.ui.checkMaker(data, $('#webmaker-nav'));
-        },
-        onlogout: function(){
-          personaSSO.ui.loggedOut();
-        }
-      });
-    });
-  </script>
 </head>
 <body>
   <div id="webmaker-nav">
@@ -48,10 +28,30 @@
             <span id="identity" class="user-name-container"></span>
           </div>
         </li>
-        <li><iframe id="SSO"></iframe></li>
+        <li><iframe id="SSO" src="http://localhost:3000/"></iframe></li>
       </ul>
     </nav>
   </div>
   <h1></h1>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+  <script src="http://localhost:3000/js/sso.js"></script>
+  <script type="text/javascript">
+    $(function(){
+      // App 1 / App 2 differences
+      var appNumber = (document.location.port - 3000),
+          personaSSO = navigator.personaSSO;
+      document.title = "App " + appNumber;
+      $('h1').html(document.title);
+      personaSSO.init(document.getElementById( "SSO" ));
+      personaSSO.id.watch({
+        onlogin: function(topic, data){
+          personaSSO.ui.checkMaker(data, $('#webmaker-nav'));
+        },
+        onlogout: function(){
+          personaSSO.ui.loggedOut();
+        }
+      });
+    });
+  </script>
 </body>
 </html>
