@@ -67,11 +67,9 @@ exports.userForm = function( req, res ) {
 };
 
 /**
-* You can post stuff to this like so:
-* $.ajax({
-*   type: "POST",
-*   url: "http://localhost:3000/dev/delete"
-* });
+* Access this route from your browser to clear the database of accounts with the emails listed below.
+* e.g. "http://localhost:3000/dev/delete"
+*
 * Obviously this should never go anywhere near production - but it's helpful for now, and at least for me
 */
 exports.devDelete = function(req, res) {
