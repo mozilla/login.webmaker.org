@@ -25,10 +25,9 @@
     var origin = decodeURIComponent(document.location.href.split("?", 2)[1]);
 
     // TODO: Make sure origin is in ALLOWED_ORIGINS
-    var allowedDomains = "<%= process.env.ALLOWED_DOMAINS %>".split(' ');
+    var allowedDomains = "<%= allowed_domains %>".split(' ');
 
     if ( $.inArray(origin, allowedDomains) != -1 ) {
-
       $(function(){
         $('#signin').click(function(){navigator.id.request(); return false;});
         $('#signout').click(function(){navigator.id.logout(); return false;});

@@ -13,7 +13,7 @@ navigator.personaSSO = {
     checkMaker: function(userData, elementAnchor) {
       $.ajax({
         type: "GET",
-        url: "<%= process.env.AUDIENCE %>/user/" + userData.loggedInUser + "/",
+        url: "<%= ssoAudience %>/user/" + userData.loggedInUser + "/",
         dataType: "json",
         success: function(resp) {
             navigator.personaSSO.ui.existingMaker(resp.user.name);
@@ -39,13 +39,13 @@ navigator.personaSSO = {
        * AJAX post to createMaker API
        * remove form and listeners once everything is sorted
        */
-      $.get("<%= process.env.AUDIENCE %>/ajax/forms/new_user.html", function(html) {
+      $.get("<%= ssoAudience %>/ajax/forms/new_user.html", function(html) {
         form_html = $(html);
         form_frag = $(form_html).appendTo(formAnchor);
         form_frag.submit(function(data) {
           $.ajax({
             type: "POST",
-            url: "<%= process.env.AUDIENCE %>/user",
+            url: "<%= ssoAudience %>/user",
             dataType: "json",
             data: {
               "_id": userID,
@@ -82,8 +82,8 @@ navigator.personaSSO = {
       navigator.personaSSO.ui.displayLogin('');
     }
   },
-  init: function(element){
-    element.src = "<%= process.env.AUDIENCE %>/signin?" + encodeURIComponent(window.location.protocol + "//" + window.location.host);
+  init: function(element, onready){
+    element.src = "<%= ssoAudience %>/signin?" + encodeURIComponent(window.location.protocol + "//" + window.location.host);
 
     var handlers = {
       "onlogout": function(){

@@ -3,9 +3,12 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 var habitat = require('habitat');
-var env = new habitat(null, {
-  port: 5000
-});
+
+// Load config from ".env"
+habitat.load();
+
+var env = new habitat();
+
 var urlutil = require('url');
 
 // In here we hack the environment variables that habitat uses based on
