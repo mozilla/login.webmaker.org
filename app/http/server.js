@@ -11,9 +11,10 @@ var express     = require('express'),
     logger      = require('../../lib/logger'),
     util        = require('util'),
     application = require('./controllers/application'),
-    User       = require('../models/user'),
-    persona     = require("express-persona"),
     env         = require('../../config/environment'),
+    mongo       = require('../../lib/mongoose')(env),
+    User        = require('../models/user')(mongo.conn),
+    persona     = require("express-persona"),
     route = require('./routes');
 
 var http = express();
@@ -23,6 +24,7 @@ http.configure(function(){
   http.set('views', __dirname + '/views');
   http.set('view engine', 'ejs');
   http.disable("x-powered-by");
+  http.use(mongo.healthCheck);
   http.use(application.allowCorsRequests);
   http.use(express.logger());
   http.use(express.static(__dirname + '/public'));
@@ -86,7 +88,7 @@ process.on('uncaughtException', function(err) {
 });
 
 // HTTP Routes
-route(http);
+route( http, User );
 
 var port = env.get('port');
 http.listen(port);

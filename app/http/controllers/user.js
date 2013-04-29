@@ -2,93 +2,99 @@
 * License, v. 2.0. If a copy of the MPL was not distributed with this file,
 * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-var UserHandle    = require( "../../models/user" ),
-    env = require('../../../config/environment');
+var env = require("../../../config/environment");
 
-exports.create = function ( req, res ) {
-  var userInfo = req.body;
+module.exports = function ( UserHandle ) {
+  var controller = {};
 
-  userInfo._id = userInfo.email;
+  controller.create = function ( req, res ) {
+    var userInfo = req.body;
 
-  var user = new UserHandle( userInfo );
+    userInfo._id = userInfo.email;
 
-  // Delegates all validation to mongoose during this step
-  user.save( function( err, thisUser ) {
-    if ( err ) {
-      res.json( 400, { error: err, user: null } );
-      return;
-    }
+    var user = new UserHandle( userInfo );
 
-    res.json( { error: null, user: thisUser } );
-  });
-};
+    // Delegates all validation to mongoose during this step
+    user.save( function( err, thisUser ) {
+      if ( err ) {
+        res.json( 404, { error: err, user: null } );
+        return;
+      }
 
-exports.get = function ( req, res ) {
-  var id = req.params.id;
+      res.json( { error: null, user: thisUser } );
+    });
+  };
 
-  UserHandle.findById( id, function ( err, user ) {
-    if ( err || !user ) {
-      res.json( 400, { error: err || "User not found for ID: " + id, user: null } );
-      return;
-    }
+  controller.get = function ( req, res ) {
+    var id = req.params.id;
 
-    res.json( { error: null, user: user } );
-  });
-};
+    UserHandle.findById( id, function ( err, user ) {
+      if ( err || !user ) {
+        res.json( 404, { error: err || "User not found for ID: " + id, user: null } );
+        return;
+      }
 
-exports.update = function ( req, res ) {
-  var userInfo = req.body,
-      id = req.params.id;
+      res.json( { error: null, user: user } );
+    });
+  };
 
-  UserHandle.findByIdAndUpdate( id, userInfo, function ( err, user ) {
-    if ( err || !user ) {
-      res.json( 400, { error: err || "User not found for ID: " + id, user: null } );
-      return;
-    } 
+  controller.update = function ( req, res ) {
+    var userInfo = req.body,
+        id = req.params.id;
 
-    res.json( { error: null, user: user } );
-  }); 
-};
+    UserHandle.findByIdAndUpdate( id, userInfo, function ( err, user ) {
+      if ( err || !user ) {
+        res.json( 404, { error: err || "User not found for ID: " + id, user: null } );
+        return;
+      } 
 
-exports.del = function ( req, res ) {
-  var id = req.params.id;
+      res.json( { error: null, user: user } );
+    }); 
+  };
 
-  UserHandle.findByIdAndRemove( id , function ( err, user ) {
-    if ( err || !user ) {
-      res.json( 400, { error: err || "User not found for ID: " + id, user: null } );
-      return;
-    }
+  controller.del = function ( req, res ) {
+    var id = req.params.id;
 
-    res.json( { error: null, user: user } );
-  });
-};
+    UserHandle.findByIdAndRemove( id , function ( err, user ) {
+      if ( err || !user ) {
+        res.json( 404, { error: err || "User not found for ID: " + id, user: null } );
+        return;
+      }
 
-exports.userForm = function( req, res ) {
-  res.render( 'ajax/forms/new_user', {
-    ssoAudience: env.get('AUDIENCE')
-  } );
-};
+      res.json( { error: null, user: user } );
+    });
+  };
 
-/**
-* Access this route from your browser to clear the database of accounts with the emails listed below.
-* e.g. "http://localhost:3000/dev/delete"
-*
-* Obviously this should never go anywhere near production - but it's helpful for now, and at least for me
-*/
-exports.devDelete = function(req, res) {
-  var email = [
-    'ross@mozillafoundation.org',
-    'ross@ross-eats.co.uk',
-    'rossbruniges10@yahoo.co.uk',
-    'rossbruniges@gmail.com',
-    'kieran.sedgwick@gmail.com',
-    'kate@mozillafoundation.org'
-  ],
-  User = require('../../models/user');
+  controller.userForm = function( req, res ) {
+    res.render( "ajax/forms/new_user", {
+      ssoAudience: env.get('AUDIENCE')
+    } );
+  };
 
-  email.forEach(function(m) {
-    User.find({ email:m }).remove();
-  });
+  /**
+  * Access this route from your browser to clear the database of accounts with the emails listed below.
+  * e.g. "http://localhost:3000/dev/delete"
+  *
+  * Obviously this should never go anywhere near production.
+  * See bug: https://bugzilla.mozilla.org/show_bug.cgi?id=863781
+  */
+  controller.devDelete = function( req, res ) {
+    var email = [
+      'ross@mozillafoundation.org',
+      'ross@ross-eats.co.uk',
+      'rossbruniges10@yahoo.co.uk',
+      'rossbruniges@gmail.com',
+      'kieran.sedgwick@gmail.com'
+    ],
+    User = require('../../models/user');
 
-  res.send("DELETED!!!");
-};
+    email.forEach(function(m) {
+      User.find({ email:m }).remove();
+    });
+
+    res.send("DELETED!!!");
+  };
+
+  return controller;
+}; // END Exports function
+
