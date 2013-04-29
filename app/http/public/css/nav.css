@@ -1,3 +1,83 @@
+/*********************************************************
+* Webmaker nav
+*/
+#webmaker-nav {
+  font-family: "Open Sans", "Helvetica Neue", sans-serif;
+  font-size: 12px;
+  width: 100%;
+}
+.webmaker-nav-container {
+  height: 29px;
+  background: #3a3c3c;
+  border-bottom: 1px solid #2d2f2f;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.webmaker-nav {
+  height: 29px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  line-height: 29px;
+  font-size: 1em;
+  color: #FFF;
+}
+
+.webmaker-nav > li > a {
+  display: block;
+  height: 100%;
+  background: #3a3c3c;
+  padding: 0 15px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  color: rgb(255, 255, 255);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.webmaker-nav > li > a:hover {
+  color: #FFF;
+}
+
+/*********************************************************
+* Primary menu
+*/
+.primary {
+  float: left;
+}
+.primary > li {
+  border-right: 1px solid #474949;
+  border-left: 1px solid #2d2f2f;
+  float: left;
+}
+.primary > li:last-child {
+  border-right-color: transparent;
+}
+.primary > li a:hover {
+  background: #3f4141;
+}
+/*********************************************************
+* User/Login Styles
+*/
+.user-info {
+  float: right;
+  text-align: right;
+}
+
+.user {
+  line-height: 29px;
+  margin-right: 20px;
+}
+
+.user-info > li {
+  float: left;
+  border-right: none;
+  height: 100%;
+}
 .webmaker-create-user {
   display: none;
   padding: 2em 1em;
