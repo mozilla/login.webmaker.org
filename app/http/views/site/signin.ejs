@@ -82,13 +82,13 @@
             $.ajax({
               type: 'POST',
               url: '/persona/logout', // This is a URL on your website.
-              success: function(res, status, xhr) { 
+              success: function(res, status, xhr) {
                 currentUser = '';
                 displaySignin();
               },
-              error: function(res, status, xhr) { 
+              error: function(res, status, xhr) {
                 displaySignout();
-                alert("logout failure" + res); 
+                alert("logout failure" + res);
               }
             });
           }
@@ -96,7 +96,7 @@
       });
     } // END-IF Origin check
   </script>
-  <style type="text/css">body { padding: 0; margin: 0; }</style>
+  <style type="text/css">body { padding: 0; margin: 0; overflow: hidden; }</style>
 </head>
 <body>
   <a href="#" id="signin" class="persona-button" style="display:none"><span>Sign in</span></a>

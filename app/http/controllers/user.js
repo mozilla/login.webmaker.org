@@ -81,7 +81,8 @@ exports.devDelete = function(req, res) {
     'ross@ross-eats.co.uk',
     'rossbruniges10@yahoo.co.uk',
     'rossbruniges@gmail.com',
-    'kieran.sedgwick@gmail.com'
+    'kieran.sedgwick@gmail.com',
+    'kate@mozillafoundation.org'
   ],
   User = require('../../models/user');
 

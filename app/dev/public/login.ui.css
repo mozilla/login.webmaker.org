@@ -1,24 +1,91 @@
-#sso_create {
-    overflow: hidden;
-    background: yellow;
-    -moz-transition: height 2s;
-    -webkit-transition: height 2s;
-    -o-transition: height 2s;
-    transition: height 2s;
-    display: block;
+.webmaker-create-user {
+  display: none;
+  padding: 2em 1em;
+  background: #F4F5F5;
+  border-bottom: 1px solid #DDD;
+  color: #555;
+  text-align: center;
 }
-#sso_create label {
-    text-transform: lowercase;
-    margin-right: 10px;
+
+.webmaker-create-user > form {
+  display: inline-block;
+  text-align: left;
 }
-#sso_create .inline {
-    display: inline-block;
+/*********************************************************
+* Helpers
+*/
+.webmaker-create-user .row {
+  margin: 1em 0;
 }
+
+.webmaker-create-user .inline {
+  display: inline-block;
+}
+
+.webmaker-create-user .visually-hidden {
+  display: block;
+  height: 1px;
+  overflow: hidden;
+  left: -99999em;
+}
+
+
+/*********************************************************
+* Title
+*/
+.webmaker-create-user legend {
+  font-size: 1.8em;
+  font-weight: 700;
+  margin: 0;
+}
+
+/*********************************************************
+* Display name
+*/
+.display-name-container {
+  font-size: 1.5em;
+}
+.display-name-container,
+.display-name-input {
+  font-family: "Open Sans", "Helvetica Neue", sans-serif;
+}
+.display-name-input {
+  font-size: 1em;
+  padding: 0.5em;
+  width: 16em;
+  border: 1px solid #3FB58E;
+  border-radius: 2px;
+  color: #3FB58E;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.display-name-input:focus {
+  outline: none;
+  box-shadow: 0 2px 3px -3px #3FB58E;
+}
+
+/*********************************************************
+* Buttons, iframe
+*/
+.create-user-submit {
+  color: #FFF;
+  border: 1px solid #519369;
+  background: #3FB58E;
+  font-size: 1.2em;
+  padding: 1em;
+  border-radius: 2px;
+}
+
+.create-user-submit:hover {
+  background: #79b790;
+}
+
 #SSO {
-    height: 60px;
-    width: 106px;
-    background: transparent;
-    color: #fff;
-    border: none;
-    margin-top: 3px;
+  height: 30px;
+  width: 115px;
+  background: transparent;
+  color: #fff;
+  border: none;
+  margin-top: 3px;
 }
