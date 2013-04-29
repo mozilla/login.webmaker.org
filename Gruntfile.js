@@ -13,7 +13,7 @@ module.exports = function( grunt ) {
           "unique-headings": false
         },
         src: [
-          "app/dev/public/*.css"
+          "app/http/public/css/*.css"
         ]
       }
     },
