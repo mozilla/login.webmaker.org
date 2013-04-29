@@ -1,76 +1,91 @@
 login.webmaker.org
 ==================
 
-This is currently demo implementation of Single Sign-on using <a href="http://persona.org">Persona</a>. The end goal is for it to be the SSO server for the webmaker.org applications.
+This is our SSO server and identity provider for webmaker.org and all our additional Webmaker websites; sign in once, sign in everywhere!
 
-There are a few TODOs that make this not ready for an actual deployment. -- See <a href="https://github.com/mozilla/login.webmaker.org/issues">Issues</a>.
+## Getting the Server Up and Running Locally
 
-# Getting the Server Up and Running
+The app is written using <a href="http://nodejs.org/">nodejs</a>, requires npm for package management and (to make running multiple servers at once easier) ruby (we run the app locally using <a href="http://ddollar.github.io/foreman/">foreman</a>). 
 
-There are *three* things you need to do to get this running:
+Once you have those you can get things up and running by:
 
-1. Create and configure a `.env` file.
-2. Run foreman
+1. Install npm modules - `npm install`
+2. Install and start up a <a href="http://docs.mongodb.org/manual/tutorial/install-mongodb-on-os-x/">local MongoDB instance</a>
+3. Create and configure a `.env` file - copy the `.env.sample` file we've provided.
+4. Install <a href="http://ddollar.github.io/foreman/">foreman</a> (if you don't have it) - `gem install foreman`
+5. Run foreman - `foreman start -f Procfile.dev`
 
-## Configuration
+Head to either <a href="http://localhost:3001">http://localhost:3001</a> or <a href="http://localhost:3002">http://localhost:3002</a> (or both) and sign-up.
 
-tl;dr: Copy the `.env.sample` file in the project root to `.env`.
+### Tests
 
-login.webmaker.org attempts to conform to the <a href="http://www.12factor.net">twelve factor methodology</a>. If using <a href="http://blog.daviddollar.org/2011/05/06/introducing-foreman.html">foreman</a>, create a .env file and populate with the following variables:
+We use <a href="http://gruntjs.com/">Grunt</a> to lint our CSS and JS and these tests are run on each pull request sent into the mozilla repo using <a href="https://travis-ci.org/mozilla/login.webmaker.org">travis-ci</a>.
 
-###LOG_LEVEL
+If you want to check your code passes before sending in a pull request (and ensure no breaking builds) then:
 
-Standard Winston log levels
+* ensure that grunt is installed globally on your system - ```npm install -g grunt```
+* run ```grunt --travis test```
 
-###PORT
+## Bugs
 
-Port for the HTTPD to listen on, use 3000 for development
-
-###SESSION_SECRET
-
-Any Gobbledygook will do, bonus points for humor.
-
-###AUDIENCE
-
-This is the persona audience of the SSO server. For dev mode, use "http://localhost:3000"
-
-###ALLOWED_DOMAINS
-
-If using the dev servers in development mode, use:
-"http://localhost:3001", "http://localhost:3002"
-
-Otherwise something like:
-
-ALLOWED_DOMAINS='["*.webmaker.org"]'
-
-###MONGO_URL
-
-Connection string for local MongoDB instance and DB
-
-For example:
-
-MONGO_URL="mongodb://localhost:27017/local_webmakers"
-
-## Installing Dependencies
-
-Packages are managed using npm, so:
-
-```
-npm install
-```
-
-## Foreman
-
-For running the dev instances do:
-
-```
-foreman start -f Procfile.dev
-```
-
-Then visit <a href="http://localhost:3001/">http://localhost:3001/</a> and sign in. If you visit <a href="http://localhost:3002/">http://localhost:3002/</a> you'll notice that you're signed in there too. Magic.
-
-In fact, if you have them both open at the same time, they update with a short delay.
+Bugs can be found in Bugzilla - this is what <a href="https://bugzilla.mozilla.org/buglist.cgi?quicksearch=c%3Dlogin&list_id=6396195">bugs we have now</a>, if you notice anything else please <a href="https://bugzilla.mozilla.org/enter_bug.cgi?product=Webmaker&component=Login">file a new bug</a> for us.
 
 ## Integration
 
-See app/dev/public/index.html for application usage.
+### 1. Set up your environment variables
+
+Ensure that you're using the correct values in your local .env file, make sure that the URL of your app is included in the ALLOWED_DOMAINS.
+
+For example, if were integrating SSO into two apps running at http://localhost:8888 and http://localhost:7777, you would need to include the following in the .env of login.webmaker.org:
+
+```ALLOWED_DOMAINS="http://localhost:8888 http://localhost:7777"```
+
+### 2. Link through to our CSS file in your master template
+
+```html
+<link rel="stylesheet" href="http://{webmaker.sso.domain}/css/nav.css" />
+```
+
+### 3. Include in the required HTML for the Webmaker navigation bar
+
+```html
+<div id="webmaker-nav">
+  <nav class="webmaker-nav-container">
+    <ul class="webmaker-nav primary">
+      <li><a>Webmaker</a></li>
+    </ul>
+    <ul class="webmaker-nav user-info">
+      <li class="user">
+        <div class="user-name">
+          <span id="identity" class="user-name-container"></span>
+        </div>
+      </li>
+      <li><iframe id="SSO"></iframe></li>
+    </ul>
+  </nav>
+</div>
+```
+
+### 4. Link to our external JS file and instantiate the personaSSO functionality
+
+For the best performance put this at the bottom of your HTML file, just before the closing ```</body>```
+
+```html
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+// yes we rely on jQuery - if this is a problem file a bug!
+<script src="http://{webmaker.sso.domain}/js/sso.js"></script>
+<script type="text/javascript">
+  $(function(){
+    var personaSSO = navigator.personaSSO;
+    personaSSO.init(document.getElementById('SSO'));
+    personaSSO.id.watch({
+      onlogin: function(topic, data){
+        personaSSO.ui.checkMaker(data, $("#webmaker-nav"));
+      },
+      onlogout: function(){
+        personaSSO.ui.loggedOut();
+      }
+    });
+  });
+</script>
+```
