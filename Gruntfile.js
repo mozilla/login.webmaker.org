@@ -2,18 +2,15 @@ module.exports = function( grunt ) {
   grunt.initConfig({
     pkg: grunt.file.readJSON( "package.json" ),
 
-    csslint: {
-      lax: {
+    recess: {
+      dist: {
         options: {
-          "box-sizing": false,
-          "ids": false,
-          "important": false,
-          "overqualified-elements": false,
-          "qualified-headings": false,
-          "unique-headings": false
+          noOverQualifying: false,
+          noIDs: false,
+          strictPropertyOrder: false
         },
         src: [
-          "app/http/public/css/*.css"
+          "app/http/public/css/*.less"
         ]
       }
     },
@@ -28,9 +25,9 @@ module.exports = function( grunt ) {
     }
   });
 
-  grunt.loadNpmTasks( "grunt-contrib-csslint" );
+  grunt.loadNpmTasks( "grunt-recess" );
   grunt.loadNpmTasks( "grunt-contrib-jshint" );
 
-  grunt.registerTask( "default", [ "csslint", "jshint" ]);
-  grunt.registerTask( "travis", [ "csslint", "jshint" ]);
+  grunt.registerTask( "default", [ "recess", "jshint" ]);
+  grunt.registerTask( "travis", [ "recess", "jshint" ]);
 };
