@@ -1,36 +1,37 @@
 navigator.personaSSO = {
   id: {
-    watch: function(opts){
+    watch: function( opts ){
       navigator.personaSSO.handlers.onlogin = opts.onlogin;
       navigator.personaSSO.handlers.onlogout = opts.onlogout;
     }
   },
   handlers: {},
   ui: {
-    displayLogin: function(userName) {
-      $("#identity").text(userName);
+    displayIdentity: function( userName ) {
+      $( "#identity" ).text( userName );
     },
-    checkMaker: function(userData, elementAnchor) {
+    checkMaker: function( userData, elementAnchor ) {
       $.ajax({
         type: "GET",
         url: "<%= ssoAudience %>/user/" + userData.loggedInUser + "/",
         dataType: "json",
-        success: function(resp) {
-            navigator.personaSSO.ui.existingMaker(resp.user.name);
+        success: function( resp ) {
+            navigator.personaSSO.ui.existingMaker( resp.user.name );
         },
-        error: function(resp) {
-          if (resp.status === 400) {
+        error: function( resp ) {
+          if ( resp.status === 400 ) {
             // we're expecting this error for a new maker
-            navigator.personaSSO.ui.newMaker(userData.loggedInUser, $('#webmaker-nav'));
+
+            navigator.personaSSO.ui.newMaker( userData.loggedInUser, $( '#webmaker-nav' ) );
             return false;
           }
           // TODO - handle errors - at this point it's a new error!
-          console.log(resp, 'failure');
+          console.log( resp, 'failure' );
           return false;
         }
       });
     },
-    newMaker: function(userID, formAnchor) {
+    newMaker: function( userID, formAnchor ) {
       /**
        * load in HTML include containing the HTML form
        * display form
@@ -39,17 +40,15 @@ navigator.personaSSO = {
        * AJAX post to createMaker API
        * remove form and listeners once everything is sorted
        */
-
       var $formContainer,
           $formFrag;
 
       $formContainer = $(".webmaker-create-user", formAnchor);
       if ( !$formContainer.length ) {
-        $.get("<%= ssoAudience %>/ajax/forms/new_user.html", function(html) {
-          $formContainer = $(html).appendTo( $("#webmaker-nav"));
-          $formContainer.slideDown();
-          $formFrag = $("#sso_create", formAnchor );
-          $formFrag.submit( function(data) {
+        $.get("<%= ssoAudience %>/ajax/forms/new_user.html", function( html ) {
+          form_html = $( html );
+          form_frag = $( form_html ).appendTo( formAnchor );
+          form_frag.submit( function( data ) {
             $.ajax({
               type: "POST",
               url: "<%= ssoAudience %>/user",
@@ -57,81 +56,68 @@ navigator.personaSSO = {
               data: {
                 "_id": userID,
                 "email": userID,
-                "name": $('#name').val()
+                "name": $( '#name' ).val()
               },
-              success: function(resp) {
-                navigator.personaSSO.ui.existingMaker(resp.user.name);
-                $formContainer.slideUp();
-
+              success: function( resp ) { 
+                navigator.personaSSO.ui.existingMaker( resp.user.name );
+                form_frag.css({"height": 0});
+                form_frag.remove();
               },
-              error: function(resp) {
+              error: function( resp ) {
                 // TODO - handle errors
-                console.log(resp, 'failure');
+                console.log( resp, 'failure' );
                 return false;
               }
-            });
-            return false;
-          });
-        });
+            }); 
+          }); 
+        }); // End-Get
       } else {
         $formContainer.slideDown();
       }
     },
-    existingMaker: function(displayName) {
+    existingMaker: function( displayName ) {
       /**
        * API call to the getUserData API
        * display logged in user data in the UI (where to be defined)
        */
-      navigator.personaSSO.ui.displayLogin(displayName);
+      navigator.personaSSO.ui.displayIdentity( displayName );
     },
     loggedOut: function() {
       /**
        * remove logged in user data from the UI
        * remove any listeners we have attached
        */
-      navigator.personaSSO.ui.displayLogin('');
-      $(".webmaker-create-user").slideUp();
+      navigator.personaSSO.ui.displayIdentity( '' );
     }
   },
-
-  init: function(element, onready){
-    element.src = "<%= ssoAudience %>/signin?" + encodeURIComponent(window.location.protocol + "//" + window.location.host);
-
-    var handlers = {
-      "onlogout": function(){
-        navigator.personaSSO.id.handlers.onlogout();
-      },
-      "onlogin": function(data){
-        navigator.personaSSO.id.loggedInUser = data.loggedInUser;
-        navigator.personaSSO.id.handlers.onlogin(data.assertion);
-      }
-    };
+  init: function( element, onready ){
+    element.src = "<%= ssoAudience %>/signin?" + encodeURIComponent( window.location.protocol + "//" + window.location.host );
 
     // Create IE + others compatible event handler
     var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
-    var eventer = window[eventMethod];
+    var eventer = window[ eventMethod ];
     var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
 
     // Listen to message from child window
-    eventer(messageEvent, function(e){
+    eventer(messageEvent, function( e ){
       try {
 
-        var jsonData = JSON.parse(e.data);
-
+        var jsonData = JSON.parse( e.data );
+        
         try {
-          var handle = navigator.personaSSO.handlers[jsonData.topic];
-
-          if (typeof(handle) == 'function'){
-            handle(jsonData.topic, jsonData.data || {});
+          var handle = navigator.personaSSO.handlers[ jsonData.topic ];
+          
+          if ( typeof( handle ) == 'function' ){
+            handle( jsonData.topic, jsonData.data || {} );
           }
         }
-        catch(err){
-          console.log("Error in handler.");
-          console.log(err.message);
+        catch( err ){
+          console.log( "Error in handler." );
+          console.log( err.message );
         }
       }
-      catch(err){
-        console.log("Error parsing event: " + event.data);
+      catch( err ){
+        console.log( "Error parsing event: " + event.data );
       }
     }, false);
 
