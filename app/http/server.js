@@ -34,10 +34,11 @@ http.configure(function(){
   http.use(express.bodyParser());
   http.use(express.methodOverride());
   http.use(express.cookieSession({
-    key: 'express.sid',
+    key: 'wm.sid',
     secret: env.get('SESSION_SECRET'),
     cookie: {
-      maxAge: 2678400000 // 31 days
+      maxAge: 2678400000, // 31 days
+      domain: env.get("ROOT_DOMAIN") // Dev code, in production this would read ".webmaker.org"
     },
     proxy: true
   }));
@@ -80,7 +81,12 @@ persona(http, {
       if (!User.length) {
         userInfo.exists = false;
       } else {
+        console.log(User[0]._id);
         userInfo.exists = true;
+        req.session.auth = {
+          _id: User[0]._id,
+          isAdmin: User[0].isAdmin
+        }
         userInfo.user = User[0];
       }
 

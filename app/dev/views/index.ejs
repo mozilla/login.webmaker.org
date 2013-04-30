@@ -43,16 +43,7 @@
           personaSSO = navigator.personaSSO;
       document.title = "App " + appNumber;
       $( "h1" ).html( document.title );
-      personaSSO.init( document.getElementById( "SSO" ) );
-      personaSSO.id.watch( {
-        onlogin: function( topic, data ){
-          personaSSO.ui.checkMaker( data, $("#webmaker-nav") );
-        },
-        onlogout: function(){
-          personaSSO.ui.loggedOut();
-        }
-      } );
-    } );
+    });
   </script>
 </body>
 </html>

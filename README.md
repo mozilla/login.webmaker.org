@@ -30,7 +30,7 @@ If you want to check your code passes before sending in a pull request (and ensu
 
 Bugs can be found in Bugzilla - this is what <a href="https://bugzilla.mozilla.org/buglist.cgi?quicksearch=c%3Dlogin&list_id=6396195">bugs we have now</a>, if you notice anything else please <a href="https://bugzilla.mozilla.org/enter_bug.cgi?product=Webmaker&component=Login">file a new bug</a> for us.
 
-## Integration
+## Client-side Integration
 
 ### 1. Set up your environment variables
 
@@ -120,3 +120,117 @@ Code inside the config block can also make use of ```window```, ```document``` a
 ```
 
 Note that your variables do not become globals, they are scoped so that they only work in combination with your login and logout handlers.
+
+
+## Server-side Integration
+
+If you want to be able to authenticate user actions on your app quickly and easily, follow these steps to persist the Login server's session to your app.
+
+
+### 1. Include the required SSO server-side code in your server-side app
+
+When declaring your middleware in `express.configure`, add the following code before any routes are declared, replacing `express.cookieSession()` & `express.cookieParser()` if they exist:
+
+```javascript
+express.configure( function() {
+  ...;
+  ...;
+  express.use(express.cookieParser());
+  express.use(express.cookieSession({
+    key: 'wm.sid',
+    secret: "I sometimes feed lunch meat to my neighbour's \"vegan\" dog.",
+    cookie: {
+      maxAge: 2678400000, // 31 days
+      domain: ".webmaker.local"
+    },
+    proxy: true
+  }));
+  ...;
+})
+```
+
+### 2. Emulate running your app on a subdomain
+
+!! WARNING !!
+This step makes the node server require superuser permissions to run, and temporarily modifies your host file. See: https://github.com/jed/localhose#localhoseset-host1-host2-etc- 
+
+Add `localhose` (watch the spelling!) to your **package.json** file:
+
+```javascript
+devDependencies: {
+  ...,
+  ...,
+  "localhose": "*",
+  ...
+}
+```
+
+Require `localhose` in your main server.js file:
+
+```javascript
+localhose = require( "localhose" );
+```
+
+Add this line before the server is started:
+
+```javascript
+localhose.set("login.webmaker.local", "{YOURAPP'S NAME}.webmaker.local");
+```
+
+Run `NPM install --dev` to install the localhose module. 
+
+This allows you to access your app in the browser with `http://yourapp.webmaker.local:port`.  For example if before, it looked like:
+
+`localhost:7777`
+
+it will now look like,
+
+`{YOURAPP'S NAME}.webmaker.local:7777`
+
+### 3. Update the ALLOWED_DOMAINS environment variable
+
+You must now update the environment variable file `.env` to allow this new domain in cross-origin requests.  
+
+If before step 2, your app was accessed with `localhost:7777`, the ALLOWED_DOMAINS variable will look like this:
+
+```
+ALLOWED_DOMAINS="http://localhost:7777"
+```
+
+It must be changed to look like this:
+
+```
+ALLOWED_DOMAINS="http://{YOURAPP'S NAME}.webmaker.local:7777"
+```
+
+### 4. How to check for a user on your server-side app
+
+After a webmaker has logged in, your middleware will have access to the session through `req.session.auth`.  If this attribute of `req.session` exists, a valid Webmaker is authenticated.  The `auth` attribute contains two sub-attributes:
+
+```javascript
+auth: {
+  _id: "user's email",
+  isAdmin: true/false
+}
+```
+More information about the user (for example, their `subdomain`) can be retrieved directly from the login server using the Login API (https://etherpad.mozilla.org/webmakerLoginAPI) combined with these sub-attributes.  
+
+For example:
+
+```javascript
+http.use( function ( req, res ) {
+  // I check for an authenticated user
+  if (req.session.auth) {
+    // I pull the _id from the session
+    var _id = req.session.auth._id
+
+    // I initiate a "get" request to the login server, passing a callback 
+    // that uses the "subdomain" of the user
+    http.get('http://login.webmaker.local:3000/user/' + _id, function (res) {
+      console.log(res.body.user.subdomain);
+    })
+  }
+})
+```
+
+
