@@ -34,10 +34,11 @@ http.configure(function(){
   http.use(express.bodyParser());
   http.use(express.methodOverride());
   http.use(express.cookieSession({
-    key: 'express.sid',
+    key: 'wm.sid',
     secret: env.get('SESSION_SECRET'),
     cookie: {
-      maxAge: 2678400000 // 31 days
+      maxAge: 2678400000, // 31 days
+      domain: env.get("COOKIE_DOMAIN") 
     },
     proxy: true
   }));
@@ -67,19 +68,27 @@ persona(http, {
       exists: null
     };
 
+    // Confirm Persona authenticated
     if (err) {
       userInfo.status = "failure";
       userInfo.reason = err;
-    }
-    else {
-      userInfo.status = "okay";
-      userInfo.email = email;
-    }
 
+      return res.send(userInfo);;
+    }  
+    userInfo.status = "okay";
+    userInfo.email = email;
+
+    // Check if user is a webmaker
     User.find( { "email" : email }, function (err, User) {
       if (!User.length) {
         userInfo.exists = false;
-      } else {
+      } else {        
+        // Set super-session data
+        req.session.auth = {
+          _id: User[0]._id,
+          isAdmin: User[0].isAdmin
+        }
+        
         userInfo.exists = true;
         userInfo.user = User[0];
       }
