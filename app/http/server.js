@@ -30,14 +30,15 @@ http.configure(function(){
   http.use(application.allowCorsRequests);
   http.use(express.logger());
   http.use(express.static( path.join(__dirname, 'public')));
-  http.use(express.cookieParser());
+  http.use(express.cookieParser("we shall see"));
   http.use(express.bodyParser());
   http.use(express.methodOverride());
   http.use(express.cookieSession({
-    key: 'express.sid',
+    key: 'wm.sid',
     secret: env.get('SESSION_SECRET'),
     cookie: {
-      maxAge: 2678400000 // 31 days
+      maxAge: 2678400000, // 31 days
+      domain: env.get("COOKIE_DOMAIN") 
     },
     proxy: true
   }));
@@ -67,27 +68,50 @@ persona(http, {
       exists: null
     };
 
+    // Confirm Persona authenticated
     if (err) {
       userInfo.status = "failure";
       userInfo.reason = err;
-    }
-    else {
-      userInfo.status = "okay";
-      userInfo.email = email;
-    }
 
+      return res.send(userInfo);;
+    }  
+    userInfo.status = "okay";
+    userInfo.email = email;
+
+    // Check if user is a webmaker
     User.find( { "email" : email }, function (err, User) {
       if (!User.length) {
         userInfo.exists = false;
-      } else {
+      } else {        
+        console.log("\n\n\n\n\n\n Anything??? \n\n\n\n\n\n");
+        console.log(req.session);
+        // Set super-session data
+        req.session.auth = {
+          _id: User[0]._id
+        }
+        console.log(req.session);
+        
         userInfo.exists = true;
         userInfo.user = User[0];
       }
 
       res.send(userInfo);
     });
+  }, // end verify response
+  logoutResponse: function(err, req, res) {
+    var out;
+    
+    // Clear authentication data
+    delete req.session;
 
-  } // end verify response
+    // Determine response
+    if (err) {
+      out = { status: "failure", reason: err };
+    } else {
+      out = { status: "okay" };
+    }
+    res.json(out);
+  }
 });
 
 http.configure('development', function(){
