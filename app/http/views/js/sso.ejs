@@ -1,14 +1,29 @@
-navigator.personaSSO = {
-  id: {
-    watch: function(opts){
-      navigator.personaSSO.handlers.onlogin = opts.onlogin;
-      navigator.personaSSO.handlers.onlogout = opts.onlogout;
-    }
-  },
-  handlers: {},
-  ui: {
-    displayLogin: function(userName) {
-      $("#identity").text(userName);
+/*jshint evil:true*/
+
+/**
+ * Single sign-on for Webmaker.org apps
+ */
+(function sso(window, document, $) {
+
+  // make sure jQuery is available to us
+  if(!$) {
+    var jq = document.createElement("script");
+    jq.src = "http://code.jquery.com/jquery.min.js";
+    jq.onload = function() {
+      // retry, this time in the knowledge that we have jQuery
+      sso(window, document, window.jQuery);
+    };
+    document.head.appendChild(jq);
+    return;
+  }
+
+  // Our SSO object definition
+  navigator.personaSSO = {
+    id: {
+      watch: function(opts){
+        navigator.personaSSO.handlers.onlogin = opts.onlogin;
+        navigator.personaSSO.handlers.onlogout = opts.onlogout;
+      }
     },
     checkMaker: function(userData, elementAnchor) {
       $.ajax({
@@ -73,68 +88,167 @@ navigator.personaSSO = {
             return false;
           });
         });
-      } else {
-        $formContainer.slideDown();
-      }
-    },
-    existingMaker: function(displayName) {
-      /**
-       * API call to the getUserData API
-       * display logged in user data in the UI (where to be defined)
-       */
-      navigator.personaSSO.ui.displayLogin(displayName);
-    },
-    loggedOut: function() {
-      /**
-       * remove logged in user data from the UI
-       * remove any listeners we have attached
-       */
-      navigator.personaSSO.ui.displayLogin('');
-      $(".webmaker-create-user").slideUp();
-    }
-  },
-
-  init: function(element, onready){
-    element.src = "<%= ssoAudience %>/signin?" + encodeURIComponent(window.location.protocol + "//" + window.location.host);
-
-    var handlers = {
-      "onlogout": function(){
-        navigator.personaSSO.id.handlers.onlogout();
       },
-      "onlogin": function(data){
-        navigator.personaSSO.id.loggedInUser = data.loggedInUser;
-        navigator.personaSSO.id.handlers.onlogin(data.assertion);
+      newMaker: function(userID, formAnchor) {
+        /**
+         * load in HTML include containing the HTML form
+         * display form
+         * munge values into form
+         * attach submit handlers to the form
+         * AJAX post to createMaker API
+         * remove form and listeners once everything is sorted
+         */
+
+        var $formContainer,
+            $formFrag;
+
+        $formContainer = $(".webmaker-create-user", formAnchor);
+        if ( !$formContainer.length ) {
+          $.get("<%= ssoAudience %>/ajax/forms/new_user.html", function(html) {
+            $formContainer = $(html).appendTo( $("#webmaker-nav"));
+            $formContainer.slideDown();
+            $formFrag = $("#sso_create", formAnchor );
+            $formFrag.submit( function(data) {
+              $.ajax({
+                type: "POST",
+                url: "<%= ssoAudience %>/user",
+                dataType: "json",
+                data: {
+                  "_id": userID,
+                  "email": userID,
+                  "name": $('#name').val()
+                },
+                success: function(resp) {
+                  navigator.personaSSO.ui.existingMaker(resp.user.name);
+                  $formContainer.slideUp();
+
+                },
+                error: function(resp) {
+                  // TODO - handle errors
+                  console.log(resp, 'failure');
+                  return false;
+                }
+              });
+              return false;
+            });
+          });
+        } else {
+          $formContainer.slideDown();
+        }
+      },
+      existingMaker: function(displayName) {
+        /**
+         * API call to the getUserData API
+         * display logged in user data in the UI (where to be defined)
+         */
+        navigator.personaSSO.ui.displayLogin(displayName);
+      },
+      loggedOut: function() {
+        /**
+         * remove logged in user data from the UI
+         * remove any listeners we have attached
+         */
+        navigator.personaSSO.ui.displayLogin('');
+        $(".webmaker-create-user").slideUp();
       }
-    };
+    },
 
-    // Create IE + others compatible event handler
-    var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
-    var eventer = window[eventMethod];
-    var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+    init: function(element, onready){
+      element.src = "<%= ssoAudience %>/signin?" + encodeURIComponent(window.location.protocol + "//" + window.location.host);
 
-    // Listen to message from child window
-    eventer(messageEvent, function(e){
-      try {
+      var handlers = {
+        "onlogout": function(){
+          navigator.personaSSO.id.handlers.onlogout();
+        },
+        "onlogin": function(data){
+          navigator.personaSSO.id.loggedInUser = data.loggedInUser;
+          navigator.personaSSO.id.handlers.onlogin(data.assertion);
+        }
+      };
 
-        var jsonData = JSON.parse(e.data);
+      // Create IE + others compatible event handler
+      var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+      var eventer = window[eventMethod];
+      var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
 
+      // Listen to message from child window
+      eventer(messageEvent, function(e){
         try {
-          var handle = navigator.personaSSO.handlers[jsonData.topic];
 
-          if (typeof(handle) == 'function'){
-            handle(jsonData.topic, jsonData.data || {});
+          var jsonData = JSON.parse(e.data);
+
+          try {
+            var handle = navigator.personaSSO.handlers[jsonData.topic];
+
+            if (typeof(handle) == 'function'){
+              handle(jsonData.topic, jsonData.data || {});
+            }
+          }
+          catch(err){
+            console.log("Error in handler.");
+            console.log(err.message);
           }
         }
         catch(err){
-          console.log("Error in handler.");
-          console.log(err.message);
+          console.log("Error parsing event: " + event.data);
         }
-      }
-      catch(err){
-        console.log("Error parsing event: " + event.data);
-      }
-    }, false);
+      }, false);
 
-  }
-};
+    }
+  };
 
+  /**
+   * initialization function for the SSO process, using either
+   * user-indicated settings, or some default elements and
+   * event handlers.
+   */
+  var initPersonaSSO = function(navigator, document) {
+    var personaSSO = navigator.personaSSO,
+        config = false;
+
+    // unpack the configuration, if one was specified prior to loading this library
+    var configElement = document.querySelector("script[type='text/x-webmaker-sso-config']");
+    if (configElement) {
+      var configuration = configElement.innerHTML;
+      try {
+        var cfn = new Function("var " + configuration + ";\nreturn config;");
+        try {
+          config = cfn();
+        } catch (runtimeError) {}
+      } catch (syntaxError) {}
+    }
+
+    // use some sensible defaults if there is no user-defined config.
+    var defaults = {
+      target: document.getElementById('SSO'),
+      onlogin: function(topic, data) {
+        personaSSO.ui.checkMaker(data, document.getElementById("#webmaker-nav"));
+      },
+      onlogout: function() {
+        personaSSO.ui.loggedOut();
+      }
+    };
+
+    // build the config object for initialising SSO
+    config = config || {};
+    for (var prop in defaults) {
+      if (defaults.hasOwnProperty(prop)) {
+        config[prop] = config[prop] || defaults[prop];
+      }
+    }
+
+    // and finally, make it all happen.
+    personaSSO.init(config.target);
+    personaSSO.id.watch({
+      onlogin: config.onlogin,
+      onlogout: config.onlogout
+    });
+  };
+
+  // Run this either immediately, or on DOM content
+  // loaded. Whichever comes last.
+  $(function() {
+    initPersonaSSO(window.navigator, document);
+  });
+
+}(window, document, window.jQuery));
