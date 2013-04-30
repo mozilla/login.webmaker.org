@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <title></title>
   <meta name="description" content="">
-  <link rel="stylesheet" href="http://localhost:3000/css/nav.css" />
+  <link rel="stylesheet" href="<%= audience %>/css/nav.css" />
   <style>
     body {
       margin: 0;
@@ -19,8 +19,9 @@
     <nav class="webmaker-nav-container">
       <ul class="webmaker-nav primary">
         <li><a>Webmaker</a></li>
-        <li><a href="http://localhost:3001">App 1</a></li>
-        <li><a href="http://localhost:3002">App 2</a></li>
+        <% for( var i=0; i<allowed_domains.length; i++ ) {%>
+          <li><a href="<%= allowed_domains[i] %>">App <%= i + 1 %></a></li>
+        <% } %>
       </ul>
       <ul class="webmaker-nav user-info">
         <li class="user">
@@ -36,22 +37,22 @@
   <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
   <script src="http://localhost:3000/js/sso.js"></script>
   <script type="text/javascript">
-    $(function(){
+    $( function(){
       // App 1 / App 2 differences
-      var appNumber = (document.location.port - 3000),
+      var appNumber = ( document.location.port - 3000 ),
           personaSSO = navigator.personaSSO;
       document.title = "App " + appNumber;
-      $('h1').html(document.title);
-      personaSSO.init(document.getElementById( "SSO" ));
-      personaSSO.id.watch({
-        onlogin: function(topic, data){
-          personaSSO.ui.checkMaker(data, $('#webmaker-nav'));
+      $( "h1" ).html( document.title );
+      personaSSO.init( document.getElementById( "SSO" ) );
+      personaSSO.id.watch( {
+        onlogin: function( topic, data ){
+          personaSSO.ui.checkMaker( data, $("#webmaker-nav") );
         },
         onlogout: function(){
           personaSSO.ui.loggedOut();
         }
-      });
-    });
+      } );
+    } );
   </script>
 </body>
 </html>
