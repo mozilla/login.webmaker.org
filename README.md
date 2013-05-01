@@ -5,7 +5,7 @@ This is our SSO server and identity provider for webmaker.org and all our additi
 
 ## Getting the Server Up and Running Locally
 
-The app is written using <a href="http://nodejs.org/">nodejs</a>, requires npm for package management and (to make running multiple servers at once easier) ruby (we run the app locally using <a href="http://ddollar.github.io/foreman/">foreman</a>). 
+The app is written using <a href="http://nodejs.org/">nodejs</a>, requires npm for package management and (to make running multiple servers at once easier) ruby (we run the app locally using <a href="http://ddollar.github.io/foreman/">foreman</a>).
 
 Once you have those you can get things up and running by:
 
@@ -66,26 +66,57 @@ For example, if were integrating SSO into two apps running at http://localhost:8
 </div>
 ```
 
-### 4. Link to our external JS file and instantiate the personaSSO functionality
+### 4. Link to our external JS file
 
 For the best performance put this at the bottom of your HTML file, just before the closing ```</body>```
 
 ```html
-<script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
-// yes we rely on jQuery - if this is a problem file a bug!
 <script src="http://{webmaker.sso.domain}/js/sso.js"></script>
-<script type="text/javascript">
-  $(function(){
-    var personaSSO = navigator.personaSSO;
-    personaSSO.init(document.getElementById('SSO'));
-    personaSSO.id.watch({
-      onlogin: function(topic, data){
-        personaSSO.ui.checkMaker(data, $("#webmaker-nav"));
-      },
-      onlogout: function(){
-        personaSSO.ui.loggedOut();
-      }
-    });
-  });
+```
+### 5. If you need to override our defaults
+
+By default, sso.js will initialise based on the element with id ```SSO```, and will use two default event handlers. However, if you wish to override this (for whatever reason) you can include the following HTML, customized to your needs, prior to loading the sso.js file:
+
+```html
+<script type="text/x-webmaker-sso-config">
+  var config = {
+    target: document.getElementById('SSO'),
+    onlogin: function(eventName, personaData) {
+      var userid = personaData.loggedInUser,
+          assertion = personaData.assertion;
+      // ...your code goes here...
+    },
+    onlogout: function() {
+      // ...your code goes here...
+    }
+  };
 </script>
 ```
+Note that you do not need to provide all three properties; any property not added will fall back to the default.
+
+Code inside the config block can also make use of ```window```, ```document``` and jQuery, so that your login/out handlers can make use of persistent variables and on-page elements. As an example:
+
+```html
+<script type="text/x-webmaker-sso-config">
+  var loggedIn = false,
+      actionButton = false;
+  var config = {
+    target: document.getElementById('SSO'),
+    onlogin: function(eventName, personaData) {
+      loggdIn = true;
+      if (!actionButton) {
+        actionButton = $("#actionbutton");
+      }
+      actionButton.show();
+    },
+    onlogout: function() {
+      loggdIn = false;
+      if (actionButton) {
+        actionButton.hide();
+      }
+    }
+  };
+</script>
+```
+
+Note that your variables do not become globals, they are scoped so that they only work in combination with your login and logout handlers.
