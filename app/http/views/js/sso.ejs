@@ -39,7 +39,7 @@
               navigator.personaSSO.ui.existingMaker(resp.user.subdomain);
           },
           error: function(resp) {
-            if (resp.status === 400) {
+            if (resp.status === 404) {
               // we're expecting this error for a new maker
               navigator.personaSSO.ui.newMaker(userData.loggedInUser, $('#webmaker-nav'));
               return false;
