@@ -15,19 +15,21 @@ var express     = require('express'),
     mongo       = require('../../lib/mongoose')(env),
     User        = require('../models/user')(mongo.conn),
     persona     = require("express-persona"),
-    route = require('./routes');
+    lessMiddleWare = require('less-middleware'),
+    route = require('./routes'),
+    path = require('path');
 
 var http = express();
 
 // Express Configuration
 http.configure(function(){
-  http.set('views', __dirname + '/views');
+  http.set('views', path.join(__dirname, 'views'));
   http.set('view engine', 'ejs');
   http.disable("x-powered-by");
   http.use(mongo.healthCheck);
   http.use(application.allowCorsRequests);
   http.use(express.logger());
-  http.use(express.static(__dirname + '/public'));
+  http.use(express.static( path.join(__dirname, 'public')));
   http.use(express.cookieParser());
   http.use(express.bodyParser());
   http.use(express.methodOverride());
@@ -40,6 +42,19 @@ http.configure(function(){
     proxy: true
   }));
   http.use(http.router);
+
+  var optimize = env.get("NODE_ENV") !== "development",
+      tmpDir = path.join(require( "os" ).tmpDir(), "mozilla.login.webmaker.org.build");
+  http.use(lessMiddleWare({
+    once: optimize,
+    debug: !optimize,
+    dest: tmpDir,
+    src: path.resolve(__dirname, "public"),
+    compress: optimize,
+    yuicompress: optimize,
+    optimization: optimize ? 0 : 2
+  }));
+  http.use(express.static(tmpDir));
 });
 
 persona(http, {

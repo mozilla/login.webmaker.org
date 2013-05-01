@@ -13,12 +13,13 @@
     "winston": "~0.6.2",
     "ejs": "~0.8.3",
     "habitat": "~0.4.1",
+    "less-middleware": "0.1.9",
     "mongoose": "~3.6.4",
     "mongoose-validator": "~0.2.1"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
-    "grunt-contrib-csslint": "~0.1.2",
+    "grunt-recess": "0.3.3",
     "grunt-contrib-jshint": "~0.4.3"
   },
   "optionalDependencies": {},
