@@ -8,7 +8,7 @@
   // make sure jQuery is available to us
   if(!$) {
     var jq = document.createElement("script");
-    jq.src = "<%= ssoAudience %>/js/jquery-1.9.1.min.js";
+    jq.src = "<%= ssoAudience %>/js/ext/jquery-1.9.1.min.js";
     jq.onload = function() {
       // retry, this time in the knowledge that we have jQuery
       sso(window, document, window.jQuery);
