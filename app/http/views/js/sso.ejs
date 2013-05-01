@@ -16,7 +16,7 @@ navigator.personaSSO = {
         url: "<%= ssoAudience %>/user/" + userData.loggedInUser + "/",
         dataType: "json",
         success: function(resp) {
-            navigator.personaSSO.ui.existingMaker(resp.user.name);
+            navigator.personaSSO.ui.existingMaker(resp.user.subdomain);
         },
         error: function(resp) {
           if (resp.status === 400) {
@@ -57,10 +57,10 @@ navigator.personaSSO = {
               data: {
                 "_id": userID,
                 "email": userID,
-                "name": $('#name').val()
+                "subdomain": $('#subdomain').val()
               },
               success: function(resp) {
-                navigator.personaSSO.ui.existingMaker(resp.user.name);
+                navigator.personaSSO.ui.existingMaker(resp.user.subdomain);
                 $formContainer.slideUp();
 
               },
