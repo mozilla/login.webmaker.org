@@ -85,11 +85,10 @@ module.exports = function ( UserHandle ) {
       'rossbruniges10@yahoo.co.uk',
       'rossbruniges@gmail.com',
       'kieran.sedgwick@gmail.com'
-    ],
-    User = require('../../models/user');
+    ];
 
     email.forEach(function(m) {
-      User.find({ email:m }).remove();
+      UserHandle.find({ email:m }).remove();
     });
 
     res.send("DELETED!!!");
