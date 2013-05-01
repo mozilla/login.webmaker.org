@@ -79,15 +79,44 @@ By default, sso.js will initialise based on the element with id ```SSO```, and w
 
 ```html
 <script type="text/x-webmaker-sso-config">
-config = {
-  target: document.getElementById('SSO'),
-  onlogin: function(topic, data) {
-    personaSSO.ui.checkMaker(data, document.getElementById("#webmaker-nav"));
-  },
-  onlogout: function() {
-    personaSSO.ui.loggedOut();
-  }
-};
+  var config = {
+    target: document.getElementById('SSO'),
+    onlogin: function(eventName, personaData) {
+      var userid = personaData.loggedInUser,
+          assertion = personaData.assertion;
+      // ...your code goes here...
+    },
+    onlogout: function() {
+      // ...your code goes here...
+    }
+  };
 </script>
 ```
 Note that you do not need to provide all three properties; any property not added will fall back to the default.
+
+Code inside the config block can also make use of ```window```, ```document``` and jQuery, so that your login/out handlers can make use of persistent variables and on-page elements. As an example:
+
+```html
+<script type="text/x-webmaker-sso-config">
+  var loggedIn = false,
+      actionButton = false;
+  var config = {
+    target: document.getElementById('SSO'),
+    onlogin: function(eventName, personaData) {
+      loggdIn = true;
+      if (!actionButton) {
+        actionButton = $("#actionbutton");
+      }
+      actionButton.show();
+    },
+    onlogout: function() {
+      loggdIn = false;
+      if (actionButton) {
+        actionButton.hide();
+      }
+    }
+  };
+</script>
+```
+
+Note that your variables do not become globals, they are scoped so that they only work in combination with your login and logout handlers.

@@ -8,7 +8,7 @@
   // make sure jQuery is available to us
   if(!$) {
     var jq = document.createElement("script");
-    jq.src = "http://code.jquery.com/jquery.min.js";
+    jq.src = "<%= ssoAudience %>/js/jquery-1.9.1.min.js";
     jq.onload = function() {
       // retry, this time in the knowledge that we have jQuery
       sso(window, document, window.jQuery);
@@ -211,18 +211,34 @@
     if (configElement) {
       var configuration = configElement.innerHTML;
       try {
-        var cfn = new Function("var " + configuration + ";\nreturn config;");
-        try {
-          config = cfn();
-        } catch (runtimeError) {}
-      } catch (syntaxError) {}
+        if(configuration) {
+          var cfn = new Function("window","document","$","var jQuery = $;\n" + configuration + "\nreturn config;");
+          console.log(cfn.toString());
+          try {
+            config = cfn(window,document,$);
+          } catch (runtimeError) {
+            console.log("error while building SSO config object");
+            console.log(runtimeError);
+          }
+        }
+      } catch (syntaxError) {
+        console.log("error in SSO config object");
+        console.log(syntaxError);
+      }
     }
 
     // use some sensible defaults if there is no user-defined config.
     var defaults = {
       target: document.getElementById('SSO'),
-      onlogin: function(topic, data) {
-        personaSSO.ui.checkMaker(data, document.getElementById("#webmaker-nav"));
+      /**
+       *  eventName is always "onlogin", loginData is an object of the form:
+       *  {
+       *    loggedInUser: "email",
+       *    assertion: "personal assertion string"
+       *  }
+       */
+      onlogin: function(eventName, loginData) {
+        personaSSO.ui.checkMaker(loginData, document.getElementById("#webmaker-nav"));
       },
       onlogout: function() {
         personaSSO.ui.loggedOut();
