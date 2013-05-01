@@ -8,14 +8,15 @@
     "url": "git@github.com:mozilla/login.webmaker.org.git"
   },
   "dependencies": {
+    "ejs": "~0.8.3",
     "express-persona": "0.0.6",
     "express": "~3.1.0",
-    "winston": "~0.6.2",
-    "ejs": "~0.8.3",
     "habitat": "~0.4.1",
     "less-middleware": "0.1.9",
     "mongoose": "~3.6.4",
-    "mongoose-validator": "~0.2.1"
+    "mongoose-validator": "~0.2.1",
+    "node-statsd": "0.0.7",
+    "winston": "~0.6.2"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

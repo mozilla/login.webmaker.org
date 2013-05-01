@@ -2,7 +2,8 @@
 * License, v. 2.0. If a copy of the MPL was not distributed with this file,
 * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-var env = require("../../../config/environment");
+var env = require("../../../config/environment"),
+    metrics = require("../../../lib/metrics");
 
 module.exports = function ( UserHandle ) {
   var controller = {};
@@ -17,10 +18,12 @@ module.exports = function ( UserHandle ) {
     // Delegates all validation to mongoose during this step
     user.save( function( err, thisUser ) {
       if ( err ) {
+        metrics.increment( "user.create.error" );
         res.json( 404, { error: err, user: null } );
         return;
       }
 
+      metrics.increment( "user.create.success" );
       res.json( { error: null, user: thisUser } );
     });
   };
@@ -29,11 +32,18 @@ module.exports = function ( UserHandle ) {
     var id = req.params.id;
 
     UserHandle.findById( id, function ( err, user ) {
-      if ( err || !user ) {
+      if ( err ) {
+        metrics.increment( "user.get.error" );
+        res.json( 500, { error: err, user: null } );
+        return;
+      }
+
+      if ( !user ) {
         res.json( 404, { error: err || "User not found for ID: " + id, user: null } );
         return;
       }
 
+      metrics.increment( "user.get.success" );
       res.json( { error: null, user: user } );
     });
   };
@@ -44,12 +54,14 @@ module.exports = function ( UserHandle ) {
 
     UserHandle.findByIdAndUpdate( id, userInfo, function ( err, user ) {
       if ( err || !user ) {
+        metrics.increment( "user.update.error" );
         res.json( 404, { error: err || "User not found for ID: " + id, user: null } );
         return;
-      } 
+      }
 
+      metrics.increment( "user.update.success" );
       res.json( { error: null, user: user } );
-    }); 
+    });
   };
 
   controller.del = function ( req, res ) {
@@ -57,10 +69,12 @@ module.exports = function ( UserHandle ) {
 
     UserHandle.findByIdAndRemove( id , function ( err, user ) {
       if ( err || !user ) {
+        metrics.increment( "user.delete.error" );
         res.json( 404, { error: err || "User not found for ID: " + id, user: null } );
         return;
       }
 
+      metrics.increment( "user.delete.success" );
       res.json( { error: null, user: user } );
     });
   };
