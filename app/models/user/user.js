@@ -8,7 +8,7 @@ mongoose_validator.extend( 'isDomain', function () {
     ( str.length <= 20 && str.length >= 1 ) &&
     str.search(/^[a-zA-Z0-9\-\_]+$/) !== -1
   );
-}, "Invalid name.  All names must be between 1-20 characters, and only include \"-\", \"_\" and alphanumeric characters");
+}, "Invalid subdomain. All subdomains must be between 1-20 characters, and only include \"-\", \"_\" and alphanumeric characters");
 
 // Exports
 module.exports = function ( connection ) {
@@ -25,14 +25,19 @@ module.exports = function ( connection ) {
       unique: true,
       validate: validate('isEmail')
     },
-    // name - the user's chosen subdomain
-    name: {
+    /**
+     * subdomain - the user's chosen subdomain. This is also
+     * the user's shortname/nickname, like Twitter's @name.
+     */
+    subdomain: {
       type: String,
       required: true,
       unique: true,
       validate: validate('isDomain')
     },
-    // fullName - the user's [optional] real name
+    /**
+     * fullName - the user's [optional] real name
+     */
     fullName: {
       type: String,
       required: false,
@@ -71,6 +76,13 @@ module.exports = function ( connection ) {
     // TODO: Avatar support
   });
 
-  return connection.model('User', schema);
-};
+  /**
+   * Some sugar around the user's display name. We prefer
+   * fullName if we have it, but fallback to subdomain.
+   */
+  schema.virtual( 'displayName' ).get( function() {
+    return this.fullName || this.subdomain;
+  });
 
+  return connection.model( 'User', schema );
+};
