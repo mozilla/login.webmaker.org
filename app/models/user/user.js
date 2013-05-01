@@ -25,11 +25,18 @@ module.exports = function ( connection ) {
       unique: true,
       validate: validate('isEmail')
     },
+    // name - the user's chosen subdomain
     name: {
       type: String,
       required: true,
       unique: true,
       validate: validate('isDomain')
+    },
+    // fullName - the user's [optional] real name
+    fullName: {
+      type: String,
+      required: false,
+      unique: false
     },
     createdAt: {
       type: Date,
