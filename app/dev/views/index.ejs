@@ -29,13 +29,13 @@
             <span id="identity" class="user-name-container"></span>
           </div>
         </li>
-        <li><iframe id="SSO" src="http://localhost:3000/"></iframe></li>
+        <li><iframe id="SSO" src="<%= audience %>"></iframe></li>
       </ul>
     </nav>
   </div>
   <h1></h1>
   <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
-  <script src="http://localhost:3000/js/sso.js"></script>
+  <script src="<%= audience %>/js/sso.js"></script>
   <script type="text/javascript">
     $( function(){
       // App 1 / App 2 differences
