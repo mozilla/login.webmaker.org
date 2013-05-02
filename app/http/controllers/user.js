@@ -3,7 +3,7 @@
 * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 var env = require("../../../config/environment"),
-    metrics = require("../../../lib/metrics");
+    metrics = require("../../../lib/metrics")( env );
 
 module.exports = function ( UserHandle ) {
   var controller = {};
