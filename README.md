@@ -120,3 +120,9 @@ Code inside the config block can also make use of ```window```, ```document``` a
 ```
 
 Note that your variables do not become globals, they are scoped so that they only work in combination with your login and logout handlers.
+
+## New Relic
+
+To enable New Relic, set the `NEW_RELIC_ENABLED` environment variable and add a config file, or set the relevant environment variables.
+
+For more information on configuring New Relic, see: https://github.com/newrelic/node-newrelic/#configuring-the-agent

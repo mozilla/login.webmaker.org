@@ -15,6 +15,7 @@
     "less-middleware": "0.1.9",
     "mongoose": "~3.6.4",
     "mongoose-validator": "~0.2.1",
+    "newrelic": "0.9.20",
     "node-statsd": "0.0.7",
     "winston": "~0.6.2"
   },
