@@ -30,14 +30,15 @@ function configure( app ){
     }));
     app.use( app.router );
     app.use( express.errorHandler( { dumpExceptions: true, showStack: true } ) );
-
   });
+
   app.get( "/", function( req, res ) {
     res.render( "index", {
         audience: env.get( "AUDIENCE" ),
         allowed_domains: env.get( "ALLOWED_DOMAINS" ).split( " " )
     });
   });
+
   app.get( "/test", function ( req, res ) {
     res.send({
       session: req.session,
