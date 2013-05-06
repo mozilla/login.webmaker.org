@@ -30,14 +30,15 @@ http.configure(function(){
   http.use(application.allowCorsRequests);
   http.use(express.logger());
   http.use(express.static( path.join(__dirname, 'public')));
-  http.use(express.cookieParser());
+  http.use(express.cookieParser(env.get("PARSER_SECRET")));
   http.use(express.bodyParser());
   http.use(express.methodOverride());
   http.use(express.cookieSession({
-    key: 'express.sid',
+    key: 'wm.sid',
     secret: env.get('SESSION_SECRET'),
     cookie: {
-      maxAge: 2678400000 // 31 days
+      maxAge: 2678400000, // 31 days
+      domain: env.get("COOKIE_DOMAIN")
     },
     proxy: true
   }));
@@ -70,24 +71,43 @@ persona(http, {
     if (err) {
       userInfo.status = "failure";
       userInfo.reason = err;
-    }
-    else {
-      userInfo.status = "okay";
-      userInfo.email = email;
+      return res.send(userInfo);
     }
 
+    userInfo.status = "okay";
+    userInfo.email = email;
+
+    // Check if user is a webmaker
     User.find( { "email" : email }, function (err, User) {
       if (!User.length) {
         userInfo.exists = false;
       } else {
+        // Set super-session data
+        req.session.auth = {
+          _id: User[0]._id
+        }
         userInfo.exists = true;
         userInfo.user = User[0];
       }
 
       res.send(userInfo);
     });
+  },
+  // end verify response
+  logoutResponse: function(err, req, res) {
+    var out;
 
-  } // end verify response
+    // Clear authentication data
+    delete req.session;
+
+    // Determine response
+    if (err) {
+      out = { status: "failure", reason: err };
+    } else {
+      out = { status: "okay" };
+    }
+    res.json(out);
+  }
 });
 
 http.configure('development', function(){
