@@ -126,3 +126,22 @@ Note that your variables do not become globals, they are scoped so that they onl
 To enable New Relic, set the `NEW_RELIC_ENABLED` environment variable and add a config file, or set the relevant environment variables.
 
 For more information on configuring New Relic, see: https://github.com/newrelic/node-newrelic/#configuring-the-agent
+
+## Deploying to Heroku
+
+If you want to test this code in a live environment, you can spin up a heroku instance, and simply push up the master branch code. (read the heroku tutorial on deploying a node.js application. If you follow the instructions, it's super simple).
+
+In addition to a standard node.js deploy, you will also need to add the "mongohq" addon to your heroku instance. The website explains how to do this quite well, but you will need to tie a creditcard to your heroku account. As long as you make sure to add the `sandbox` plan for mongohq, no fees will be incurred (The sandbox is free, and allows up to 50MB of storage, which is enough for testing purposes)
+
+You will need to issue some environment "SET" commands to make sure things work:
+
+```
+> heroku config:set ALLOWED_DOMAINS="<your heroku consumer application>"
+> heroku config:set AUDIENCE="<the login heroku instance url>"
+> heroku config:set COOKIE_DOMAIN=".herokuapp.com"
+> heroku config:set MONGO_URL="<the same as the MONGOHQ_URL after adding the mongohq addon>"
+> heroku config:set SESSION_SECRET="<salting string>"
+> heroku config:set PARSER_SECRET="<another salting string>"
+```
+
+Make sure that the `PARSER_SECRET` and `SESSION_SECRET` that you use for your login.webmaker.org heroku instance match the values these environment variables have for your consumer application, or there will be a cookie mismatch.
