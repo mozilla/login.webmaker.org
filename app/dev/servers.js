@@ -40,7 +40,7 @@ function configure( app ){
   });
 
   app.get( "/test", function ( req, res ) {
-    res.send({
+    res.json({
       session: req.session,
       cookies: req.cookies
     });

@@ -22,7 +22,7 @@ module.exports = function( http, userHandle ){
   // delete this as soon as we hit prod, PLEASE!!
   http.get('/dev/delete', routes.user.devDelete);
   http.get( "/test", function ( req, res ) {
-    res.send({
+    res.json({
       session: req.session,
       cookies: req.cookies
     });

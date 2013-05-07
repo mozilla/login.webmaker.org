@@ -27,7 +27,7 @@ module.exports = function ( UserHandle ) {
 
       // Create super-session
       req.session.auth = {
-        _id: thisUser._id || "Unknown"
+        _id: thisUser._id || ""
       };
 
       res.json( { error: null, user: thisUser } );
