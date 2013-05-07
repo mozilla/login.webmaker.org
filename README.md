@@ -144,8 +144,7 @@ You will need to issue some environment "SET" commands to make sure things work:
 > heroku config:set AUDIENCE="<the login heroku instance url>"
 > heroku config:set COOKIE_DOMAIN=".herokuapp.com"
 > heroku config:set MONGO_URL="<the same as the MONGOHQ_URL after adding the mongohq addon>"
-> heroku config:set SESSION_SECRET="<salting string>"
-> heroku config:set PARSER_SECRET="<another salting string>"
+> heroku config:set SESSION_SECRET="<secret string>"
 ```
 
-Make sure that the `PARSER_SECRET` and `SESSION_SECRET` that you use for your login.webmaker.org heroku instance match the values these environment variables have for your consumer application, or there will be a cookie mismatch.
+Make sure that the `SESSION_SECRET` that you use for your login.webmaker.org heroku instance matches the value that this environment variable has for your consumer application, or there will be a cookie mismatch.
