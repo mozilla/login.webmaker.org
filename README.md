@@ -36,7 +36,7 @@ Bugs can be found in Bugzilla - this is what <a href="https://bugzilla.mozilla.o
 
 Ensure that you're using the correct values in your local .env file, make sure that the URL of your app is included in the ALLOWED_DOMAINS.
 
-We're using `localhose` to temporarily set up additional hostname-to-localhost rules, which means that running login.webmaker.org (using --dev) will set up three default routes: `login.webmaker.local`, `thimble.webmaker.local`, and `popcorn.webmaker.local`. You can add more routes in the `./app/dev/servers.js` file by modifying the localhose list.
+We're using `localhose`, https://npmjs.org/package/localhose, to temporarily set up additional hostname-to-localhost rules, which means that running login.webmaker.org (using --dev) will set up three default routes: `login.webmaker.local`, `thimble.webmaker.local`, and `popcorn.webmaker.local`. You can add more routes in the `./app/dev/servers.js` file by modifying the localhose list.
 
 To test SSO, make sure that you refer to the SSO location as `http://login.webmaker.local:<port>`, **not** `localhost`, and refer to the consumer application in a similar way; if you were testing Thimble integration and ran thimble on `http://localhost:3456` then you will have to use `http://thimble.webmaker.local:3456` for SSO purpose. The reason here is that we're setting cross-sub-domain cookies, making the `localhost` domain name unusable.
 

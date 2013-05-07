@@ -95,18 +95,15 @@ persona(http, {
   },
   // end verify response
   logoutResponse: function(err, req, res) {
-    var out;
-
     // Clear authentication data
     delete req.session;
 
     // Determine response
     if (err) {
-      out = { status: "failure", reason: err };
+      res.json( { status: "failure", reason: err } );
     } else {
-      out = { status: "okay" };
+      res.json( { status: "okay" } );
     }
-    res.json(out);
   }
 });
 
