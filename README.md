@@ -36,9 +36,13 @@ Bugs can be found in Bugzilla - this is what <a href="https://bugzilla.mozilla.o
 
 Ensure that you're using the correct values in your local .env file, make sure that the URL of your app is included in the ALLOWED_DOMAINS.
 
-For example, if were integrating SSO into two apps running at http://localhost:8888 and http://localhost:7777, you would need to include the following in the .env of login.webmaker.org:
+We're using `localhose` to temporarily set up additional hostname-to-localhost rules, which means that running login.webmaker.org (using --dev) will set up three default routes: `login.webmaker.local`, `thimble.webmaker.local`, and `popcorn.webmaker.local`. You can add more routes in the `./app/dev/servers.js` file by modifying the localhose list.
 
-```ALLOWED_DOMAINS="http://localhost:8888 http://localhost:7777"```
+To test SSO, make sure that you refer to the SSO location as `http://login.webmaker.local:<port>`, **not** `localhost`, and refer to the consumer application in a similar way; if you were testing Thimble integration and ran thimble on `http://localhost:3456` then you will have to use `http://thimble.webmaker.local:3456` for SSO purpose. The reason here is that we're setting cross-sub-domain cookies, making the `localhost` domain name unusable.
+
+Also make sure that your consumer domains are allowed in the `.env` file, by setting the `ALLOWED_DOMAINS` variable. This takes a quote string of space-separated domain names, with ports. e.g.:
+
+```ALLOWED_DOMAINS="http://popcorn.webmaker.local:3001 http://thimble.webmaker.local:8888"```
 
 ### 2. Link through to our CSS file in your master template
 
