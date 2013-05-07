@@ -14,6 +14,7 @@ var express     = require('express'),
     env         = require('../../config/environment'),
     mongo       = require('../../lib/mongoose')(env),
     User        = require('../models/user')(mongo.conn),
+    Blacklist   = require('../models/user/blacklist')(mongo.conn),
     persona     = require("express-persona"),
     lessMiddleWare = require('less-middleware'),
     route = require('./routes'),
@@ -103,7 +104,7 @@ process.on('uncaughtException', function(err) {
 });
 
 // HTTP Routes
-route( http, User );
+route( http, User, Blacklist );
 
 var port = env.get('port');
 http.listen(port);
