@@ -61,36 +61,35 @@ http.configure(function(){
 persona(http, {
   audience: env.get('audience'),
   verifyResponse: function(err, req, res, email) {
-    var userInfo = {
-      status: null,
-      reason: null,
-      user: null,
-      exists: null
-    };
 
+    // FIXME: we need to DRY this out with a dedicated error handler
+    // SEE:   https://bugzilla.mozilla.org/show_bug.cgi?id=869589
     if (err) {
-      userInfo.status = "failure";
-      userInfo.reason = err;
-      return res.send(userInfo);
+      return res.json( { status: "failure", reason: err } );
     }
 
-    userInfo.status = "okay";
-    userInfo.email = email;
-
     // Check if user is a webmaker
-    User.find( { "email" : email }, function (err, User) {
-      if (!User.length) {
-        userInfo.exists = false;
-      } else {
-        // Set super-session data
-        req.session.auth = {
-          _id: User[0]._id
-        }
-        userInfo.exists = true;
-        userInfo.user = User[0];
+    User.findOne( { _id : email }, function (err, User) {
+
+      // FIXME: we need to DRY this out with a dedicated error handler
+      // SEE:   https://bugzilla.mozilla.org/show_bug.cgi?id=869589
+      if(err) {
+        return res.json( { status: "failure", reason: err } );
       }
 
-      res.send(userInfo);
+      // Set super-session data
+      req.session.auth = {
+        _id: email
+      };
+
+      // fill in User info object
+      var userInfo = {
+        exists: true,
+        user: User,
+        email: email,
+        status: "okay"
+      };
+      res.json(userInfo);
     });
   },
   // end verify response
@@ -100,6 +99,8 @@ persona(http, {
 
     // Determine response
     if (err) {
+      // FIXME: we need to DRY this out with a dedicated error handler
+      // SEE:   https://bugzilla.mozilla.org/show_bug.cgi?id=869589
       res.json( { status: "failure", reason: err } );
     } else {
       res.json( { status: "okay" } );
