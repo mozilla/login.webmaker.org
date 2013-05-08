@@ -30,12 +30,12 @@ http.configure(function(){
   http.use(application.allowCorsRequests);
   http.use(express.logger());
   http.use(express.static( path.join(__dirname, 'public')));
-  http.use(express.cookieParser('generic string'));
+  http.use(express.cookieParser(cookieSecret));
   http.use(express.bodyParser());
   http.use(express.methodOverride());
   http.use(express.cookieSession({
     key: 'wm.sid',
-    secret: env.get('SESSION_SECRET'),
+    secret: cookieSecret,
     cookie: {
       maxAge: 2678400000, // 31 days
       domain: env.get("COOKIE_DOMAIN")
