@@ -85,6 +85,18 @@ module.exports = function ( UserHandle ) {
     } );
   };
 
+  controller.isAdmin = function( req, res ) {
+    UserHandle.findById( req.query.id, function( err, user ) {
+      if ( err || !user ) {
+        metrics.increment( "user.isAdmin.error" );
+        res.json( 404, { error: err || "User not found for ID: " + req.query.id, isAdmin: false } );
+        return;
+      }
+      metrics.increment( "user.isAdmin.success" );
+      res.json( { error: null, isAdmin: user.isAdmin } );
+    });
+  };
+
   /**
   * Access this route from your browser to clear the database of accounts with the emails listed below.
   * e.g. "http://localhost:3000/dev/delete"
