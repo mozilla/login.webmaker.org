@@ -21,8 +21,6 @@ var express     = require('express'),
 
 var http = express();
 
-var cookieSecret = env.get("SESSION_SECRET") + "";
-
 // Express Configuration
 http.configure(function(){
   http.set('views', path.join(__dirname, 'views'));
@@ -32,12 +30,12 @@ http.configure(function(){
   http.use(application.allowCorsRequests);
   http.use(express.logger());
   http.use(express.static( path.join(__dirname, 'public')));
-  http.use(express.cookieParser(cookieSecret));
+  http.use(express.cookieParser('generic string'));
   http.use(express.bodyParser());
   http.use(express.methodOverride());
   http.use(express.cookieSession({
     key: 'wm.sid',
-    secret: cookieSecret,
+    secret: env.get('SESSION_SECRET'),
     cookie: {
       maxAge: 2678400000, // 31 days
       domain: env.get("COOKIE_DOMAIN")
