@@ -21,6 +21,8 @@ var express     = require('express'),
 
 var http = express();
 
+var cookieSecret = env.get("SESSION_SECRET");
+
 // Express Configuration
 http.configure(function(){
   http.set('views', path.join(__dirname, 'views'));
