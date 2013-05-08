@@ -30,9 +30,9 @@ http.configure(function(){
   http.use(application.allowCorsRequests);
   http.use(express.logger());
   http.use(express.static( path.join(__dirname, 'public')));
+  http.use(express.cookieParser(env.get("SESSION_SECRET")));
   http.use(express.bodyParser());
   http.use(express.methodOverride());
-  http.use(express.cookieParser('random string'));
   http.use(express.cookieSession({
     key: 'wm.sid',
     secret: env.get('SESSION_SECRET'),
