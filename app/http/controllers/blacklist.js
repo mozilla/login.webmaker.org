@@ -4,11 +4,11 @@
 
 var env = require("../../../config/environment");
 
-module.exports = function ( blacklist ) {
+module.exports = function ( Blacklist ) {
   
   return {
     create: function ( req, res ) {
-      var listWord = new blacklist( req.body );
+      var listWord = new Blacklist( req.body );
 
       // Delegates all validation to mongoose during this step
       listWord.save( function( err, listItem ) {
@@ -23,7 +23,7 @@ module.exports = function ( blacklist ) {
     find: function ( req, res ) {
       var word = req.params.word;
 
-      blacklist.find({ name:word }, function ( err, word ) {
+      Blacklist.find({ name:word }, function ( err, word ) {
 
         if ( err ) {
           res.json( 500, { error: err } );
