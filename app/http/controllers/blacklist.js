@@ -8,10 +8,10 @@ module.exports = function ( Blacklist ) {
   
   return {
     create: function ( req, res ) {
-      var listWord = new Blacklist( req.body );
+      var entry = new Blacklist( req.body );
 
       // Delegates all validation to mongoose during this step
-      listWord.save( function( err, listItem ) {
+      entry.save( function( err, entry ) {
         if ( err ) {
           res.json( 500, { error: err } );
           return;
@@ -21,7 +21,7 @@ module.exports = function ( Blacklist ) {
       });
     },
     find: function ( req, res ) {
-      Blacklist.find({ name: req.params.word }, function ( err, word ) {
+      Blacklist.find({ word: req.params.word }, function ( err, word ) {
 
         if ( err ) {
           res.json( 500, { error: err } );
