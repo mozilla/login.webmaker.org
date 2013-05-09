@@ -21,9 +21,7 @@ module.exports = function ( Blacklist ) {
       });
     },
     find: function ( req, res ) {
-      var word = req.params.word;
-
-      Blacklist.find({ name:word }, function ( err, word ) {
+      Blacklist.find({ name: req.params.word }, function ( err, word ) {
 
         if ( err ) {
           res.json( 500, { error: err } );
