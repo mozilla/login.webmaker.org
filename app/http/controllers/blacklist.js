@@ -21,14 +21,14 @@ module.exports = function ( Blacklist ) {
       });
     },
     find: function ( req, res ) {
-      Blacklist.find({ word: req.params.word }, function ( err, word ) {
+      Blacklist.findOne({ word: req.params.word }, function ( err, word ) {
 
         if ( err ) {
           res.json( 500, { error: err } );
           return;
         }
 
-        res.json( { found: word.length } );
+          res.send( !!word ? 200 : 404 );
       });
     }
   };
