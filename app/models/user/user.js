@@ -4,7 +4,7 @@ function isFriendly (val, callback) {
   var env = require("../../../config/environment"),
       request = require("request");
 
-  request(env.get( "AUDIENCE" ) + "/user/blacklist/" + val + "/", function (error, response, body) {
+  request(env.get( "AUDIENCE" ) + "/user/blacklist/" + val, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       var json = JSON.parse(body);
       console.log( !json.found, 'isFriendly' );

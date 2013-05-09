@@ -28,7 +28,7 @@ module.exports = function( http, userHandle, blacklist ){
    * });
    */
   http.post('/user/blacklist', routes.blacklist.create);
-  http.get('/user/blacklist/:word/', routes.blacklist.find);
+  http.get('/user/blacklist/:word', routes.blacklist.find);
 
 
   // delete this as soon as we hit prod, PLEASE!!
