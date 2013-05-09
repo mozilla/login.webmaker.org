@@ -1,13 +1,10 @@
-var isFriendly, isEmail, isDomain;
+var env = require("../../../config/environment"),
+    request = require("request");
 
-function isFriendly (val, callback) {
-  var env = require("../../../config/environment"),
-      request = require("request");
-
+function isBlackListed (val, callback) {
   request(env.get( "AUDIENCE" ) + "/user/blacklist/" + val, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       var json = JSON.parse(body);
-      console.log( !json.found, 'isFriendly' );
       callback( !json.found );
     }
   });
@@ -49,7 +46,7 @@ module.exports = function ( connection ) {
       unique: true,
       validate: [
         { validator: isDomain, msg: "Invalid subdomain. All subdomains must be between 1-20 characters, and only include \"-\", \"_\" and alphanumeric characters" },
-        { validator: isFriendly, msg: "Ooooooh that's a very bad word" }
+        { validator: isBlackListed, msg: "Ooooooh that's a very bad word" }
       ]
     },
     /**
