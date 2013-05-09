@@ -5,35 +5,33 @@
 var env = require("../../../config/environment");
 
 module.exports = function ( blacklist ) {
-  var controller = {};
+  
+  return {
+    create: function ( req, res ) {
+      var listWord = new blacklist( req.body );
 
-  controller.create = function ( req, res ) {
-    var listWord = new blacklist( req.body );
+      // Delegates all validation to mongoose during this step
+      listWord.save( function( err, listItem ) {
+        if ( err ) {
+          res.json( 500, { error: err } );
+          return;
+        }
 
-    // Delegates all validation to mongoose during this step
-    listWord.save( function( err, listItem ) {
-      if ( err ) {
-        res.json( 500, { error: err } );
-        return;
-      }
+        res.json( { error: null, word: listItem } );
+      });
+    },
+    find: function ( req, res ) {
+      var word = req.params.word;
 
-      res.json( { error: null, word: listItem } );
-    });
+      blacklist.find({ name:word }, function ( err, word ) {
+
+        if ( err ) {
+          res.json( 500, { error: err } );
+          return;
+        }
+
+        res.json( { found: word.length } );
+      });
+    }
   };
-
-  controller.find = function ( req, res ) {
-    var word = req.params.word;
-
-    blacklist.find({ name:word }, function ( err, word ) {
-
-      if ( err ) {
-        res.json( 500, { error: err } );
-        return;
-      }
-
-      res.json( { found: word.length } );
-    });
-  };
-
-  return controller;
 }; // END Exports function
