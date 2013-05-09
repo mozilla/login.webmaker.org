@@ -17,7 +17,7 @@ module.exports = function ( Blacklist ) {
           return;
         }
 
-        res.json( { error: null, word: listItem } );
+        res.send( 200 );
       });
     },
     find: function ( req, res ) {
