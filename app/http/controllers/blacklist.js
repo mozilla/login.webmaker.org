@@ -28,7 +28,7 @@ module.exports = function ( Blacklist ) {
           return;
         }
 
-          res.send( !!word ? 200 : 404 );
+        res.send( !!word ? 200 : 404 );
       });
     }
   };
