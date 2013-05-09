@@ -2,7 +2,7 @@ module.exports = function( http, userHandle, blacklist ){
   routes = {
     site: require('./controllers/site'),
     user: require('./controllers/user')(userHandle),
-    blacklist: require('./controllers/blacklist')(blacklist)
+    blacklist: require('./controllers/blacklist')
   };
 
   http.get('/', routes.site.index);
