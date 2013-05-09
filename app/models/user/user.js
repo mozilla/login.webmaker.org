@@ -1,5 +1,10 @@
 // Custom validation
-var mongoose_validator = require('mongoose-validator');
+var mongoose_validator = require('mongoose-validator'),
+    badword = require('badword');
+
+mongoose_validator.extend( 'isBlackListed', function() {
+  return !badword(this.str);
+}, "Oooooh that's a bad word");
 
 mongoose_validator.extend( 'isDomain', function () {
   var str = this.str;
@@ -33,7 +38,7 @@ module.exports = function ( connection ) {
       type: String,
       required: true,
       unique: true,
-      validate: validate('isDomain')
+      validate: [validate('isDomain'), validate('isBlackListed')]
     },
     /**
      * fullName - the user's [optional] real name
