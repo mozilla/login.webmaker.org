@@ -1,8 +1,14 @@
 module.exports = function( http, userHandle ){
-  routes = {
-    site: require('./controllers/site'),
-    user: require('./controllers/user')(userHandle)
-  };
+  var qs = require('querystring'),
+      basicAuth = require( 'express').basicAuth,
+      env = require('../../config/environment'),
+      routes = {
+        site: require('./controllers/site'),
+        user: require('./controllers/user')(userHandle)
+      },
+      userList = env.get( "ALLOWED_USERS" );
+
+  userList = qs.parse( userList, ",", ":" );
 
   http.get('/', routes.site.index);
   http.get('/signin', routes.site.signin);
@@ -14,6 +20,16 @@ module.exports = function( http, userHandle ){
   http.get('/user/:id/', routes.user.get);
   http.del('/user/:id/', routes.user.del);
 
+  http.get( '/isAdmin', basicAuth( function( user, pass ) {
+    for ( var username in userList ) {
+      if ( userList.hasOwnProperty( username ) ) {
+        if ( user === username && pass === userList[ username ] ) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }), routes.user.isAdmin );
 
   // TODO: display name taken
   // http.get('/info/displayName', routes.info.displayName);
