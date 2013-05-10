@@ -24,12 +24,6 @@ module.exports = function ( UserHandle ) {
       }
 
       metrics.increment( "user.create.success" );
-
-      // Create super-session
-      req.session.auth = {
-        _id: thisUser._id || ""
-      };
-
       res.json( { error: null, user: thisUser } );
     });
   };

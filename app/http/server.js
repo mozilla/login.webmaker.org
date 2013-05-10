@@ -30,15 +30,14 @@ http.configure(function(){
   http.use(application.allowCorsRequests);
   http.use(express.logger());
   http.use(express.static( path.join(__dirname, 'public')));
-  http.use(express.cookieParser(env.get("SESSION_SECRET")));
+  http.use(express.cookieParser());
   http.use(express.bodyParser());
   http.use(express.methodOverride());
   http.use(express.cookieSession({
-    key: 'wm.sid',
+    key: 'express.sid',
     secret: env.get('SESSION_SECRET'),
     cookie: {
-      maxAge: 2678400000, // 31 days
-      domain: env.get("COOKIE_DOMAIN")
+      maxAge: 2678400000 // 31 days
     },
     proxy: true
   }));
@@ -61,51 +60,34 @@ http.configure(function(){
 persona(http, {
   audience: env.get('audience'),
   verifyResponse: function(err, req, res, email) {
+    var userInfo = {
+      status: null,
+      reason: null,
+      user: null,
+      exists: null
+    };
 
-    // FIXME: we need to DRY this out with a dedicated error handler
-    // SEE:   https://bugzilla.mozilla.org/show_bug.cgi?id=869589
     if (err) {
-      return res.json( { status: "failure", reason: err } );
+      userInfo.status = "failure";
+      userInfo.reason = err;
+    }
+    else {
+      userInfo.status = "okay";
+      userInfo.email = email;
     }
 
-    // Check if user is a webmaker
-    User.findOne( { _id : email }, function (err, User) {
-
-      // FIXME: we need to DRY this out with a dedicated error handler
-      // SEE:   https://bugzilla.mozilla.org/show_bug.cgi?id=869589
-      if(err) {
-        return res.json( { status: "failure", reason: err } );
+    User.find( { "email" : email }, function (err, User) {
+      if (!User.length) {
+        userInfo.exists = false;
+      } else {
+        userInfo.exists = true;
+        userInfo.user = User[0];
       }
 
-      // Set super-session data
-      req.session.auth = {
-        _id: email
-      };
-
-      // fill in User info object
-      var userInfo = {
-        exists: true,
-        user: User,
-        email: email,
-        status: "okay"
-      };
-      res.json(userInfo);
+      res.send(userInfo);
     });
-  },
-  // end verify response
-  logoutResponse: function(err, req, res) {
-    // Clear authentication data
-    delete req.session;
 
-    // Determine response
-    if (err) {
-      // FIXME: we need to DRY this out with a dedicated error handler
-      // SEE:   https://bugzilla.mozilla.org/show_bug.cgi?id=869589
-      res.json( { status: "failure", reason: err } );
-    } else {
-      res.json( { status: "okay" } );
-    }
-  }
+  } // end verify response
 });
 
 http.configure('development', function(){
