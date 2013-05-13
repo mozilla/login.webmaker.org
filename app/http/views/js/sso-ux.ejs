@@ -1,0 +1,202 @@
+/**
+ * User sign-in/sign-on for Webmaker.org apps
+ */
+(function setupUIHandler(window, document, $) {
+
+  // make sure jQuery is available to us
+  if(!$) {
+    var jq = document.createElement("script");
+    jq.src = "<%= hostname %>/js/ext/jquery-1.9.1.min.js";
+    jq.onload = function() {
+      // retry, this time in the knowledge that we have jQuery
+      setupUIHandler(window, document, window.jQuery);
+    };
+    document.head.appendChild(jq);
+    return;
+  }
+
+  // SSO UI handling object
+  var ui =  {
+    displayLogin: function(userName) {
+      $("#identity").text(userName);
+    },
+    checkMaker: function(userData, elementAnchor, callback) {
+      $.ajax({
+        type: "GET",
+        url: "<%= hostname %>/user/" + userData.loggedInUser,
+        dataType: "json",
+        success: function(resp) {
+          ui.existingMaker(resp.user.subdomain);
+          callback(null, userData.loggedInUser, resp.user.subdomain);
+        },
+        error: function(resp) {
+          if (resp.status === 404) {
+            // we're expecting this error for a new maker
+            ui.newMaker(userData.loggedInUser, $('#webmaker-nav'), callback);
+            return false;
+          }
+          // TODO - handle errors - at this point it's a new error!
+          console.log(resp, 'failure');
+          return false;
+        }
+      });
+    },
+    newMaker: function(loggedInUser, formAnchor, callback) {
+      /**
+       * load in HTML include containing the HTML form
+       * display form
+       * munge values into form
+       * attach submit handlers to the form
+       * AJAX post to createMaker API
+       * remove form and listeners once everything is sorted
+       */
+
+      var $formContainer,
+          $formFrag;
+
+      $formContainer = $(".webmaker-create-user", formAnchor);
+      if ( !$formContainer.length ) {
+        $.get("<%= hostname %>/ajax/forms/new_user.html", function(html) {
+          $formContainer = $(html).appendTo( $("#webmaker-nav"));
+          $formContainer.slideDown();
+          $formFrag = $("#sso_create", formAnchor );
+          $formFrag.submit( function(data) {
+            $.ajax({
+              type: "POST",
+              url: "<%= hostname %>/user",
+              dataType: "json",
+              data: {
+                "_id": loggedInUser,
+                "email": loggedInUser,
+                "subdomain": $('#subdomain').val()
+              },
+              success: function(resp) {
+                ui.existingMaker(resp.user.subdomain);
+                $formContainer.slideUp();
+                callback(null, loggedInUser, resp.user.subdomain);
+              },
+              error: function(resp) {
+                // TODO - handle errors
+                console.log(resp, 'failure');
+                return false;
+              }
+            });
+            return false;
+          });
+        });
+      } else {
+        $formContainer.slideDown();
+      }
+    },
+    existingMaker: function(displayName) {
+      /**
+       * API call to the getUserData API
+       * display logged in user data in the UI (where to be defined)
+       */
+      ui.displayLogin(displayName);
+    },
+    loggedOut: function() {
+      /**
+       * remove logged in user data from the UI
+       * remove any listeners we have attached
+       */
+      ui.displayLogin('');
+      $(".webmaker-create-user").slideUp();
+    }
+  };
+
+
+  // Set up the login button's UX
+  var login = $("#webmaker-login").click(function() {
+    navigator.idSSO.request({
+      siteName: document.title
+    });
+  });
+
+  // Set up the logou button's UX
+  var logout = $("#webmaker-logout").click(function() {
+    navigator.idSSO.logout();
+  });
+
+  // User-defined login/logout handling
+  var noop = function(){};
+  navigator.idSSO.app = navigator.idSSO.app || {};
+  navigator.idSSO.app.onlogin = navigator.idSSO.app.onlogin || noop;
+  navigator.idSSO.app.onlogout = navigator.idSSO.app.onlogout || noop;
+
+
+  // Which button do we show?
+  var emailMeta = document.querySelector("meta[name='persona-email']"),
+      cookieEmail = emailMeta.content ? emailMeta.content : "",
+      loggedIn = !!cookieEmail;
+
+  if(loggedIn) {
+    $("#webmaker-logout").show();
+  } else {
+    $("#webmaker-login").show();
+  }
+
+  // Start listening for Persona events
+  navigator.idSSO.watch({
+    onlogin: function(assertion) {
+      $.ajax({
+        type: 'POST',
+        url: '/persona/verify',
+        data: {assertion: assertion},
+        success: function(res, status, xhr) {
+          ui.checkMaker( { loggedInUser:res.email }, $("#webmaker-nav"), function (err, loggedInUser, displayName) {
+            // hook-out to the owning page, so that it can perform a
+            // webmaker-loginAPI lookup, allowing it to bind the user's
+            // email and webmaker ID in its req.session.[...]
+            $.ajax({
+              type: 'POST',
+              url: window.location.toString() + 'user/' + loggedInUser,
+              data: {assertion: assertion},
+              success: function(res, status, xhr) {
+                console.log("xhr success (2): ", res);
+                if (res.status === "failed") {
+                  console.log("odd error condition: user has a subdomain ("+displayName+"), "+
+                              "but webmaker-loginAPI at the consumer can't find it");
+                  navigator.idSSO.logout();
+                } else if (res.subdomain !== displayName) {
+                  console.log("odd error condition: user has a subdomain ("+displayName+"), "+
+                              "but webmaker-loginAPI reported a different name ("+res.subdomain+")");
+                  navigator.idSSO.logout();
+                } else {
+                  // login succeeded, show this user as logged in
+                  // and call the on-page onlogin handler.
+                  login.hide();
+                  logout.show();
+                  navigator.idSSO.app.onlogin(loggedInUser, displayName);
+                }
+              },
+              error: function(xhr, status, err) {
+                console.log("xhr failed (2): ", err);
+                navigator.idSSO.logout();
+              }
+            });
+          });
+        },
+        error: function(xhr, status, err) {
+          console.log("xhr failed: ", err);
+          navigator.idSSO.logout();
+        }
+      });
+    },
+    onlogout: function() {
+      ui.loggedOut();
+      login.show();
+      logout.hide();
+      // make sure the page does whatever it needs to,
+      navigator.idSSO.app.onlogout();
+      // and make sure the app knows we're logged out.
+      console.log("calling persona/logout");
+      $.ajax({
+        type: "POST",
+        url: "/persona/logout",
+        async: true
+      });
+    }
+  });
+
+}(window, document, window.jQuery));
