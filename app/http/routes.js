@@ -19,6 +19,7 @@ module.exports = function( http, userHandle ){
   http.put('/user/:id', routes.user.update);
   http.del('/user/:id', routes.user.del);
   http.post('/user', routes.user.create);
+  http.get('/user/subdomain/:name', routes.user.checkSubdomain);
 
   http.get( '/isAdmin', basicAuth( function( user, pass ) {
     for ( var username in userList ) {

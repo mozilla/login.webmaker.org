@@ -97,6 +97,31 @@ module.exports = function ( UserHandle ) {
     });
   };
 
+  controller.checkSubdomain = function ( req, res ) {
+
+    var name = req.param( 'name' ),
+      badword = require( 'badword' );
+    
+    UserHandle.count({ subdomain: name }, function ( err, count ) {
+      if ( err ) {
+        res.json( 500, { error: err } );
+        return;
+      }      
+      
+      if ( count ) {
+        return res.json( 200, "subdomain given in '" +
+                              name + "' is good and being used" );
+      }
+
+      if ( badword( name ) ) {
+        return res.json( 406, "subdomain given in '" +
+                     name + "' is blacklisted" );
+      }
+      res.json( 404, "subdomain given in '" +
+                      name + "' is available" );  
+    });
+  }; 
+
   /**
   * Access this route from your browser to clear the database of accounts with the emails listed below.
   * e.g. "http://localhost:3000/dev/delete"
