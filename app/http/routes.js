@@ -16,6 +16,7 @@ module.exports = function( http, userHandle ){
   http.get('/ajax/forms/new_user.html', routes.user.userForm);
 
   http.post('/user', routes.user.create);
+  http.get('/user/subdomain/:name', routes.user.checkSubdomain);
   http.put('/user/:id/', routes.user.update);
   http.get('/user/:id/', routes.user.get);
   http.del('/user/:id/', routes.user.del);
