@@ -10,25 +10,15 @@ var env = require('../../../config/environment');
 exports.index = function(req, res){
   res.render('site/index');
 };
-/**
- * GET sign-in link.
- */
-exports.signin = function(req, res){
-  res.render('site/signin', {
-    allowed_domains: env.get('ALLOWED_DOMAINS'),
-    user: req.session.email,
-    layout: null
-  });
-};
 
 /**
  * GET sign-in link.
  */
 exports.sso = function(req,res) {
 	res.set('Content-Type', 'application/javascript');
-	res.render('js/sso', {
-        ssoAudience: env.get('AUDIENCE')
-    });
+	res.render('js/sso-ux', {
+    hostname: env.get('HOSTNAME') + (env.get('PORT') ? ":" + env.get("PORT"): '')
+  });
 };
 
 /**

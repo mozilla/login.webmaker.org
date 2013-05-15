@@ -101,10 +101,8 @@ process.on('uncaughtException', function(err) {
   logger.error(err);
 });
 
-// HTTP Routes
 route( http, User );
 
 var port = env.get('port');
 http.listen(port);
-
 logger.info("HTTP server listening on port " + port + ".");
