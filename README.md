@@ -46,12 +46,12 @@ For example, if we're integrating SSO into two apps running at http://localhost:
 
 For testing purposes, the Persona `AUDIENCE` variable can be set to the following:
 
-`AUDIENCE="http://personasso.s3-website-us-east-1.amazonaws.com"`
+`AUDIENCE="http://webmaker.mofostaging.net"`
 
 ### 2. Include this app's CSS file in your master template
 
 ```html
-<link rel="stylesheet" href="http://{webmaker.sso.domain}/css/nav.css" />
+<link rel="stylesheet" href="http://login.mofostaging.net/css/nav.css" />
 ```
 
 ### 3. Add the following snippet to your HTML page, below <body> but before any other content in the required HTML for the Webmaker navigation bar
@@ -87,7 +87,7 @@ For testing purposes, the Persona `AUDIENCE` variable can be set to the followin
 For the best performance put this at the bottom of your HTML file, just before the closing ```</body>```
 
 ```html
-<script src="http://{audience variable from environment}/include.js"></script>
+<script src="http://webmaker.mofostaging.net/sso/include.js"></script>
 ```
 
 ### 5. If you need your own login / logout event handling
@@ -170,6 +170,17 @@ app.post( "/user/:userid", function( req, res ) {
 ```
 
 This will let you use the `req.session.email` and `req.session.webmakerid` values in the rest of your code.
+
+### 8 put the session email into your master template, when known
+
+Add the following snippet to you HTML and render it based on the person-created `req.session.email` value:
+
+```html
+  <meta name="persona-email" content="{req.session.email}">
+```
+
+If `req.session.email` is known, the user may already be logged in and this value should be the user's Persona email address. If it is not set, this value should be an empty string.
+
 
 ## New Relic
 
