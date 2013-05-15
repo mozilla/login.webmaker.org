@@ -9,7 +9,6 @@ module.exports = function( http, userHandle ){
       userList = env.get( "ALLOWED_USERS" );
 
   userList = qs.parse( userList, ",", ":" );
-  console.log("exporting routes");
 
   http.get('/', routes.site.index);
   http.get('/js/sso-ux.js', routes.site.sso);

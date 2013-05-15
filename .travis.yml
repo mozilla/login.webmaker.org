@@ -2,5 +2,9 @@ language: node_js
 node_js:
   - "0.8"
   - "0.10"
+services:
+  - mongodb
 before_script:
   - npm install -g grunt-cli
+env:
+  - TRAVIS=1 PORT=3000 HOSTNAME="http://localhost" MONGO_URL="mongodb://localhost:27017/local_webmakers" SESSION_SECRET="secret" ALLOWED_USERS="travis:travis" ALLOWED_DOMAINS="http://localhost:3001 http://localhost:3002"

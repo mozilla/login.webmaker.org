@@ -10,7 +10,6 @@ module.exports = function ( UserHandle ) {
 
   controller.create = function ( req, res ) {
     var userInfo = req.body;
-
     userInfo._id = userInfo.email;
 
     var user = new UserHandle( userInfo );
