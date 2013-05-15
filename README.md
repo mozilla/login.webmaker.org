@@ -173,7 +173,7 @@ This will let you use the `req.session.email` and `req.session.webmakerid` value
 
 ### 8 put the session email into your master template, when known
 
-Add the following snippet to you HTML and render it based on the person-created `req.session.email` value:
+Add the following snippet to you HTML `<head>` section, and render it based on the person-created `req.session.email` value:
 
 ```html
   <meta name="persona-email" content="{req.session.email}">
