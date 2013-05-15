@@ -138,6 +138,7 @@
 
   // Start listening for Persona events
   navigator.idSSO.watch({
+    loggedInUser: cookieEmail,
     onlogin: function(assertion) {
       $.ajax({
         type: 'POST',

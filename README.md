@@ -113,7 +113,7 @@ Note that you do not need to provide both event handlers; if you only need one, 
 This include must be included after the Persona `include.js`, or —if custom event handlers are used— after the custom event handling script block.
 
 ```html
-<script src="http://{audience variable from environment}/js/sso-ux.js"></script>
+<script src="http://login.mofostaging.net/js/sso-ux.js"></script>
 ```
 
 ### 7 Set up a /user/:id route in your app
