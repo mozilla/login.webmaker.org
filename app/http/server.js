@@ -104,5 +104,12 @@ process.on('uncaughtException', function(err) {
 route( http, User );
 
 var port = env.get('port');
-http.listen(port);
-logger.info("HTTP server listening on port " + port + ".");
+http.listen( port, function() {
+  var addy = server.address();
+  logger.info("HTTP server listening on port " + port + ".");
+
+  // If we're running as a child process, let our parent know we're ready.
+  if ( process.send ) {
+    process.send( 'Started' );
+  }
+});
