@@ -8,7 +8,6 @@ exports.allowCorsRequests = function(req, resp, next){
   var allowed = env.get('ALLOWED_DOMAINS').split(' '),
       origin = req.get('origin'); // TODO: Check if this is spoof-proof
 
-  console.log("Req.get(origin): ", req.get('origin'));
   /**
    * Browsers don't support passing a single list so we have to loop
    * and return a single domain when we detect a match

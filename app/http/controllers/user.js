@@ -110,7 +110,9 @@ module.exports = function ( UserHandle ) {
       'ross@ross-eats.co.uk',
       'rossbruniges10@yahoo.co.uk',
       'rossbruniges@gmail.com',
-      'kieran.sedgwick@gmail.com'
+      'kieran.sedgwick@gmail.com',
+      'pomax@mozillafoundation.org',
+      'jon@mozillafoundation.org'
     ];
 
     email.forEach(function(m) {
