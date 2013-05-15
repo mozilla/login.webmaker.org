@@ -23,12 +23,11 @@ describe( '/user routes', function() {
 
   var api = hostNoAuth + '/user';
 
-  function apiHelper( verb, id, data, callback ) {
+  function postHelper( data, callback ) {
     request({
-      url: api + ( id ? '/' + id : '' ),
-      method: verb,
-      data: data,
-      json: true
+      url: api,
+      method: 'post',
+      json: data
     }, callback );
   }
 
@@ -43,12 +42,11 @@ describe( '/user routes', function() {
   it( 'should create a new login with only required fields', function( done ) {
     var email = "test@testing.com",
         newUser = {
-          "_id": email,
           "email": email,
           "fullName": "Test User"
         };
 
-    apiHelper( 'post', null, newUser, function( err, res, body ) {
+    postHelper( newUser, function( err, res, body ) {
       assert.ok( !err );
       assert.equal( res.statusCode, 200 );
       assert.equal( body.user._id, email );
