@@ -15,6 +15,8 @@ module.exports = function ( UserHandle ) {
 
     var user = new UserHandle( userInfo );
 
+console.log("create", userInfo, user);
+
     // Delegates all validation to mongoose during this step
     user.save( function( err, thisUser ) {
       if ( err ) {
