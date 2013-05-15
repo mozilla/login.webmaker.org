@@ -1,58 +1,94 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title></title>
-  <meta name="description" content="">
-  <link rel="stylesheet" href="<%= audience %>/css/nav.css" />
-  <style>
-    body {
-      margin: 0;
-    }
-    h1 {
-      padding: 0 15px;
-    }
-  </style>
-</head>
-<body>
-  <div id="webmaker-nav">
-    <nav class="webmaker-nav-container">
-      <ul class="webmaker-nav primary">
-        <li><a>Webmaker</a></li>
-        <% for( var i=0; i<allowed_domains.length; i++ ) {%>
-          <li><a href="<%= allowed_domains[i] %>">App <%= i + 1 %></a></li>
-        <% } %>
-      </ul>
-      <ul class="webmaker-nav user-info">
-        <li class="user">
-          <div class="user-name">
-            <span id="identity" class="user-name-container"></span>
-          </div>
-        </li>
-        <li><iframe id="SSO" src="<%= audience %>"></iframe></li>
-      </ul>
-    </nav>
-  </div>
-  <h1></h1>
-  <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
-  <script src="<%= audience %>/js/sso.js"></script>
-  <script type="text/javascript">
-    $( function(){
-      // App 1 / App 2 differences
-      var appNumber = ( document.location.port - 3000 ),
-          personaSSO = navigator.personaSSO;
-      document.title = "App " + appNumber;
-      $( "h1" ).html( document.title );
-      personaSSO.init( document.getElementById( "SSO" ) );
-      personaSSO.id.watch( {
-        onlogin: function( topic, data ){
-          personaSSO.ui.checkMaker( data, $("#webmaker-nav") );
+  <head>
+    <meta charset="utf-8">
+    <title>Demonstrator consumer</title>
+    <meta name="description" content="">
+    <meta name="persona-email" content="<%= email %>">
+    <link rel="stylesheet" href="<%= hostname %>/css/nav.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+      h1 {
+        padding: 0 15px;
+      }
+      .loggedin {
+        background-color: #EFE;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!--
+      This is the snippet we put on the page to effect a user bar
+    -->
+    <div id="webmaker-nav">
+      <!-- the webmaker bar -->
+      <nav class="webmaker-nav-container">
+        <ul class="webmaker-nav primary">
+          <li><a>Webmaker</a></li>
+          <% for( var i=0; i<app_domains.length; i++ ) {%>
+            <li><a href="<%= app_domains[i] %>">App <%= i + 1 %></a></li>
+          <% } %>
+        </ul>
+        <!-- we use this section for universal functionality -->
+        <ul class="webmaker-nav secondary">
+          <li><a>universal things</a></li>
+        </ul>
+        <!-- we use this section for tool-specific functionality -->
+        <ul class="webmaker-nav custom">
+          <li><a>custom things</a></li>
+        </ul>
+        <!-- and this is the log in/out section -->
+        <ul class="webmaker-nav user-info">
+          <li class="user">
+            <div class="user-name">
+              <span id="identity" class="user-name-container"></span>
+            </div>
+          </li>
+          <li>
+            <button id="webmaker-login" class="access-button hidden">Login</button>
+            <button id="webmaker-logout" class="access-button hidden">Logout</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- then the persona SSO include -->
+    <script src="<%= audience %>/include.js"></script>
+
+    <!-- if the user needs app-side logic to trigger on login/out, here's how we do that: -->
+    <script>
+      /**
+       * We can set up an ".app" variable on the navigator.idSSO object, which
+       * exists only AFTER loading the sso/include.js file. So, define your
+       * handlers after loading include.js, but before you load the sso-ux.js
+       * and it'll just work. You don't need to specify both functions, either.
+       */
+      navigator.idSSO.app = {
+        onlogin: function(loggedInUser, displayName) {
+          // purely for demonstrating purposes, recolor the page
+          console.log("page's onlogin called");
+          document.body.classList.add("loggedin");
         },
-        onlogout: function(){
-          personaSSO.ui.loggedOut();
+        onlogout: function() {
+          // and revert when the user logs out again.
+          console.log("page's onlogout called");
+          document.body.classList.remove("loggedin");
         }
-      } );
-    } );
-  </script>
-</body>
+      };
+    </script>
+
+    <!-- and then the webmaker SSO UI/UX code -->
+    <script src="<%= hostname %>/js/sso-ux.js"></script>
+
+    <!--
+      This is the rest of the page, with the user bar on top.
+    -->
+    <h1>Example Consumer App using the Webmaker User Bar</h1>
+
+    <p>Not much going on here, but click some buttons!</p>
+
+  </body>
 </html>

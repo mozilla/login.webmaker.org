@@ -44,7 +44,32 @@
 }
 
 /*********************************************************
-* Primary menu
+* Primary/secondary/custom menu
+*/
+.primary,
+.secondary,
+.custom {
+  float: left;
+}
+.primary > li,
+.secondary > li,
+.custom > li {
+  border-right: 1px solid #474949;
+  border-left: 1px solid #2d2f2f;
+  float: left;
+}
+.primary > li:last-child,
+.secondary > li:last-child,
+.custom > li:last-child {
+  border-right: none;
+}
+.primary > li a:hover,
+.secondary > li a:hover,
+.custom > li a:hover {
+  background: #3f4141;
+}
+/*********************************************************
+* Secondary menu
 */
 .primary {
   float: left;
@@ -148,17 +173,26 @@
 /*********************************************************
 * Buttons, iframe
 */
-.create-user-submit {
+.create-user-submit,
+.access-button {
   color: #FFF;
   border: 1px solid #519369;
   background: #3FB58E;
-  font-size: 1.2em;
-  padding: 1em;
+  font-size: 1em;
   border-radius: 2px;
+}
+
+.create-user-submit {
+  padding: 1em;
+  font-size: 1.2em;
 }
 
 .create-user-submit:hover {
   background: #79b790;
+}
+
+.hidden {
+  display: none;
 }
 
 #SSO {
