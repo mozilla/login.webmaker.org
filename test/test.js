@@ -24,8 +24,9 @@ describe( '/user routes', function() {
   var api = hostNoAuth + '/user';
 
   function apiHelper( verb, id, data, callback ) {
-    request[ verb ]({
-      uri: api + ( id ? '/' + id : '' ),
+    request({
+      url: api + ( id ? '/' + id : '' ),
+      method: verb,
       data: data,
       json: true
     }, callback );
@@ -42,9 +43,9 @@ describe( '/user routes', function() {
   it( 'should create a new login with only required fields', function( done ) {
     var email = "test@testing.com",
         newUser = {
-          _id: email,
-          email: email,
-          fullName: "Test User"
+          "_id": email,
+          "email": email,
+          "fullName": "Test User"
         };
 
     apiHelper( 'post', null, newUser, function( err, res, body ) {
