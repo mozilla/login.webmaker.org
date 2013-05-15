@@ -15,7 +15,7 @@
     "habitat": "~0.4.1",
     "less-middleware": "0.1.9",
     "MD5": "1.0.3",
-    "mongoose": "~3.6.4",
+    "mongoose": "3.6.11",
     "mongoose-validator": "~0.2.1",
     "newrelic": "0.9.20",
     "node-statsd": "0.0.7",
@@ -25,10 +25,11 @@
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-recess": "0.3.3",
-    "grunt-contrib-jshint": "~0.4.3"
+    "grunt-contrib-jshint": "~0.4.3",
+    "mocha": "~1.9.0",
+    "request": "2.20.0"
   },
-  "optionalDependencies": {},
   "scripts": {
-    "test": "grunt travis --verbose"
+    "test": "grunt travis --verbose && mocha --reporter spec"
   }
 }
