@@ -39,13 +39,20 @@ describe( '/user routes', function() {
     stopServer();
   });
 
-  it( 'should create a new login', function( done ) {
-    apiHelper( 'post', null, { email: "test@testing.com" }, function( err, res, body ) {
+  it( 'should create a new login with only required fields', function( done ) {
+    var email = "test@testing.com",
+        newUser = {
+          _id: email,
+          email: email,
+          fullName: "Test User"
+        };
+
+    apiHelper( 'post', null, newUser, function( err, res, body ) {
       assert.ok( !err );
       assert.equal( res.statusCode, 200 );
-      assert.deepEqual( body.user, {
-        email: "test@testing.com"
-      });
+      assert.equal( body.user._id, email );
+      assert.equal( body.user.email, email );
+      assert.equal( body.user.fullName, newUser.fullName );
       done();
     });
   });
