@@ -138,7 +138,8 @@
 
   // Start listening for Persona events
   navigator.idSSO.watch({
-   onlogin: function(assertion) {
+    // Note: 'loggedInUser:cookieEmail' yet, see https://bugzilla.mozilla.org/show_bug.cgi?id=872710
+    onlogin: function(assertion) {
       $.ajax({
         type: 'POST',
         url: '/persona/verify',
