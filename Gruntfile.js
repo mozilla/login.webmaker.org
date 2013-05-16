@@ -18,6 +18,7 @@ module.exports = function( grunt ) {
       files: [
         "Gruntfile.js",
         "app.js",
+        "test/**/*.js",
         "lib/**/*.js",
         "app/dev/**/*.js",
         "app/http/controllers/*.js",

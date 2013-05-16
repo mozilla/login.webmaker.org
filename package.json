@@ -25,10 +25,11 @@
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-recess": "0.3.3",
-    "grunt-contrib-jshint": "~0.4.3"
+    "grunt-contrib-jshint": "~0.4.3",
+    "mocha": "~1.9.0",
+    "request": "2.20.0"
   },
-  "optionalDependencies": {},
   "scripts": {
-    "test": "grunt travis --verbose"
+    "test": "grunt travis --verbose && mocha --reporter spec"
   }
 }
