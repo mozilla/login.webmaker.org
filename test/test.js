@@ -21,11 +21,11 @@ function stopServer() {
 }
 
 function unique() {
-  var unique = ( ++now ).toString( 36 );
+  var u = ( ++now ).toString( 36 );
   return {
-    email: unique + '@email.com',
-    subdomain: unique,
-    fullName: unique + ' ' + unique
+    email: u + '@email.com',
+    subdomain: u,
+    fullName: u + ' ' + u
   };
 }
 
@@ -33,13 +33,13 @@ describe( '/user routes', function() {
 
   var api = hostNoAuth + '/user';
 
-  function postHelper( expectError, httpCode, data, callback ) {
+  function apiHelper( verb, httpCode, data, callback ) {
     request({
       url: api,
-      method: 'post',
+      method: verb,
       json: data
     }, function( err, res, body ) {
-      assert.ok( !!err === expectError );
+      assert.ok( !err );
       assert.ok( res.statusCode, httpCode );
       callback( err, res, body );
     });
@@ -56,13 +56,13 @@ describe( '/user routes', function() {
   it( 'should error when missing required subdomain', function( done ) {
     var info = unique();
 
-    postHelper( false, 404, { email: info.email }, done );
+    apiHelper( 'post', 404, { email: info.email }, done );
   });
 
   it( 'should create a new login with minimum required fields', function( done ) {
     var user = unique();
 
-    postHelper( false, 200, user, function( err, res, body ) {
+    apiHelper( 'post', 200, user, function( err, res, body ) {
       assert.equal( body.user._id, user.email );
       assert.equal( body.user.email, user.email );
       assert.equal( body.user.fullName, user.fullName );
