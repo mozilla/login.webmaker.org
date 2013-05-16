@@ -164,7 +164,7 @@
             // email and webmaker ID in its req.session.[...]
             $.ajax({
               type: 'GET',
-              url: "<%= hostname %>/user/" + loggedInUser,
+              url: "/user/" + loggedInUser,
               dataType: "json",
               success: function(res, status, xhr) {
                 console.log("xhr success (2): ", res);
