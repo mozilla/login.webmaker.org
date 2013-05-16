@@ -21,7 +21,8 @@ function stopServer() {
 
 describe( '/user routes', function() {
 
-  var api = hostNoAuth + '/user';
+  var api = hostNoAuth + '/user',
+      email = "test@testing.com";
 
   function postHelper( data, callback ) {
     request({
@@ -39,13 +40,20 @@ describe( '/user routes', function() {
     stopServer();
   });
 
-  it( 'should create a new login with only required fields', function( done ) {
-    var email = "test@testing.com",
-        newUser = {
-          "email": email,
-          "subdomain": "subdomain",
-          "fullName": "Test User"
-        };
+  it( 'should error when missing required subdomain', function( done ) {
+    postHelper({ email: email }, function( err, res, body ) {
+      assert.ok( !err );
+      assert.equal( res.statusCode, 404 );
+      done();
+    });
+  });
+
+  it( 'should create a new login with minimum required fields', function( done ) {
+    var newUser = {
+      "email": email,
+      "subdomain": "subdomain",
+      "fullName": "Test User"
+    };
 
     postHelper( newUser, function( err, res, body ) {
       assert.ok( !err );
