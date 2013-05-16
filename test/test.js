@@ -43,6 +43,7 @@ describe( '/user routes', function() {
     var email = "test@testing.com",
         newUser = {
           "email": email,
+          "subdomain": "subdomain",
           "fullName": "Test User"
         };
 
