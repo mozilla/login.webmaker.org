@@ -5,7 +5,7 @@
     <title>Demonstrator consumer</title>
     <meta name="description" content="">
     <meta name="persona-email" content="<%= email %>">
-    <link rel="stylesheet" href="<%= hostname %>/css/nav.css" />
+    <link rel="stylesheet" href="http://login.mofostaging.net/css/nav.css" />
     <style>
       body {
         margin: 0;
@@ -56,7 +56,7 @@
     </div>
 
     <!-- then the persona SSO include -->
-    <script src="<%= audience %>/include.js"></script>
+    <script src="http://webmaker.mofostaging.net/sso/include.js"></script>
 
     <!-- if the user needs app-side logic to trigger on login/out, here's how we do that: -->
     <script>
@@ -81,7 +81,7 @@
     </script>
 
     <!-- and then the webmaker SSO UI/UX code -->
-    <script src="<%= hostname %>/js/sso-ux.js"></script>
+    <script src="http://login.mofostaging.net/js/sso-ux.js"></script>
 
     <!--
       This is the rest of the page, with the user bar on top.
