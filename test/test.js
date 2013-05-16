@@ -1,6 +1,7 @@
 var assert = require( 'assert' ),
     fork = require( 'child_process' ).fork,
     request = require( 'request' ),
+    now = Date.now(),
     child,
     hostAuth = 'http://travis:travis@localhost:3000',
     hostNoAuth = 'http://localhost:3000';
@@ -19,17 +20,29 @@ function stopServer() {
   child.kill();
 }
 
+function unique() {
+  var unique = ( ++now ).toString( 36 );
+  return {
+    email: unique + '@email.com',
+    subdomain: unique,
+    fullName: unique + ' ' + unique
+  };
+}
+
 describe( '/user routes', function() {
 
-  var api = hostNoAuth + '/user',
-      email = "test@testing.com";
+  var api = hostNoAuth + '/user';
 
-  function postHelper( data, callback ) {
+  function postHelper( expectError, httpCode, data, callback ) {
     request({
       url: api,
       method: 'post',
       json: data
-    }, callback );
+    }, function( err, res, body ) {
+      assert.ok( !!err === expectError );
+      assert.ok( res.statusCode, httpCode );
+      callback( err, res, body );
+    });
   }
 
   before( function( done ) {
@@ -41,26 +54,18 @@ describe( '/user routes', function() {
   });
 
   it( 'should error when missing required subdomain', function( done ) {
-    postHelper({ email: email }, function( err, res, body ) {
-      assert.ok( !err );
-      assert.equal( res.statusCode, 404 );
-      done();
-    });
+    var info = unique();
+
+    postHelper( false, 404, { email: info.email }, done );
   });
 
   it( 'should create a new login with minimum required fields', function( done ) {
-    var newUser = {
-      "email": email,
-      "subdomain": "subdomain",
-      "fullName": "Test User"
-    };
+    var user = unique();
 
-    postHelper( newUser, function( err, res, body ) {
-      assert.ok( !err );
-      assert.equal( res.statusCode, 200 );
-      assert.equal( body.user._id, email );
-      assert.equal( body.user.email, email );
-      assert.equal( body.user.fullName, newUser.fullName );
+    postHelper( false, 200, user, function( err, res, body ) {
+      assert.equal( body.user._id, user.email );
+      assert.equal( body.user.email, user.email );
+      assert.equal( body.user.fullName, user.fullName );
       done();
     });
   });

@@ -10,12 +10,9 @@ module.exports = function ( UserHandle ) {
 
   controller.create = function ( req, res ) {
     var userInfo = req.body;
-
     userInfo._id = userInfo.email;
 
     var user = new UserHandle( userInfo );
-
-console.log("create", userInfo, user);
 
     // Delegates all validation to mongoose during this step
     user.save( function( err, thisUser ) {
@@ -36,6 +33,7 @@ console.log("create", userInfo, user);
     UserHandle.findById( id, function ( err, user ) {
       if ( err ) {
         metrics.increment( "user.get.error" );
+console.log(err);
         res.json( 500, { error: err, user: null } );
         return;
       }

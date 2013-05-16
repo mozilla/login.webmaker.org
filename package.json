@@ -29,6 +29,6 @@
     "request": "2.20.0"
   },
   "scripts": {
-    "test": "grunt travis --verbose && mocha"
+    "test": "grunt travis --verbose && mocha --reporter spec"
   }
 }
