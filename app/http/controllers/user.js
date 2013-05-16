@@ -33,7 +33,6 @@ module.exports = function ( UserHandle ) {
     UserHandle.findById( id, function ( err, user ) {
       if ( err ) {
         metrics.increment( "user.get.error" );
-console.log(err);
         res.json( 500, { error: err, user: null } );
         return;
       }
