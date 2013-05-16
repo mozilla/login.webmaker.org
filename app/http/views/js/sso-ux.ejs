@@ -150,18 +150,20 @@
             // webmaker-loginAPI lookup, allowing it to bind the user's
             // email and webmaker ID in its req.session.[...]
             $.ajax({
-              type: 'POST',
-              url: window.location.toString() + 'user/' + loggedInUser,
-              data: {assertion: assertion},
+              type: 'GET',
+              url: "<%= hostname %>/user/" + loggedInUser,
+              dataType: "json",
               success: function(res, status, xhr) {
                 console.log("xhr success (2): ", res);
                 if (res.status === "failed") {
                   console.log("odd error condition: user has a subdomain ("+displayName+"), "+
                               "but webmaker-loginAPI at the consumer can't find it");
                   navigator.idSSO.logout();
-                } else if (res.subdomain !== displayName) {
+                } else if (res.user.subdomain !== displayName) {
                   console.log("odd error condition: user has a subdomain ("+displayName+"), "+
                               "but webmaker-loginAPI reported a different name ("+res.subdomain+")");
+                  console.log(res.user.subdomain, 'result subdomain');
+                  console.log(displayName, 'displayName');
                   navigator.idSSO.logout();
                 } else {
                   // login succeeded, show this user as logged in
