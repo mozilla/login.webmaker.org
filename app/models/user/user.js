@@ -1,6 +1,7 @@
 // Custom validation
 var mongoose_validator = require('mongoose-validator'),
-    badword = require('badword');
+    badword = require('badword'),
+    md5 = require('MD5');
 
 mongoose_validator.extend( 'isBlackListed', function() {
   return !badword(this.str);
@@ -88,6 +89,16 @@ module.exports = function ( connection ) {
   schema.virtual( 'displayName' ).get( function() {
     return this.fullName || this.subdomain;
   });
+
+  /**
+   * We're using gravatar for avatar display - it requires an email hash to display
+   * Not sure if we should store this value in the DB....
+   */
+  schema.virtual( 'emailHash' ).get( function() {
+    return md5( this.email );
+  });
+
+  schema.set('toJSON', { virtuals: true });
 
   return connection.model( 'User', schema );
 };

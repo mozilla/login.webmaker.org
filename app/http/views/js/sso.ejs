@@ -27,8 +27,11 @@
     },
     handlers: {},
     ui: {
-      displayLogin: function(userName) {
-        $("#identity").text(userName);
+      displayLogin: function(userData) {
+        console.log(userData);
+        var placeHolder = $("#identity");
+        placeHolder.text(userData.name);
+        placeHolder.before("<img src='http://www.gravatar.com/avatar/" + userData.hash + "?s=29' alt='" + userData.hash + "' height='20' width='20' />");
       },
       checkMaker: function(userData, elementAnchor) {
         $.ajax({
@@ -36,7 +39,11 @@
           url: "<%= ssoAudience %>/user/" + userData.loggedInUser + "/",
           dataType: "json",
           success: function(resp) {
-              navigator.personaSSO.ui.existingMaker(resp.user.subdomain);
+              console.log(resp.user);
+              navigator.personaSSO.ui.existingMaker({
+                name: resp.user.subdomain,
+                hash: resp.user.emailHash
+              });
           },
           error: function(resp) {
             if (resp.status === 404) {
@@ -80,7 +87,10 @@
                   "subdomain": $('#subdomain').val()
                 },
                 success: function(resp) {
-                  navigator.personaSSO.ui.existingMaker(resp.user.subdomain);
+                  navigator.personaSSO.ui.existingMaker({
+                    name: resp.user.subdomain,
+                    hash: resp.user.emailHash
+                  });
                   $formContainer.slideUp();
 
                 },
@@ -97,12 +107,12 @@
           $formContainer.slideDown();
         }
       },
-      existingMaker: function(displayName) {
+      existingMaker: function(userData) {
         /**
          * API call to the getUserData API
          * display logged in user data in the UI (where to be defined)
          */
-        navigator.personaSSO.ui.displayLogin(displayName);
+        navigator.personaSSO.ui.displayLogin(userData);
       },
       loggedOut: function() {
         /**

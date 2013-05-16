@@ -43,6 +43,8 @@ module.exports = function ( UserHandle ) {
         return;
       }
 
+      console.log(user);
+
       metrics.increment( "user.get.success" );
       res.json( { error: null, user: user } );
     });
