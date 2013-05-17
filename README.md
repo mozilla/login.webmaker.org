@@ -36,7 +36,15 @@ Bugs can be found in Bugzilla - this is what <a href="https://bugzilla.mozilla.o
 
 If you wish to use the webmaker user bar in your webmaker.org app, you will need to implement the following steps.
 
-### 1. Set up your environment variables
+### 1. Add express-personaand the webmaker-loginapi modules
+
+Your app will need to be able to speak to persona (for server-side validation and logout), as well as the webmaker login API. You will need the `express-persona`, https://github.com/jbuck/express-persona, and `webmaker-loginapi`, https://github.com/mozilla/node-webmaker-loginapi, modules installed.
+
+Also note that the login API requires that  the `username:password` combination that you use to create your loginapi instance with needs to be known by the login server you are accessing. As such, you will have to make sure that it is one of the possible `username:password` combinations specified in the login server's environment variable `ALLOWED_USERS`.
+
+Also, it is recommended to not hardcode the loginapi's endpoint with user credentials in your app, but to use an environment variable that you refer to in the code: `var loginapi = require("webmaker-loginapi")({make this an env. var});`.
+
+### 2. Set up your environment variables
 
 Ensure that you're using the correct values in your local .env file, make sure that the URL of your app is included in the ALLOWED_DOMAINS for this app. (For production and staging, these values have already been fixed to the webmaker.org production and staging domains).
 
@@ -44,22 +52,22 @@ For example, if we're integrating SSO into two apps running at http://localhost:
 
 `ALLOWED_DOMAINS="http://localhost:8888 http://localhost:7777"`
 
-For testing purposes, the Persona `AUDIENCE` variable can be set to the following:
+For testing purposes, your app's Persona `AUDIENCE` variable can be set to the following:
 
 `AUDIENCE="http://webmaker.mofostaging.net"`
 
-and the `LOGIN` variable can be set to the following
+and your app's `LOGIN` variable can be set to the following:
 
 `LOGIN="http://login.mofostaging.net"`
 
-### 2. Include this app's CSS file in your master template
+
+### 3. Include this app's CSS file in your master template
 
 ```html
 <link rel="stylesheet" href="http://login.mofostaging.net/css/nav.css" />
 ```
 
-### 3. Add the following snippet to your HTML page, below <body> but before any other content in the required HTML for the Webmaker navigation bar
-
+### 4. Add the following snippet to your HTML page, below <body> but before any other content in the required HTML for the Webmaker navigation bar
 
 ```html
 <div id="webmaker-nav">
@@ -86,7 +94,7 @@ and the `LOGIN` variable can be set to the following
 </div>
 ```
 
-### 4. Link to our external JS file
+### 5. Link to our external JS file
 
 For the best performance put this at the bottom of your HTML file, just before the closing ```</body>```
 
@@ -94,7 +102,7 @@ For the best performance put this at the bottom of your HTML file, just before t
 <script src="http://webmaker.mofostaging.net/sso/include.js"></script>
 ```
 
-### 5. If you need your own login / logout event handling
+### 6. If you need your own login / logout event handling
 
 You can specify custom event handlers to be triggered after the user bar logs someone in or out (in order to effect UI changes for your app, for instance). This requires setting up a `navigator.idSSO.app` object in the following manner:
 
@@ -112,7 +120,7 @@ You can specify custom event handlers to be triggered after the user bar logs so
 ```
 Note that you do not need to provide both event handlers; if you only need one, the other can be left out without leading to any errors.
 
-### 6. Include our sso-ux script
+### 7. Include our sso-ux script
 
 This include must be included after the Persona `include.js`, or —if custom event handlers are used— after the custom event handling script block.
 
@@ -120,40 +128,34 @@ This include must be included after the Persona `include.js`, or —if custom ev
 <script src="http://login.mofostaging.net/js/sso-ux.js"></script>
 ```
 
-### 7 Set up a /user/:id route in your app
+### 8 Set up the persona handler
 
-Finally, your app will need to be able to speak to persona (for server-side validation and logout), as well as the webmaker login API. You will need the following requires:
-
-```javascript
-var persona = require( "express-persona" );
-var loginAPI = require( "webmaker-loginapi" )( "http://{user}:{password}@{webmaker.sso.domain}" );
-```
-
-To ensure these packages are known for your app, run the following commands if you do not already use them:
-
-```
-> npm install express-persona --save
-> npm install webmaker-loginapi --save
-```
-
-The username:password needs to be know to the login server, so you will have to make sure that it is one of the possible user:pass combinations specified in the login's `ALLOWED_USERS` variable.
-
-The persona block that you will need consists of the following code:
+The persona block that you will need to add to your app.js consists of the following code:
 
 ```javascript
 persona(app, {
-  audience: env.get( "AUDIENCE" ),
-  verifyResponse: function(err, req, res, email) {
-    if (err) {
-      return res.json({status: "failure", reason: err});
-    }
-    req.session.email = email;
-    res.json({status: "okay", email: email});
-  }
+  audience: env.get( "AUDIENCE" )
 });
 ```
 
-And the Login API user route consists of the following code:
+Make sure you also follow the instructions on setting up express-persona mentiond in step 1.
+
+This will let you use `req.session.email` in the rest of your code.
+
+
+### 9 put the session email into your master template, when known
+
+Add the following snippet to you HTML `<head>` section, and render it based on the person-created `req.session.email` value:
+
+```html
+  <meta name="persona-email" content="{value from req.session.email}">
+```
+
+If `req.session.email` is known during page serving, the user may already be logged in and this value should be the user's Persona email address. If it is not set, this value should be an empty string.
+
+### 10 Set up a /user/:id route in your app
+
+Finally, add the Login API user route to your app.js:
 
 ```javascript
 app.get( "/user/:userid", function( req, res ) {
@@ -173,17 +175,7 @@ app.get( "/user/:userid", function( req, res ) {
 });
 ```
 
-This will let you use the `req.session.email` and `req.session.webmakerid` values in the rest of your code.
-
-### 8 put the session email into your master template, when known
-
-Add the following snippet to you HTML `<head>` section, and render it based on the person-created `req.session.email` value:
-
-```html
-  <meta name="persona-email" content="{req.session.email}">
-```
-
-If `req.session.email` is known, the user may already be logged in and this value should be the user's Persona email address. If it is not set, this value should be an empty string.
+This will let you use `req.session.webmakerid` in the rest of your code.
 
 
 ## New Relic
