@@ -79,7 +79,7 @@ env.get("DEV_PORTS").split(/\s+/).forEach(function(APP_PORT) {
       // respond with the found user domain
       res.json({
         status: "okay",
-        subdomain: user.subdomain
+        user: user
       });
     });
   });
