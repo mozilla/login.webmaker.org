@@ -172,10 +172,10 @@
                   console.log("odd error condition: user has a subdomain ("+displayName+"), "+
                               "but webmaker-loginAPI at the consumer can't find it");
                   navigator.idSSO.logout();
-                } else if (res.user.subdomain !== displayName) {
+                } else if (res.subdomain !== displayName) {
                   console.log("odd error condition: user has a subdomain ("+displayName+"), "+
                               "but webmaker-loginAPI reported a different name ("+res.subdomain+")");
-                  console.log(res.user.subdomain, 'result subdomain');
+                  console.log(res.subdomain, 'result subdomain');
                   console.log(displayName, 'displayName');
                   navigator.idSSO.logout();
                 } else {

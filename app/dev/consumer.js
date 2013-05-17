@@ -54,14 +54,14 @@ env.get("DEV_PORTS").split(/\s+/).forEach(function(APP_PORT) {
     res.render( "index", {
       email: req.session.email ? req.session.email : '',
        // for some reason, env.get("PORT") is 3100 at this point.
-      hostname: env.get("HOSTNAME") + ":" + HOST_PORT,
+      login: env.get("LOGIN") + ":" + HOST_PORT,
       apphost: env.get("HOSTNAME") + ":" + APP_PORT,
       audience: env.get( "AUDIENCE" ),
       app_domains: env.get( "ALLOWED_DOMAINS" ).split( " " )
     });
   });
 
-  app.post( "/user/:userid", function( req, res ) {
+  app.get( "/user/:userid", function( req, res ) {
     loginAPI.getUser(req.session.email, function(err, user) {
       if(err || !user) {
         return res.json({
