@@ -1,7 +1,7 @@
 // Custom validation
 var mongoose_validator = require('mongoose-validator'),
     badword = require('badword'),
-    md5 = require('md5');
+    md5 = require('MD5');
 
 mongoose_validator.extend( 'isBlackListed', function() {
   return !badword(this.str);

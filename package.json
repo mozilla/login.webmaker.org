@@ -14,13 +14,13 @@
     "express": "~3.1.0",
     "habitat": "~0.4.1",
     "less-middleware": "0.1.9",
+    "MD5": "1.0.3",
     "mongoose": "~3.6.4",
     "mongoose-validator": "~0.2.1",
     "newrelic": "0.9.20",
     "node-statsd": "0.0.7",
     "winston": "~0.6.2",
-    "webmaker-loginapi": "0.0.1",
-    "md5": "1.0.1"
+    "webmaker-loginapi": "0.0.1"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
