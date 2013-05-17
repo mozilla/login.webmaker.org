@@ -60,7 +60,6 @@ and the `LOGIN` variable can be set to the following
 
 ### 3. Add the following snippet to your HTML page, below <body> but before any other content in the required HTML for the Webmaker navigation bar
 
-
 ```html
 <div id="webmaker-nav">
   <nav class="webmaker-nav-container">
@@ -122,34 +121,15 @@ This include must be included after the Persona `include.js`, or —if custom ev
 
 ### 7 Set up a /user/:id route in your app
 
-Finally, your app will need to be able to speak to persona (for server-side validation and logout), as well as the webmaker login API. You will need the following requires:
+Finally, your app will need to be able to speak to persona (for server-side validation and logout), as well as the webmaker login API. You will need the `express-persona`, https://github.com/jbuck/express-persona, and `webmaker-loginapi`, https://github.com/mozilla/node-webmaker-loginapi, modules installed.
 
-```javascript
-var persona = require( "express-persona" );
-var loginAPI = require( "webmaker-loginapi" )( "http://{user}:{password}@{webmaker.sso.domain}" );
-```
-
-To ensure these packages are known for your app, run the following commands if you do not already use them:
-
-```
-> npm install express-persona --save
-> npm install webmaker-loginapi --save
-```
-
-The username:password needs to be know to the login server, so you will have to make sure that it is one of the possible user:pass combinations specified in the login's `ALLOWED_USERS` variable.
+For the loginapi, the `username:password` combination that you use to create your loginapi instance needs to be known by the login server you are accessing, so you will have to make sure that it is one of the possible `username:password` combinations specified in the login server's environment variable `ALLOWED_USERS`.
 
 The persona block that you will need consists of the following code:
 
 ```javascript
 persona(app, {
-  audience: env.get( "AUDIENCE" ),
-  verifyResponse: function(err, req, res, email) {
-    if (err) {
-      return res.json({status: "failure", reason: err});
-    }
-    req.session.email = email;
-    res.json({status: "okay", email: email});
-  }
+  audience: env.get( "AUDIENCE" )
 });
 ```
 
@@ -177,13 +157,13 @@ This will let you use the `req.session.email` and `req.session.webmakerid` value
 
 ### 8 put the session email into your master template, when known
 
-Add the following snippet to you HTML `<head>` section, and render it based on the person-created `req.session.email` value:
+Finally, make sure to add the following snippet to you HTML `<head>` section, and render it based on the person-created `req.session.email` value:
 
 ```html
-  <meta name="persona-email" content="{req.session.email}">
+  <meta name="persona-email" content="{value from req.session.email}">
 ```
 
-If `req.session.email` is known, the user may already be logged in and this value should be the user's Persona email address. If it is not set, this value should be an empty string.
+If `req.session.email` is known during page serving, the user may already be logged in and this value should be the user's Persona email address. If it is not set, this value should be an empty string.
 
 
 ## New Relic
