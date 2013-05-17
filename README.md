@@ -152,7 +152,7 @@ persona(app, {
 And the Login API user route consists of the following code:
 
 ```javascript
-app.post( "/user/:userid", function( req, res ) {
+app.get( "/user/:userid", function( req, res ) {
   loginAPI.getUser(req.session.email, function(err, user) {
     if(err || !user) {
       return res.json({
