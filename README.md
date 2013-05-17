@@ -42,6 +42,8 @@ Your app will need to be able to speak to persona (for server-side validation an
 
 Also note that the login API requires that  the `username:password` combination that you use to create your loginapi instance with needs to be known by the login server you are accessing. As such, you will have to make sure that it is one of the possible `username:password` combinations specified in the login server's environment variable `ALLOWED_USERS`.
 
+Also, it is recommended to not hardcode the loginapi's endpoint with user credentials in your app, but to use an environment variable that you refer to in the code: `var loginapi = require("webmaker-loginapi")({make this an env. var});`.
+
 ### 2. Set up your environment variables
 
 Ensure that you're using the correct values in your local .env file, make sure that the URL of your app is included in the ALLOWED_DOMAINS for this app. (For production and staging, these values have already been fixed to the webmaker.org production and staging domains).
@@ -50,13 +52,14 @@ For example, if we're integrating SSO into two apps running at http://localhost:
 
 `ALLOWED_DOMAINS="http://localhost:8888 http://localhost:7777"`
 
-For testing purposes, the Persona `AUDIENCE` variable can be set to the following:
+For testing purposes, your app's Persona `AUDIENCE` variable can be set to the following:
 
 `AUDIENCE="http://webmaker.mofostaging.net"`
 
-and the `LOGIN` variable can be set to the following
+and your app's `LOGIN` variable can be set to the following:
 
 `LOGIN="http://login.mofostaging.net"`
+
 
 ### 3. Include this app's CSS file in your master template
 
