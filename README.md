@@ -130,7 +130,7 @@ This include must be included after the Persona `include.js`, or —if custom ev
 
 ### 8 Set up the persona handler
 
-The persona block that you will need consists of the following code:
+The persona block that you will need to add to your app.js consists of the following code:
 
 ```javascript
 persona(app, {
@@ -138,7 +138,7 @@ persona(app, {
 });
 ```
 
-Make sure you also followed the instructions on setting up express-persona mentiond in step 1.
+Make sure you also follow the instructions on setting up express-persona mentiond in step 1.
 
 This will let you use `req.session.email` in the rest of your code.
 
@@ -155,7 +155,7 @@ If `req.session.email` is known during page serving, the user may already be log
 
 ### 10 Set up a /user/:id route in your app
 
-Finally, add the Login API user route consists of the following code:
+Finally, add the Login API user route to your app.js:
 
 ```javascript
 app.get( "/user/:userid", function( req, res ) {
