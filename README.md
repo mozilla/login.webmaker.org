@@ -48,6 +48,10 @@ For testing purposes, the Persona `AUDIENCE` variable can be set to the followin
 
 `AUDIENCE="http://webmaker.mofostaging.net"`
 
+and the `LOGIN` variable can be set to the following
+
+`LOGIN="http://login.mofostaging.net"`
+
 ### 2. Include this app's CSS file in your master template
 
 ```html
