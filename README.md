@@ -71,23 +71,17 @@ and your app's `LOGIN` variable can be set to the following:
 
 ```html
 <div id="webmaker-nav">
+  <!-- the webmaker bar -->
   <nav class="webmaker-nav-container">
-    <ul class="webmaker-nav primary">
-      <li><a>Webmaker</a></li>
-    </ul>
-    <ul class="webmaker-nav secondary">
-    </ul>
-    <ul class="webmaker-nav custom">
-    </ul>
+    <a id="logo" href="https://webmaker.org"><img src="<%= login %>/img/webmaker-logo.png" alt="Mozilla Webmaker" /></a>
     <ul class="webmaker-nav user-info">
       <li class="user">
-        <div class="user-name">
-          <span id="identity" class="user-name-container"></span>
-        </div>
+        Hi <span id="identity" class="user-name-container"></span>
       </li>
+      <li class="makes"><button>My makes</button></li>
       <li>
-        <button id="webmaker-login" class="access-button hidden">Login</button>
-        <button id="webmaker-logout" class="access-button hidden">Logout</button>
+        <button id="webmaker-login">Sign in to save <span>Sign up</span></button>
+        <button id="webmaker-logout">Sign out</button>
       </li>
     </ul>
   </nav>

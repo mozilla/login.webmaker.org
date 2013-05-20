@@ -5,16 +5,13 @@
     <title>Demonstrator consumer</title>
     <meta name="description" content="">
     <meta name="persona-email" content="<%= email %>">
-    <link rel="stylesheet" href="http://login.mofostaging.net/css/nav.css" />
+    <link rel="stylesheet" href="<%= login %>/css/nav.css" />
     <style>
       body {
         margin: 0;
       }
       h1 {
         padding: 0 15px;
-      }
-      .loggedin {
-        background-color: #EFE;
       }
     </style>
   </head>
@@ -26,30 +23,15 @@
     <div id="webmaker-nav">
       <!-- the webmaker bar -->
       <nav class="webmaker-nav-container">
-        <ul class="webmaker-nav primary">
-          <li><a>Webmaker</a></li>
-          <% for( var i=0; i<app_domains.length; i++ ) {%>
-            <li><a href="<%= app_domains[i] %>">App <%= i + 1 %></a></li>
-          <% } %>
-        </ul>
-        <!-- we use this section for universal functionality -->
-        <ul class="webmaker-nav secondary">
-          <li><a>universal things</a></li>
-        </ul>
-        <!-- we use this section for tool-specific functionality -->
-        <ul class="webmaker-nav custom">
-          <li><a>custom things</a></li>
-        </ul>
-        <!-- and this is the log in/out section -->
+        <a id="logo" href="https://webmaker.org"><img src="<%= login %>/img/webmaker-logo.png" alt="Mozilla Webmaker" /></a>
         <ul class="webmaker-nav user-info">
           <li class="user">
-            <div class="user-name">
-              <span id="identity" class="user-name-container"></span>
-            </div>
+              Hi <span id="identity" class="user-name-container"></span>
           </li>
+          <li class="makes"><button>My makes</button></li>
           <li>
-            <button id="webmaker-login" class="access-button hidden">Login</button>
-            <button id="webmaker-logout" class="access-button hidden">Logout</button>
+            <button id="webmaker-login">Sign in to save <span>Sign up</span></button>
+            <button id="webmaker-logout">Sign out</button>
           </li>
         </ul>
       </nav>
@@ -70,12 +52,12 @@
         onlogin: function(loggedInUser, displayName) {
           // purely for demonstrating purposes, recolor the page
           console.log("page's onlogin called");
-          document.body.classList.add("loggedin");
+          document.body.style.background = "#EFE";
         },
         onlogout: function() {
           // and revert when the user logs out again.
           console.log("page's onlogout called");
-          document.body.classList.remove("loggedin");
+          document.body.style.background = "";
         }
       };
     </script>
