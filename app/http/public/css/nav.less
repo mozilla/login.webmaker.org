@@ -3,87 +3,45 @@
 */
 #webmaker-nav {
   font-family: "Open Sans", "Helvetica Neue", sans-serif;
-  font-size: 12px;
+  font-size: 13px;
   width: 100%;
+  color: #373737;
 }
 .webmaker-nav-container {
-  height: 29px;
-  background: #3a3c3c;
-  border-bottom: 1px solid #2d2f2f;
+  overflow: hidden;
+  background: #eaeff2;
+  border-bottom: 1px solid #fff;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   width: 100%;
+  padding: 0 15px;
 }
 
 .webmaker-nav {
-  height: 29px;
   padding: 0;
   margin: 0;
   list-style: none;
-  line-height: 29px;
   font-size: 1em;
-  color: #FFF;
 }
 
 .webmaker-nav > li > a {
   display: block;
   height: 100%;
-  background: #3a3c3c;
-  padding: 0 15px;
-  font-weight: 600;
+  padding: 0 10px;
   text-decoration: none;
   cursor: pointer;
   user-select: none;
-  color: rgb(255, 255, 255);
-  color: rgba(255, 255, 255, 0.5);
 }
 
 .webmaker-nav > li > a:hover {
-  color: #FFF;
+  text-decoration: underline;
 }
 
-/*********************************************************
-* Primary/secondary/custom menu
-*/
-.primary,
-.secondary,
-.custom {
+#logo {
+  line-height: 1;
   float: left;
-}
-.primary > li,
-.secondary > li,
-.custom > li {
-  border-right: 1px solid #474949;
-  border-left: 1px solid #2d2f2f;
-  float: left;
-}
-.primary > li:last-child,
-.secondary > li:last-child,
-.custom > li:last-child {
-  border-right: none;
-}
-.primary > li a:hover,
-.secondary > li a:hover,
-.custom > li a:hover {
-  background: #3f4141;
-}
-/*********************************************************
-* Secondary menu
-*/
-.primary {
-  float: left;
-}
-.primary > li {
-  border-right: 1px solid #474949;
-  border-left: 1px solid #2d2f2f;
-  float: left;
-}
-.primary > li:last-child {
-  border-right-color: transparent;
-}
-.primary > li a:hover {
-  background: #3f4141;
+  display: block;
 }
 /*********************************************************
 * User/Login Styles
@@ -93,16 +51,66 @@
   text-align: right;
 }
 
-.user {
-  line-height: 29px;
-  margin-right: 20px;
-}
-
 .user-info > li {
   float: left;
   border-right: none;
   height: 100%;
+  margin: 0.9em 0;
+  border-right: 1px solid #b5b7b8;
+  &:last-child {
+    border-right: none;
+  }
 }
+
+.user-info button {
+  border: none;
+  padding: 0 10px;
+  background: transparent;
+  font-family: "Open Sans", "Helvetica Neue", sans-serif;
+  font-size: 13px; 
+  line-height: 1.1;
+  color: #27AAE1;
+  cursor: pointer;
+  span {
+    background: #27AAE1;
+    color: #fff;
+    padding: 0.5em;
+    margin-left: 24px;
+    position: relative;
+    &:before {
+      content: "";
+      border-right: 14px solid #27AAE1;
+      border-top: 14px solid transparent;
+      border-bottom: 14px solid transparent;
+      width: 0;
+      height: 0;
+      position: absolute;
+      top: 0;
+      left: -14px;
+    }
+  }
+}
+.user-info button:hover {
+  text-decoration: underline;
+}
+
+.webmaker-nav .user {
+  position: relative;
+  padding-left: 36px;
+  border-right: none;
+  img {
+    position: absolute;
+    left: 0;
+    top: -0.4em;
+    border-radius: 50%;
+  }
+}
+
+#identity {
+  font-weight: bold;
+}
+
+
 .webmaker-create-user {
   display: none;
   padding: 2em 1em;
@@ -173,6 +181,15 @@
 /*********************************************************
 * Buttons, iframe
 */
+a {
+  color: #27aae1;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+a:hover {
+  text-decoration: underline;
+}
 .create-user-submit,
 .access-button {
   color: #FFF;
@@ -191,15 +208,24 @@
   background: #79b790;
 }
 
-.hidden {
-  display: none;
+/*********************************************************
+* Login button states - done via a JS class switch
+*/
+/* Initial we don't want anything shown */
+#webmaker-nav {
+  .user, 
+  .dash,
+  .makes,
+  #webmaker-logout,
+  #webmaker-login {
+    display: none;
+  }
 }
-
-#SSO {
-  height: 30px;
-  width: 115px;
-  background: transparent;
-  color: #fff;
-  border: none;
-  margin-top: 3px;
+/* We're logged in - show all the things */ 
+.loggedin #webmaker-nav {
+  .user, 
+  .dash,
+  .makes {
+    display: block;
+  }
 }

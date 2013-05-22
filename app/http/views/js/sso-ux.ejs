@@ -22,7 +22,7 @@
           userElement = $('div.user-name');
       if (userData) {
         placeHolder.text(userData.name);
-        placeHolder.before("<img src='http://www.gravatar.com/avatar/" + userData.hash + "?s=29' alt='" + userData.hash + "' height='20' width='20' />");
+        placeHolder.before("<img src='http://www.gravatar.com/avatar/" + userData.hash + "?s=26' alt='" + userData.hash + "' />");
       } else {
         userElement.html("<span id='identity'></span>");
       }
@@ -181,6 +181,7 @@
                   // and call the on-page onlogin handler.
                   login.hide();
                   logout.show();
+                  $('body').addClass("loggedin");
                   navigator.idSSO.app.onlogin(loggedInUser, displayName);
                 }
               },
@@ -201,6 +202,7 @@
       ui.loggedOut();
       login.show();
       logout.hide();
+      $('body').removeClass("loggedin");
       // make sure the page does whatever it needs to,
       navigator.idSSO.app.onlogout();
       // and make sure the app knows we're logged out.
