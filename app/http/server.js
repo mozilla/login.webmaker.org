@@ -34,6 +34,7 @@ http.configure(function(){
   http.use(express.bodyParser());
   http.use(express.methodOverride());
   http.use(express.cookieSession({
+    key: "login.sid",
     secret: env.get('SESSION_SECRET'),
     cookie: {
       maxAge: 2678400000 // 31 days
