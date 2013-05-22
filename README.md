@@ -48,9 +48,9 @@ Also, it is recommended to not hardcode the loginapi's endpoint with user creden
 
 Ensure that you're using the correct values in your local .env file, make sure that the URL of your app is included in the ALLOWED_DOMAINS for this app. (For production and staging, these values have already been fixed to the webmaker.org production and staging domains).
 
-For example, if we're integrating SSO into two apps running at http://localhost:8888 and http://localhost:7777, you would need to include the following in the .env of login.webmaker.org:
+For example, if we're integrating SSO into two apps running at http://localhost:8888 and http://localhost:7777, with the Login server running at http://localhost:3000, you would need to include the following in the .env of login.webmaker.org:
 
-`ALLOWED_DOMAINS="http://localhost:8888 http://localhost:7777"`
+`ALLOWED_DOMAINS="http://localhost:3000 http://localhost:8888 http://localhost:7777"`
 
 For testing purposes, your app's Persona `AUDIENCE` variable can be set to the following:
 
