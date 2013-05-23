@@ -64,8 +64,10 @@ and your app's `LOGIN` variable can be set to the following:
 ### 3. Include this app's CSS file in your master template
 
 ```html
-<link rel="stylesheet" href="http://login.mofostaging.net/css/nav.css" />
+<link rel="stylesheet" href="<%= login %>/css/nav.css" />
 ```
+
+For staging/dev work, you can use `http://login.mofostaging.net` instead of the `login` variable.
 
 ### 4. Add the following snippet to your HTML page, below <body> but before any other content in the required HTML for the Webmaker navigation bar
 
@@ -85,6 +87,9 @@ and your app's `LOGIN` variable can be set to the following:
       </li>
     </ul>
   </nav>
+  <div class="my-projects-container">
+    <iframe src="<%= audience %>/myprojects?app=<%= appname %>&email=<%= email %>"></iframe>
+  </div>
 </div>
 ```
 
