@@ -79,6 +79,19 @@ module.exports = function ( UserHandle ) {
     });
   };
 
+  controller.all = function( req, res ) {
+    UserHandle.find( {}, function ( err, users ) {
+      if ( err || !users.length ) {
+        metrics.increment( "user.all.error" );
+        res.json( 404, { error: err || "Users could not be found!", user: null } );
+        return;
+      }
+
+      metrics.increment( "user.all.success" );
+      res.json( { "users": users } );
+    });
+  };
+
   controller.userForm = function( req, res ) {
     res.render( "ajax/forms/new_user", {
       ssoAudience: env.get('AUDIENCE')

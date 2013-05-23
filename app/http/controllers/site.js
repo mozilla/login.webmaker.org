@@ -12,6 +12,23 @@ exports.index = function(req, res){
 };
 
 /**
+ * Get admin console
+ */
+exports.console = function( req, res ){
+  res.render( 'site/console.html.ejs' );
+};
+
+/**
+ * Get admin console
+ */
+exports.consolejs = function( req, res ){
+  res.set('Content-Type', 'application/javascript');
+  res.render( 'js/console.js.ejs', {
+    loginUri: env.get( "HOSTNAME" ) + ( env.get( "PORT" ) ? ":" + env.get( "PORT" ) : '' )
+  });
+};
+
+/**
  * GET sign-in link.
  */
 exports.sso = function(req,res) {

@@ -1,0 +1,49 @@
+(function() {
+  // Cache jQuery reference
+  var table = $( "#table" );
+
+  // Collect users superfunction
+  function ajaxHelper() {
+    $.ajax({
+      url: "<%= loginUri %>/users",
+      error: function( xhr, status, error ) {
+        table.empty();
+        table.append( "<td><h3>" + ( error || "No users found!" ) + "</h3></td>" );
+      },
+      success: function( data, status, xhr ) {
+        // Unique ID incrementer
+        var userId = 0;
+
+        table.empty();
+        data.users.forEach( function( user ) {
+          userId++;
+
+          // Add a row
+          table.append( "<tr>" + 
+                        "<th>" + user._id + "</th>" +
+                        "<td>" + ( user.isAdmin ? "admin" : "none" ) + "</td>" +
+                        "<td><button id=\"" + userId + "\">" + ( user.isAdmin ? "Remove admin" : "Add admin" ) + "</button></td>" +
+                        "</tr>" );
+
+          // Bind click event for update
+          $( "#" + userId ).on( 'click', function() {
+            $.ajax({
+              url: "<%= loginUri %>/user/" + user._id,
+              type: "put",
+              data: { isAdmin: !user.isAdmin },
+              error: function( xhr, status, error ) {
+                alert("Error! " + error);
+              },
+              success: function( data, status, xhr ) {
+                ajaxHelper();
+              }  
+            });
+          }); // END-BIND
+        });
+      } // END-SUCCESS
+    });
+  } // END-HELPRE
+
+  ajaxHelper();
+})();
+
