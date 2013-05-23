@@ -20,6 +20,8 @@ module.exports = function( grunt ) {
         "app.js",
         "lib/**/*.js",
         "app/dev/**/*.js",
+        "app/http/*.js",
+        "app/lib/*.js",
         "app/http/controllers/*.js",
         "app/http/public/js/*.js",
         "app/http/views/js/*.ejs"
