@@ -35,10 +35,13 @@
           </li>
         </ul>
       </nav>
+      <div class="my-projects-container">
+        <iframe src="<%= audience %>/myprojects?app=consumer&email=<%= email %>"></iframe>
+      </div>
     </div>
 
     <!-- then the persona SSO include -->
-    <script src="http://webmaker.mofostaging.net/sso/include.js"></script>
+    <script src="<%= audience %>/sso/include.js"></script>
 
     <!-- if the user needs app-side logic to trigger on login/out, here's how we do that: -->
     <script>

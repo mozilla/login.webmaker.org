@@ -126,10 +126,26 @@
     });
   });
 
-  // Set up the logou button's UX
+  // Set up the logout button's UX
   var logout = $("#webmaker-logout").click(function() {
     navigator.idSSO.logout();
   });
+
+  // Set up the 'my makes' functionality.
+  var makes = $("#webmaker-nav .my-projects-container"),
+      makeButton = $("#webmaker-nav .makes button").click(function() {
+        makes.toggleClass("open");
+      });
+
+  // Window level control over updating the iframe when a consumer
+  // app knows that the publications have changed and need to be
+  // refreshed:
+  window.userBar = window.userBar || {
+    updateMakes: function() {
+      var iframe = $("iframe",makes)[0];
+      iframe.src = iframe.src;
+    }
+  };
 
   // User-defined login/logout handling
   var noop = function(){};
@@ -144,9 +160,9 @@
       loggedIn = !!cookieEmail;
 
   if(loggedIn) {
-    $("#webmaker-logout").show();
+    logout.show();
   } else {
-    $("#webmaker-login").show();
+    login.show();
   }
 
   // Start listening for Persona events
@@ -202,6 +218,7 @@
       ui.loggedOut();
       login.show();
       logout.hide();
+      makes.removeClass("open");
       $('body').removeClass("loggedin");
       // make sure the page does whatever it needs to,
       navigator.idSSO.app.onlogout();
