@@ -67,7 +67,7 @@
   padding: 0 10px;
   background: transparent;
   font-family: "Open Sans", "Helvetica Neue", sans-serif;
-  font-size: 13px; 
+  font-size: 13px;
   line-height: 1.1;
   color: #27AAE1;
   cursor: pointer;
@@ -213,7 +213,7 @@ a:hover {
 */
 /* Initial we don't want anything shown */
 #webmaker-nav {
-  .user, 
+  .user,
   .dash,
   .makes,
   #webmaker-logout,
@@ -221,11 +221,38 @@ a:hover {
     display: none;
   }
 }
-/* We're logged in - show all the things */ 
+/* We're logged in - show all the things */
 .loggedin #webmaker-nav {
-  .user, 
+  .user,
   .dash,
   .makes {
     display: block;
   }
+}
+/*********************************************************
+* My projects
+*/
+.my-projects-container {
+  display:none;
+}
+.my-projects-container iframe {
+  width: 100%;
+  height: 0;
+  z-index: 0;
+  border-bottom: 1px solid #CCC;
+  border: none;
+}
+
+.my-projects-container.open {
+  z-index: 5;
+  position: relative;
+  display: block;
+}
+
+.my-projects-container.open iframe {
+  height: 300px;
+}
+
+.my-projects-title.hidden {
+  display: none;
 }
