@@ -5,7 +5,6 @@ module.exports = function( grunt ) {
     recess: {
       dist: {
         options: {
-          "noOverQualifying": false,
           "noIDs": false,
           "noOverqualifying": false,
           "strictPropertyOrder": false
