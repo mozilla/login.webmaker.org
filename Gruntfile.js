@@ -5,9 +5,10 @@ module.exports = function( grunt ) {
     recess: {
       dist: {
         options: {
-          noOverQualifying: false,
-          noIDs: false,
-          strictPropertyOrder: false
+          "noOverQualifying": false,
+          "noIDs": false,
+          "noOverqualifying": false,
+          "strictPropertyOrder": false
         },
         src: [
           "app/http/public/css/*.less"
