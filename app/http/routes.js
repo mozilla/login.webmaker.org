@@ -22,7 +22,7 @@ module.exports = function( http, userHandle ){
 
 
   // Static pages
-  http.get('/', routes.site.index);
+  http.get('/', authenticate, routes.site.index);
   http.get('/console', authenticate, routes.site.console);
 
   // Resources
@@ -31,12 +31,12 @@ module.exports = function( http, userHandle ){
   http.get('/ajax/forms/new_user.html', routes.user.userForm);
 
   // LoginAPI
-  http.get('/user/:id', routes.user.get);
+  http.get('/user/:id', authenticate, routes.user.get);
   http.get('/users', authenticate, routes.user.all);
-  http.put('/user/:id', routes.user.update);
-  http.del('/user/:id', routes.user.del);
-  http.post('/user', routes.user.create);
-  http.get('/user/subdomain/:name', routes.user.checkSubdomain);
+  http.put('/user/:id', authenticate, routes.user.update);
+  http.del('/user/:id', authenticate, routes.user.del);
+  http.post('/user', authenticate, routes.user.create);
+  http.get('/user/subdomain/:name', authenticate, routes.user.checkSubdomain);
   http.get( '/isAdmin', authenticate, routes.user.isAdmin );
 
   // Devops
