@@ -29,9 +29,23 @@ module.exports = function ( UserHandle ) {
   };
 
   controller.get = function ( req, res ) {
-    var id = req.params.id;
+    var id = req.params.id,
+        field,
+        query = {};
 
-    UserHandle.findById( id, function ( err, user ) {
+    // Parse out field
+    // \d+ is an id, [^@]+ is subdomain, 
+    if ( id.match(/^\d+$/g) ) {
+      field = "_id";
+    } else if ( id.match(/^[^@]+$/g) ) {
+      field = "subdomain";
+    } else {
+      field = "email";
+    }
+    query[field] = id;
+
+
+    UserHandle.findOne( query, function ( err, user ) {
       if ( err ) {
         metrics.increment( "user.get.error" );
         res.json( 500, { error: err, user: null } );

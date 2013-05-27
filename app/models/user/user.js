@@ -23,7 +23,8 @@ module.exports = function ( connection ) {
   var schema = new connection.Schema({
     _id: {
       type: String,
-      required: true
+      required: true,
+      unique: true
     },
     email: {
       type: String,
@@ -34,6 +35,8 @@ module.exports = function ( connection ) {
     /**
      * subdomain - the user's chosen subdomain. This is also
      * the user's shortname/nickname, like Twitter's @name.
+     *
+     * unique index
      */
     subdomain: {
       type: String,
