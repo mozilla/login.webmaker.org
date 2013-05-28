@@ -7,7 +7,7 @@ module.exports = function( http, userHandle ){
         user: require('./controllers/user')(userHandle)
       },
       userList = env.get( "ALLOWED_USERS" );
-  
+
   userList = qs.parse( userList, ",", ":" );
 
   // Shared middleware
@@ -22,8 +22,8 @@ module.exports = function( http, userHandle ){
 
 
   // Static pages
-  http.get('/', authenticate, routes.site.index);
-  http.get('/console', authenticate, routes.site.console);
+  http.get('/', routes.site.index);
+  http.get('/console', routes.site.console);
 
   // Resources
   http.get('/js/sso-ux.js', routes.site.sso);
@@ -31,13 +31,13 @@ module.exports = function( http, userHandle ){
   http.get('/ajax/forms/new_user.html', routes.user.userForm);
 
   // LoginAPI
-  http.get('/user/:id', authenticate, routes.user.get);
-  http.get('/users', authenticate, routes.user.all);
-  http.put('/user/:id', authenticate, routes.user.update);
-  http.del('/user/:id', authenticate, routes.user.del);
-  http.post('/user', authenticate, routes.user.create);
-  http.get('/user/subdomain/:name', authenticate, routes.user.checkSubdomain);
-  http.get( '/isAdmin', authenticate, routes.user.isAdmin );
+  http.get('/user/:id', routes.user.get);
+  http.get('/users', routes.user.all);
+  http.put('/user/:id', routes.user.update);
+  http.del('/user/:id', routes.user.del);
+  http.post('/user', routes.user.create);
+  http.get('/user/subdomain/:name', routes.user.checkSubdomain);
+  http.get( '/isAdmin', routes.user.isAdmin );
 
   // Devops
   http.get('/healthcheck', routes.site.healthcheck);
