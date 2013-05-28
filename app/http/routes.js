@@ -35,7 +35,7 @@ module.exports = function( http, userHandle ){
   http.get('/users', routes.user.all);
   http.put('/user/:id', routes.user.update);
   http.del('/user/:id', authenticate, routes.user.del);
-  http.post('/user', authenticate, routes.user.create);
+  http.post('/user', routes.user.create);
   http.get('/user/subdomain/:name', authenticate, routes.user.checkSubdomain);
   http.get( '/isAdmin', authenticate, routes.user.isAdmin );
 
