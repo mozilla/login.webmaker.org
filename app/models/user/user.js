@@ -24,7 +24,8 @@ module.exports = function ( connection ) {
     _id: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
+      validate: validate('isEmail')
     },
     email: {
       type: String,

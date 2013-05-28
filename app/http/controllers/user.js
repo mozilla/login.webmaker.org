@@ -10,7 +10,6 @@ module.exports = function ( UserHandle ) {
 
   controller.create = function ( req, res ) {
     var userInfo = req.body;
-
     userInfo._id = userInfo.email;
 
     var user = new UserHandle( userInfo );
@@ -33,8 +32,7 @@ module.exports = function ( UserHandle ) {
         field,
         query = {};
 
-    // Parse out field
-    // \d+ is an id, [^@]+ is subdomain, 
+    // Parse out field type
     if ( id.match(/^\d+$/g) ) {
       field = "_id";
     } else if ( id.match(/^[^@]+$/g) ) {
@@ -43,7 +41,6 @@ module.exports = function ( UserHandle ) {
       field = "email";
     }
     query[field] = id;
-
 
     UserHandle.findOne( query, function ( err, user ) {
       if ( err ) {
@@ -66,12 +63,31 @@ module.exports = function ( UserHandle ) {
     var userInfo = req.body,
         id = req.params.id;
 
-    UserHandle.findByIdAndUpdate( id, userInfo, function ( err, user ) {
+    UserHandle.findById( id, function ( err, user ) {
       if ( err || !user ) {
         metrics.increment( "user.update.error" );
         res.json( 404, { error: err || "User not found for ID: " + id, user: null } );
         return;
-      }
+      }      
+
+      // Selectively update the user model
+      Object.keys( userInfo ).forEach( function ( key ) {
+        user[ key ] = userInfo[ key ];
+      });
+
+      user.save( function ( err ) {
+        metrics.increment( "user.update.error" );
+        res.json( 404, { error: err, user: null } );
+      });
+      
+   });
+
+    UserHandle.findById( id, function ( err, user ) {
+      if ( err || !user ) {
+        metrics.increment( "user.update.error" );
+        res.json( 404, { error: err || "User not found for ID: " + id, user: null } );
+        return;
+      }      
 
       metrics.increment( "user.update.success" );
       res.json( { error: null, user: user } );
