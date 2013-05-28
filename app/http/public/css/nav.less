@@ -68,25 +68,30 @@
   background: transparent;
   font-family: "Open Sans", "Helvetica Neue", sans-serif;
   font-size: 13px;
-  line-height: 1.1;
+  line-height: 1;
   color: #27AAE1;
   cursor: pointer;
   span {
     background: #27AAE1;
     color: #fff;
-    padding: 0.5em;
+    padding: 6px 1em 6px 0.5em;
     margin-left: 24px;
     position: relative;
     &:before {
       content: "";
-      border-right: 14px solid #27AAE1;
-      border-top: 14px solid transparent;
-      border-bottom: 14px solid transparent;
+      /*
+       * Yes this is weird - opensans makes things 2px higher than it should 
+       * be meaning we need what look like extra pixels than we should need
+       */
+      border-right: 15px solid #27AAE1;
+      border-top: 15px solid transparent;
+      border-bottom: 15px solid transparent;
+      line-height: 1;
       width: 0;
       height: 0;
       position: absolute;
       top: 0;
-      left: -14px;
+      left: -15px;
     }
   }
 }
