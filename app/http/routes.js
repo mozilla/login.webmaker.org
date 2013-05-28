@@ -22,8 +22,8 @@ module.exports = function( http, userHandle ){
 
 
   // Static pages
-  http.get('/', routes.site.index);
-  http.get('/console', routes.site.console);
+  http.get('/', authenticate, routes.site.index);
+  http.get('/console', authenticate, routes.site.console);
 
   // Resources
   http.get('/js/sso-ux.js', routes.site.sso);
@@ -34,10 +34,10 @@ module.exports = function( http, userHandle ){
   http.get('/user/:id', routes.user.get);
   http.get('/users', routes.user.all);
   http.put('/user/:id', routes.user.update);
-  http.del('/user/:id', routes.user.del);
-  http.post('/user', routes.user.create);
-  http.get('/user/subdomain/:name', routes.user.checkSubdomain);
-  http.get( '/isAdmin', routes.user.isAdmin );
+  http.del('/user/:id', authenticate, routes.user.del);
+  http.post('/user', authenticate, routes.user.create);
+  http.get('/user/subdomain/:name', authenticate, routes.user.checkSubdomain);
+  http.get( '/isAdmin', authenticate, routes.user.isAdmin );
 
   // Devops
   http.get('/healthcheck', routes.site.healthcheck);
