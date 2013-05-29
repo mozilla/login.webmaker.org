@@ -14,7 +14,9 @@ module.exports = function( http, userHandle ){
   var authenticate = basicAuth( function( user, pass ) {
       for ( var username in userList ) {
         if ( userList.hasOwnProperty( username ) ) {
-          return ( user === username && pass === userList[ username ] );
+          if ( user === username && pass === userList[ username ] ) {
+            return true;
+          }
         }
       }
       return false;
