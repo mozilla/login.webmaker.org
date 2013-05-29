@@ -36,7 +36,7 @@ Bugs can be found in Bugzilla - this is what <a href="https://bugzilla.mozilla.o
 
 If you wish to use the webmaker user bar in your webmaker.org app, you will need to implement the following steps.
 
-### 1. Add express-personaand the webmaker-loginapi modules
+### 1. Add express-persona and the webmaker-loginapi modules
 
 Your app will need to be able to speak to persona (for server-side validation and logout), as well as the webmaker login API. You will need the `express-persona`, https://github.com/jbuck/express-persona, and `webmaker-loginapi`, https://github.com/mozilla/node-webmaker-loginapi, modules installed.
 
