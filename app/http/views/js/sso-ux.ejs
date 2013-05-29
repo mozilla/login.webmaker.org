@@ -34,10 +34,10 @@
         dataType: "json",
         success: function(resp) {
           ui.existingMaker({
-            name: resp.user.subdomain,
+            name: resp.user.username,
             hash: resp.user.emailHash
           });
-          callback(null, userData.loggedInUser, resp.user.subdomain);
+          callback(null, userData.loggedInUser, resp.user.username);
         },
         error: function(resp) {
           if (resp.status === 404) {
@@ -78,15 +78,15 @@
               data: {
                 "_id": loggedInUser,
                 "email": loggedInUser,
-                "subdomain": $('#subdomain').val()
+                "username": $('#username').val()
               },
               success: function(resp) {
                 ui.existingMaker({
-                  name: resp.user.subdomain,
+                  name: resp.user.username,
                   hash: resp.user.emailHash
                 });
                 $formContainer.slideUp();
-                callback(null, loggedInUser, resp.user.subdomain);
+                callback(null, loggedInUser, resp.user.username);
               },
               error: function(resp) {
                 // TODO - handle errors
@@ -185,12 +185,12 @@
               success: function(res, status, xhr) {
                 console.log("xhr success (2): ", res);
                 if (res.status === "failed") {
-                  console.log("odd error condition: user has a subdomain ("+displayName+"), "+
+                  console.log("odd error condition: user has a username ("+displayName+"), "+
                               "but webmaker-loginAPI at the consumer can't find it");
                   navigator.idSSO.logout();
-                } else if (res.user.subdomain !== displayName) {
-                  console.log("odd error condition: user has a subdomain ("+displayName+"), "+
-                              "but webmaker-loginAPI reported a different name ("+res.user.subdomain+")");
+                } else if (res.user.username !== displayName) {
+                  console.log("odd error condition: user has a username ("+displayName+"), "+
+                              "but webmaker-loginAPI reported a different name ("+res.user.username+")");
                   navigator.idSSO.logout();
                 } else {
                   // login succeeded, show this user as logged in

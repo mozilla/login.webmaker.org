@@ -1,9 +1,9 @@
 <div class="webmaker-create-user">
   <form id="sso_create" action="<%= process.env.AUDIENCE %>/user" method="POST">
     <legend>Claim your webmaker space</legend>
-    <div class="display-subdomain-container row">
-      <label for="subdomain" class="visually-hidden">Display subdomain</label>
-      <input class="display-subdomain-input" type="text" name="subdomain" id="subdomain" required> .webmaker.org
+    <div class="display-username-container row">
+      <label for="username" class="visually-hidden">Display username</label>
+      <input class="display-username-input" type="text" name="username" id="username" required> .webmaker.org
     </div>
     <div class="row">
       <input type="checkbox" name="terms" id="terms" class="inline" required>

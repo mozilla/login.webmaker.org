@@ -9,24 +9,24 @@
   },
   "dependencies": {
     "badword": "0.0.1",
-    "ejs": "~0.8.3",
+    "ejs": "0.8.4",
     "express-persona": "0.0.6",
-    "express": "~3.1.0",
-    "habitat": "~0.4.1",
-    "less-middleware": "0.1.9",
+    "express": "3.2.5",
+    "habitat": "0.4.2",
+    "less-middleware": "0.1.11",
     "MD5": "1.0.3",
     "mongoose": "3.6.11",
-    "mongoose-validator": "~0.2.1",
+    "mongoose-validator": "0.2.1",
     "newrelic": "0.9.20",
     "node-statsd": "0.0.7",
-    "winston": "~0.6.2",
-    "webmaker-loginapi": "0.1.0"
+    "winston": "0.7.1",
+    "webmaker-loginapi": "0.1.1"
   },
   "devDependencies": {
-    "grunt": "~0.4.1",
+    "grunt": "0.4.1",
     "grunt-recess": "0.3.3",
-    "grunt-contrib-jshint": "~0.4.3",
-    "mocha": "~1.9.0",
+    "grunt-contrib-jshint": "0.4.3",
+    "mocha": "1.9.0", 
     "request": "2.20.0"
   },
   "scripts": {

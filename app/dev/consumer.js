@@ -70,11 +70,11 @@ env.get("DEV_PORTS").split(/\s+/).forEach(function(APP_PORT) {
         });
       }
 
-      // Bind the webmakerid for this user in the cookie.
+      // Bind the username for this user in the cookie.
       // Note that doing so means your operations need
-      // to make sure that email and webmakerid are set.
-      // Simply checking webmakerid is not secure.
-      req.session.webmakerid = user.subdomain;
+      // to make sure that email and username are set.
+      // Simply checking username is not secure.
+      req.session.username = user.username;
 
       // respond with the found user domain
       res.json({
