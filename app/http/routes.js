@@ -38,7 +38,7 @@ module.exports = function( http, userHandle ){
   http.put('/user/:id', routes.user.update);
   http.del('/user/:id', authenticate, routes.user.del);
   http.post('/user', routes.user.create);
-  http.get('/user/subdomain/:name', authenticate, routes.user.checkSubdomain);
+  http.get('/user/username/:name', authenticate, routes.user.checkUsername);
   http.get( '/isAdmin', authenticate, routes.user.isAdmin );
 
   // Devops

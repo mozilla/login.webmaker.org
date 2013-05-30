@@ -33,7 +33,7 @@ function stopServer( done ) {
 }
 
 /**
- * Api functions 
+ * Api functions
  */
 
 function apiHelper( verb, uri, httpCode, data, callback, customAssertions ) {
@@ -75,7 +75,7 @@ function apiHelper( verb, uri, httpCode, data, callback, customAssertions ) {
  * -
  * obj.watchUser: Track the passed user
  * obj.unwatchUser: Stop tracking the passed user
- * obj.userCleanup: Deletes all test users from database backend
+ * obj.userCleanup: Deletes all tracked users from database backend
  */
 var userTracer = (function() {
   var newUsers = [];
@@ -129,7 +129,7 @@ function unique() {
   var u = ( ++now ).toString( 36 );
   return {
     email: u + '@email.com',
-    subdomain: u
+    username: u
   };
 }
 
@@ -149,7 +149,7 @@ describe( 'POST /user (create)', function() {
     stopServer( done );
   });
 
-  it( 'should error when missing required subdomain', function( done ) {
+  it( 'should error when missing required username', function( done ) {
     apiHelper( 'post', api, 404, { email: unique().email }, done );
   });
 
@@ -163,44 +163,44 @@ describe( 'POST /user (create)', function() {
     });
   });
 
-  it( 'should error when subdomain is too long', function( done ) {
+  it( 'should error when username is too long', function( done ) {
     var user = unique();
-    user.subdomain = "123456789012345678901";
+    user.username = "123456789012345678901";
 
     apiHelper( 'post', api, 404, user, done );
   });
 
-  it( 'should error when subdomain is too short', function( done ) {
+  it( 'should error when username is too short', function( done ) {
     var user = unique();
-    user.subdomain = "";
+    user.username = "";
 
     apiHelper( 'post', api, 404, user, done );
   });
 
-  // Test subdomain for 404 on illegal characters
+  // Test username for 404 on illegal characters
   illegalChars.forEach( function( badString ) {
-    it( 'should error when subdomain contains the illegal character "' + badString + '"', function( done ) {
+    it( 'should error when username contains the illegal character "' + badString + '"', function( done ) {
       var user = unique();
-      user.subdomain = badString;
+      user.username = badString;
 
       apiHelper( 'post', api, 404, user, done );
     });
   });
 
-  it( 'should error when subdomain contains a bad word ("damn" is being tested)', function( done ) {
+  it( 'should error when username contains a bad word ("damn" is being tested)', function( done ) {
     var user = unique();
-    user.subdomain = "damn";
+    user.username = "damn";
 
     apiHelper( 'post', api, 404, user, done );
   });
 
-  it( 'should error when subdomain already exists', function ( done ) {
+  it( 'should error when username already exists', function ( done ) {
     var user = unique();
 
-    // Create a user, then create another one with the same subdomain
+    // Create a user, then create another one with the same username
     apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
       var newUser = unique();
-      newUser.subdomain = user.subdomain;
+      newUser.username = user.username;
 
       apiHelper( 'post', api, 404, newUser, done );
     });
@@ -272,12 +272,12 @@ describe( 'PUT /user/:id (update)', function() {
     stopServer( done );
   });
 
-  it( "should update a user when new, valid, subdomain is passed", function ( done ) {
+  it( "should update a user when new, valid, username is passed", function ( done ) {
     var user = unique();
 
-    // Create a user, then update it with a unique subdomain
+    // Create a user, then update it with a unique username
     apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
-      user.subdomain = unique().subdomain;
+      user.username = unique().username;
 
       apiHelper( 'put', hostAuth + "/user/" + user.email, 200, user, done );
     });
@@ -299,12 +299,12 @@ describe( 'PUT /user/:id (update)', function() {
     apiHelper( 'put', hostAuth + "/user/" + unique().email, 404, {}, done );
   });
 
-  it( 'should error when updating a user with an invalid subdomain', function ( done ) {
+  it( 'should error when updating a user with an invalid username', function ( done ) {
     var user = unique();
 
     // Create user
     apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
-      user.subdomain = "damn";
+      user.username = "damn";
 
       // Update user
       apiHelper( 'put', hostAuth + "/user/" + user.email, 404, user, done );
@@ -369,12 +369,12 @@ describe( 'GET /user/:id', function() {
     });
   });
 
-  it( 'should successfully return an account when attempting the retrieve an existing user by subdomain', function ( done ) {
+  it( 'should successfully return an account when attempting the retrieve an existing user by username', function ( done ) {
     var user = unique();
     
     // Create a user, then attempt to retrieve it 
     apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
-      apiHelper( 'get', hostAuth + "/user/" + user.subdomain, 200, {}, done );
+      apiHelper( 'get', hostAuth + "/user/" + user.username, 200, {}, done );
     });
   });
 
