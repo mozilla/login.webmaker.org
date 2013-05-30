@@ -36,7 +36,7 @@ module.exports = function ( UserHandle ) {
     if ( id.match(/^\d+$/g) ) {
       field = "_id";
     } else if ( id.match(/^[^@]+$/g) ) {
-      field = "subdomain";
+      field = "username";
     } else {
       field = "email";
     }
@@ -140,27 +140,27 @@ module.exports = function ( UserHandle ) {
     });
   };
 
-  controller.checkSubdomain = function ( req, res ) {
+  controller.checkUsername = function ( req, res ) {
 
     var name = req.param( 'name' ),
       badword = require( 'badword' );
     
-    UserHandle.count({ subdomain: name }, function ( err, count ) {
+    UserHandle.count({ username: name }, function ( err, count ) {
       if ( err ) {
         res.json( 500, { error: err } );
         return;
       }      
       
       if ( count ) {
-        return res.json( 200, "subdomain given in '" +
+        return res.json( 200, "username given in '" +
                               name + "' is good and being used" );
       }
 
       if ( badword( name ) ) {
-        return res.json( 406, "subdomain given in '" +
+        return res.json( 406, "username given in '" +
                      name + "' is blacklisted" );
       }
-      res.json( 404, "subdomain given in '" +
+      res.json( 404, "username given in '" +
                       name + "' is available" );  
     });
   }; 

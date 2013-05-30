@@ -7,14 +7,14 @@ mongoose_validator.extend( 'isBlackListed', function() {
   return !badword(this.str);
 }, "Oooooh that's a bad word");
 
-mongoose_validator.extend( 'isDomain', function () {
+mongoose_validator.extend( 'isUsername', function () {
   var str = this.str;
 
   return ( "string" === typeof( str ) &&
     ( str.length <= 20 && str.length >= 1 ) &&
     str.search(/^[a-zA-Z0-9\-\_]+$/) !== -1
   );
-}, "Invalid subdomain. All subdomains must be between 1-20 characters, and only include \"-\", \"_\" and alphanumeric characters");
+}, "Invalid username. All usernames must be between 1-20 characters, and only include \"-\", \"_\" and alphanumeric characters");
 
 // Exports
 module.exports = function ( connection ) {
@@ -34,16 +34,16 @@ module.exports = function ( connection ) {
       validate: validate('isEmail')
     },
     /**
-     * subdomain - the user's chosen subdomain. This is also
-     * the user's shortname/nickname, like Twitter's @name.
+     * username - the user's chosen username, like Twitter's @name.
+     * This is also the user's subdomain.
      *
      * unique index
      */
-    subdomain: {
+    username: {
       type: String,
       required: true,
       unique: true,
-      validate: [validate('isDomain'), validate('isBlackListed')]
+      validate: [validate('isUsername'), validate('isBlackListed')]
     },
     /**
      * fullName - the user's [optional] real name
@@ -88,10 +88,10 @@ module.exports = function ( connection ) {
 
   /**
    * Some sugar around the user's display name. We prefer
-   * fullName if we have it, but fallback to subdomain.
+   * fullName if we have it, but fallback to username.
    */
   schema.virtual( 'displayName' ).get( function() {
-    return this.fullName || this.subdomain;
+    return this.fullName || this.username;
   });
 
   /**

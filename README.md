@@ -17,7 +17,7 @@ Once you have those you can get things up and running by:
 
 Head to either <a href="http://localhost:3001">http://localhost:3001</a> or <a href="http://localhost:3002">http://localhost:3002</a> (or both) and sign in.
 
-On first-time login, the page will slide down a dialog that lets you pick a subdomain to use. Fill in something interesting, accept the terms, and continue. On subsequent logins, you will not be faced with this dialog.
+On first-time login, the page will slide down a dialog that lets you pick a username to use. Fill in something interesting, accept the terms, and continue. On subsequent logins, you will not be faced with this dialog.
 
 ### Tests
 
@@ -152,30 +152,11 @@ Add the following snippet to you HTML `<head>` section, and render it based on t
 
 If `req.session.email` is known during page serving, the user may already be logged in and this value should be the user's Persona email address. If it is not set, this value should be an empty string.
 
-### 10 Set up a /user/:id route in your app
+### 10 Include the `webmaker-loginapi` node module in your app
 
-Finally, add the Login API user route to your app.js:
+Add `webmaker-loginapi` to your package.json, and follow its instructions in the README at https://github.com/mozilla/node-webmaker-loginapi. The module will give your app a new route, `/user/:userid`, which can be used to get a user's Webmaker username. 
 
-```javascript
-app.get( "/user/:userid", function( req, res ) {
-  loginAPI.getUser(req.session.email, function(err, user) {
-    if(err || !user) {
-      return res.json({
-        status: "failed",
-        reason: (err || "user not defined")
-      });
-    }
-    req.session.webmakerid = user.subdomain;
-    res.json({
-      status: "okay",
-      user: user
-    });
-  });
-});
-```
-
-This will let you use `req.session.webmakerid` in the rest of your code.
-
+Calling the route with a Persona email as userid will either set a session value `req.session.username` to the user's Webmaker username, if they have one, or will not add the `username` property on `req.session`, signalling that the user is either unknown entirely, or does not have a username associated with his or her Persona login. For more detailed information, see the node-webmaker-loginapi repository.
 
 ## New Relic
 
