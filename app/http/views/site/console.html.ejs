@@ -7,22 +7,74 @@
   </head>
   <body>
     <div class="row">
-      <h2> Admin console</h2>
-      <div class="span4 offset2">
-        <h2>User permissions</h2>
+      <div class="span10 offset2">
+        <h2> Admin console | LoginAPI</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="span8 offset2">
+        <h4>User List</h2>
 
-        <table class="table">
+        <table class="table well well-small">
           <thead>
             <tr>
               <th>User ID</th>
-              <th colspan="2">Permissions</th>
+              <th>Permissions</th>
           </thead>
-          <tbody id="table">
+          <tbody id="users">
           </tbody>
         </table>
       </div>
-      <div class="span4">
+      <div class="span6">
+        <h4>Add a user</h4>
 
+        <table class="table well well-small">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>Data</th>
+          </thead>
+          <tbody>
+            <tr>
+              <td><p class="pull-right">User ID</p></td>
+              <td><input id="_id" value="" readonly /></td>
+            </tr>
+            <tr>
+              <td><p class="pull-right">Email</p></td>
+              <td><input id="email" value="" /></td>
+            </tr>
+            <tr>
+              <td><p class="pull-right">Username/Subdomain</p></td>
+              <td><input maxlength="20" size="20" value="" id="username" /></td>
+            </tr>
+            <tr>
+              <td><p class="pull-right">Full Name</p></td>
+              <td><input value="" id="fullname" /></td>
+            </tr>
+            <tr>
+              <td><p class="pull-right">Admin Permissions</p></td>
+              <td><input type="checkbox" value="true" id="isAdmin" /></td>
+            </tr>
+            <tr>
+              <td><p class="pull-right">Account suspended?</p></td>
+              <td><input type="checkbox" value="true" id="isSuspended" /></td>
+            </tr>
+            <tr>
+              <td><p class="pull-right">Communications</p></td>
+              <td>
+                <input type="checkbox" value="true" id="sendEngagements" />  Engagements<br />
+                <input type="checkbox" value="true" id="sendNotifications" />  Notifications
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <input type="hidden" value="true" id="newUser" />
+                <button class="pull-right" id="clear">Clear Form</button>
+                <button class="pull-right" id="submit">Save/Update</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
