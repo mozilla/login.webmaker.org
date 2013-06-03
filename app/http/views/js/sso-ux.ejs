@@ -46,7 +46,6 @@
             return false;
           }
           // TODO - handle errors - at this point it's a new error!
-          console.log(resp, 'failure');
           return false;
         }
       });
@@ -90,7 +89,6 @@
               },
               error: function(resp) {
                 // TODO - handle errors
-                console.log(resp, 'failure');
                 return false;
               }
             });
@@ -183,14 +181,9 @@
               url: "/user/" + loggedInUser,
               dataType: "json",
               success: function(res, status, xhr) {
-                console.log("xhr success (2): ", res);
                 if (res.status === "failed") {
-                  console.log("odd error condition: user has a username ("+displayName+"), "+
-                              "but webmaker-loginAPI at the consumer can't find it");
                   navigator.idSSO.logout();
                 } else if (res.user.username !== displayName) {
-                  console.log("odd error condition: user has a username ("+displayName+"), "+
-                              "but webmaker-loginAPI reported a different name ("+res.user.username+")");
                   navigator.idSSO.logout();
                 } else {
                   // login succeeded, show this user as logged in
@@ -202,14 +195,12 @@
                 }
               },
               error: function(xhr, status, err) {
-                console.log("xhr failed (2): ", err);
                 navigator.idSSO.logout();
               }
             });
           });
         },
         error: function(xhr, status, err) {
-          console.log("xhr failed: ", err);
           navigator.idSSO.logout();
         }
       });
@@ -223,7 +214,6 @@
       // make sure the page does whatever it needs to,
       navigator.idSSO.app.onlogout();
       // and make sure the app knows we're logged out.
-      console.log("calling persona/logout");
       $.ajax({
         type: "POST",
         url: "/persona/logout",
