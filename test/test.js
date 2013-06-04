@@ -44,8 +44,8 @@ function apiHelper( verb, uri, httpCode, data, callback, customAssertions ) {
   } else {
     data = data || {};
   }
-  callback = callback || function(){},
-  assertion = customAssertions || function ( err, res, body, callback ) {
+  callback = callback || function(){};
+  var assertion = customAssertions || function ( err, res, body, callback ) {
     assert.ok( !err );
     assert.equal( res.statusCode, httpCode );
     callback( err, res, body );
