@@ -12,6 +12,7 @@ var express     = require('express'),
     util        = require('util'),
     application = require('./controllers/application'),
     env         = require('../../config/environment'),
+    helmet      = require('helmet'),
     mongo       = require('../../lib/mongoose')(env),
     User        = require('../models/user')(mongo.conn),
     persona     = require("express-persona"),
@@ -29,6 +30,10 @@ http.configure(function(){
   http.use(mongo.healthCheck);
   http.use(application.allowCorsRequests);
   http.use(express.logger());
+  if (!!env.get('FORCE_SSL')) {
+    http.use(helmet.hsts());
+    http.enable('trust proxy');
+  }
   http.use(express.static( path.join(__dirname, 'public')));
   http.use(express.cookieParser());
   http.use(express.bodyParser());
@@ -37,6 +42,7 @@ http.configure(function(){
     key: "login.sid",
     secret: env.get('SESSION_SECRET'),
     cookie: {
+      secure: !!env.get('FORCE_SSL'),
       maxAge: 2678400000 // 31 days
     },
     proxy: true
