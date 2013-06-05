@@ -31,6 +31,6 @@
     "request": "2.20.0"
   },
   "scripts": {
-    "test": "grunt travis --verbose && mocha --reporter spec"
+    "test": "grunt travis --verbose && mocha --timeout 10000 --reporter spec"
   }
 }
