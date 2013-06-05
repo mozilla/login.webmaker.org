@@ -104,10 +104,6 @@ http.configure('production', function(){
   http.use(express.errorHandler());
 });
 
-process.on('uncaughtException', function(err) {
-  logger.error(err);
-});
-
 route( http, User );
 
 http.listen( env.get('PORT'), function() {
