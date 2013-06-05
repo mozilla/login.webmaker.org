@@ -24,7 +24,7 @@ exports.console = function( req, res ){
 exports.consolejs = function( req, res ){
   res.set('Content-Type', 'application/javascript');
   res.render( 'js/console.js.ejs', {
-    loginUri: env.get( "HOSTNAME" ) + ( env.get( "PORT" ) ? ":" + env.get( "PORT" ) : '' )
+    loginUri: env.get( "HOSTNAME" )
   });
 };
 
@@ -34,7 +34,7 @@ exports.consolejs = function( req, res ){
 exports.sso = function(req,res) {
 	res.set('Content-Type', 'application/javascript');
 	res.render('js/sso-ux', {
-    hostname: env.get('HOSTNAME') + (env.get('PORT') ? ":" + env.get("PORT"): '')
+    hostname: env.get('HOSTNAME')
   });
 };
 

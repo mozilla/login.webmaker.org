@@ -110,7 +110,6 @@ process.on('uncaughtException', function(err) {
 
 route( http, User );
 
-var port = env.get('port');
-http.listen( port, function() {
-  logger.info("HTTP server listening on port " + port + ".");
+http.listen( env.get('PORT'), function() {
+  logger.info("HTTP server listening on port " + env.get('PORT') + ".");
 });
