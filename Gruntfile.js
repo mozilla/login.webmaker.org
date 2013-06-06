@@ -10,7 +10,8 @@ module.exports = function( grunt ) {
           "strictPropertyOrder": false
         },
         src: [
-          "app/http/public/css/*.less"
+          "app/http/public/css/nav.less",
+          "app/http/public/css/account.less"
         ]
       }
     },

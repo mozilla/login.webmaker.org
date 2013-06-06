@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="persona-email" content="<%= email %>">
+  <title>Webmaker</title>
+  <link rel="stylesheet" href="/css/account.css">
+  <link rel="stylesheet" href="/css/nav.css">
+</head>
+<body>
+  <div id="webmaker-nav">
+  <!-- the webmaker bar -->
+  <nav class="webmaker-nav-container">
+    <a id="logo" href="https://webmaker.org"><img src="/img/webmaker-logo.png" alt="Mozilla Webmaker" /></a>
+    <ul class="webmaker-nav user-info">
+      <li class="user">
+        Hi <span id="identity" class="user-name-container"></span>
+      </li>
+      <li>
+        <button id="webmaker-login">Sign in <span>Sign up</span></button>
+        <button id="webmaker-logout">Sign out</button>
+      </li>
+    </ul>
+  </nav>
+  <div class="my-projects-container">
+  </div>
+</div>
+<div class="wm-user-panel">
+  <div class="ui-wrapper ui-body">
+      <div class="ui-poster">
+        <div class="ui-row">
+          <div class="g-3">
+            <div id="user-avatar" class="ui-circle-frame"></div>
+          </div>
+          <div class="g-5">
+            <h1>Hi <span class="wm-username"></span>!</h1>
+            <ul class="user-info-list">
+              <li><span class="field-label">Username</span><span class="wm-username"></span></li>
+              <li><span class="field-label">Email</span><span class="wm-email"></span></li>
+            </ul>
+            <p><a id="delete-account">Delete account?</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="confirm-delete" class="ui-wrapper ui-body">
+      <h2>Are you sure you want to leave?</h2>
+      <p>Enter your email to confirm:</p>
+      <p><input id="email-check"></p>
+      <p><a id="delete-me" class="ui-btn">Delete me forever</a></p>
+    </div>
+  </div>
+  <div class="ui-wrapper ui-body" id="logout-message"></div>
+   </div>
+  </div>
+  <script src="/js/ext/require.js" data-main="/js/account"></script>
+</body>
+</html>

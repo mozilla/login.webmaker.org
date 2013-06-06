@@ -1,6 +1,6 @@
 (function() {
   // Cache config
-  var loginUri = "<%= loginUri %>";
+  var loginUri = "<%= hostname %>";
 
   // Cache jQuery references
   var jQuery = {
@@ -221,7 +221,7 @@
 
       // Invoke ajax helper
       ajaxHelper( {
-        uri: "<%= loginUri %>/users",
+        uri: loginUri + "/users",
         method: "get",
         data: {},
         error: error,

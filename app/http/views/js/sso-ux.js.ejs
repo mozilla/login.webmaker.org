@@ -191,7 +191,7 @@
                   login.hide();
                   logout.show();
                   $('body').addClass("loggedin");
-                  navigator.idSSO.app.onlogin(loggedInUser, displayName);
+                  navigator.idSSO.app.onlogin(loggedInUser, displayName, res.user);
                 }
               },
               error: function(xhr, status, err) {
