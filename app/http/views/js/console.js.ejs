@@ -21,14 +21,6 @@
         fullnameError: $( "#fullname-error" )
       };
 
-  // CRSF Protection
-  var csrf_token = $("meta[name='X-CSRF-Token']").attr("content");
-  $.ajaxSetup({
-    beforeSend: function(request) {
-     request.setRequestHeader('X-CSRF-Token', csrf_token);
-    }
-  });
-
   /**
    * Ajax helper
    * Expects: { 
@@ -239,7 +231,7 @@
   };
 
   /**
-   * Control Logic
+   * General event bindings
    **/  
 
   jQuery.submit.on( 'click', function() {
@@ -254,6 +246,10 @@
   jQuery.clear.on( 'click', function() {
     domHelper.clearForm();
   });
+
+  /**
+   * Control Logic
+   **/  
 
   domHelper.displayUsers();
 })();
