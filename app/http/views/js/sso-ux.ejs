@@ -45,7 +45,7 @@
             ui.newMaker(userData.loggedInUser, $('#webmaker-nav'), callback);
             return false;
           }
-          // TODO - handle errors - at this point it's a new error!
+          console.error(resp.status + resp.text);
           return false;
         }
       });
@@ -88,7 +88,7 @@
                 callback(null, loggedInUser, resp.user.username);
               },
               error: function(resp) {
-                // TODO - handle errors
+                console.error(resp.status + resp.text);
                 return false;
               }
             });
