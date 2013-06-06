@@ -1,0 +1,46 @@
+ requirejs.config({
+    baseUrl: './js',
+    paths: {
+      'jquery': 'ext/jquery-1.9.1.min',
+      'persona-sso': '<%= audience %>/sso/include'
+    },
+    shim: {
+      'persona-sso': [],
+      'sso-ux': ['jquery', 'persona-sso']
+    }
+  });
+  require(['jquery', 'persona-sso', 'sso-ux'], function ($) {
+    var personaEmail;
+
+    navigator.idSSO.app.onlogin = function( email, username, data ) {
+      personaEmail = email;
+      $("#logout-message").hide();
+      $(".wm-user-panel" ).fadeIn();
+      $(".wm-email").text( email );
+      $(".wm-username").text(username);
+      $("#user-avatar").css("background-image", "url(http://www.gravatar.com/avatar/" + data.emailHash + "?s=200)");
+    };
+
+    navigator.idSSO.app.onlogout = function() {
+      $(".wm-user-panel" ).hide();
+      $("#confirm-delete").hide();
+    };
+    $("#delete-account").click(function(e){
+      e.preventDefault();
+      $("#confirm-delete").fadeIn();
+    });
+    $("#delete-me").click(function(e){
+      if ( $("#email-check").val() === personaEmail ) {
+        $.post( "/account/delete", function( data ) {
+          if ( data.user ) {
+            $(".wm-user-panel" ).fadeOut();
+            $("#logout-message").fadeIn().text("Your user account was deleted!");
+            navigator.idSSO.logout();
+          }
+        });
+      } else {
+        alert( "Looks like that isn't your email :(" );
+      }
+    });
+
+  });

@@ -1,0 +1,89 @@
+@import "mixins";
+@import "webfonts";
+@import "ui";
+
+.wm-user-panel {
+  display: none;
+}
+
+#confirm-delete {
+  font-size: 14px;
+  display: none;
+  .width( 4 );
+  padding: 3em;
+  .border-box;
+  h2 {
+    color: @red;
+    font-weight: 200;
+    font-size: 1.5em;
+    margin-top: 0;
+  }
+  p {
+    line-height: 1.4;
+  }
+}
+
+#email-check {
+  display: block;
+  width: 100%;
+  padding: 0.7em;
+  border: 1px solid @midgrey;
+  font-size: 1em;
+  color: lighten( @grey, 10% );
+  .border-box;
+  &:focus {
+    outline: none;
+    border-color: @red;
+  }
+}
+
+#delete-me {
+  background: @red;
+  color: #FFF;
+  padding: 1em;
+  &:hover {
+    background: lighten( @red, 10% );
+  }
+}
+
+.ui-poster {
+  min-height: 0;
+  background: #FFF;
+}
+
+#user-avatar {
+  height: 150px;
+  width: 150px;
+  border-radius: 200px;
+  margin: 20px auto;
+}
+
+#logout-message {
+  display: none;
+  text-align: center;
+  font-size: 1.5em;
+  padding: 1em;
+}
+
+.ui-body h1 {
+  margin-top: 1em;
+}
+
+.field-label {
+  display: inline-block;
+  color: @midgrey;
+  width: 110px;
+  margin-right: 20px;
+}
+
+.user-info-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+iframe {
+  border: none;
+  width: 100%;
+  height: 300px;
+}

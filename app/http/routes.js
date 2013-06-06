@@ -22,14 +22,28 @@ module.exports = function( http, userHandle ){
       return false;
     });
 
+// Make sure persona is there
+  var checkpersona = function( req, res, next ) {
+    if ( req.session.email ) {
+      req.params.id = req.session.email;
+      next();
+    } else {
+      res.send( "You are not signed in :(" );
+    }
+  };
 
   // Static pages
   http.get('/', authenticate, routes.site.index);
   http.get('/console', authenticate, routes.site.console);
 
+  // Account
+  http.get('/account', routes.site.account);
+  http.post('/account/delete', checkpersona, routes.user.del);
+
   // Resources
-  http.get('/js/sso-ux.js', routes.site.sso);
-  http.get('/js/console.js', routes.site.consolejs);
+  http.get('/js/sso-ux.js', routes.site.js('sso-ux'));
+  http.get('/js/console.js', routes.site.js('console'));
+  http.get('/js/account.js', routes.site.js('account'));
   http.get('/ajax/forms/new_user.html', routes.user.userForm);
 
   // LoginAPI

@@ -7,8 +7,18 @@ var env = require('../../../config/environment');
 /**
  * GET home page.
  */
-exports.index = function(req, res){
+exports.index = function( req, res ){
   res.render('site/index');
+};
+
+/**
+ * Get account page
+ */
+exports.account = function( req, res ){
+  res.render('site/account', {
+    email: req.session.email || "",
+    audience: env.get( "AUDIENCE" )
+  });
 };
 
 /**
@@ -19,28 +29,21 @@ exports.console = function( req, res ){
 };
 
 /**
- * Get admin console
+ * Get js files
  */
-exports.consolejs = function( req, res ){
-  res.set('Content-Type', 'application/javascript');
-  res.render( 'js/console.js.ejs', {
-    loginUri: env.get( "HOSTNAME" )
-  });
-};
-
-/**
- * GET sign-in link.
- */
-exports.sso = function(req,res) {
-	res.set('Content-Type', 'application/javascript');
-	res.render('js/sso-ux', {
-    hostname: env.get('HOSTNAME')
-  });
+exports.js = function( filename ) {
+  return function( req, res ){
+    res.set('Content-Type', 'application/javascript');
+    res.render( 'js/' + filename + '.js.ejs', {
+      hostname: env.get( "HOSTNAME" ),
+      audience: env.get( "AUDIENCE" )
+    });
+  };
 };
 
 /**
  * GET health check for app
  */
-exports.healthcheck = function(req, res){
+exports.healthcheck = function( req, res ){
   res.json({ http: 'okay' });
 };
