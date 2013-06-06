@@ -157,11 +157,23 @@
       cookieEmail = emailMeta.content ? emailMeta.content : "",
       loggedIn = !!cookieEmail;
 
-  if(loggedIn) {
-    logout.show();
-  } else {
-    login.show();
-  }
+  /*
+    This code has been commented off, but not removed, due to
+    bug https://bugzilla.mozilla.org/show_bug.cgi?id=878140
+
+    We want to renable this once the dust has settled on login
+    integration in all the apps, so that cache and cookies
+    don't get in the way. Technically there is no reason for
+    this code not to work, but cookie conflicts and stale
+    cache from testing with multiple instances of apps and
+    login services make this code extremely unreliable.
+
+    if(loggedIn) {
+      logout.show();
+    } else {
+      login.show();
+    }
+  */
 
   // Start listening for Persona events
   navigator.idSSO.watch({
