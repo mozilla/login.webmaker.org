@@ -30,7 +30,7 @@
     checkMaker: function(userData, elementAnchor, callback) {
       $.ajax({
         type: "GET",
-        url: "<%= hostname %>/user/" + userData.loggedInUser,
+        url: "/user/" + userData.loggedInUser,
         dataType: "json",
         success: function(resp) {
           ui.existingMaker({
