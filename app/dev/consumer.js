@@ -9,7 +9,7 @@ var express = require( "express" ),
     persona = require( "express-persona" ),
     // module is real, username/pass are hardcoded here
     // but obviously in your own app,/ should not be.
-    loginAPI = require( "webmaker-loginapi" )( "http://testapp:testpass@localhost:3000" );
+    loginAPI = require( "webmaker-loginapi" );
 
 // THESE VALUES SHOULD COME FROM .ENV, BUT COME IN WRONG
 var HOST_PORT = 3000;
@@ -35,6 +35,7 @@ env.get("DEV_PORTS").split(/\s+/).forEach(function(APP_PORT) {
       proxy: true
     }));
     app.use( app.router );
+    loginHandle = loginAPI( app,  "http://testapp:testpass@localhost:3000"  );
   });
 
   // set up persona handling
