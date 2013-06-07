@@ -291,7 +291,7 @@ describe( 'PUT /user/:id (update)', function() {
       var newEmail = unique().email;
 
       // Update user
-      apiHelper( 'put', hostAuth + "/user/" + user.email, 200, { email: newEmail, _id: newEmail }, done );
+      apiHelper( 'put', hostAuth + "/user/" + user.email, 200, { email: newEmail }, done );
     });
   });
 

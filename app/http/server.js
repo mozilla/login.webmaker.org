@@ -14,7 +14,7 @@ var express     = require('express'),
     env         = require('../../config/environment'),
     helmet      = require('helmet'),
     mongo       = require('../../lib/mongoose')(env),
-    User        = require('../models/user')(mongo.conn),
+    userHandle  = require('../models/user')(mongo.conn),
     persona     = require("express-persona"),
     lessMiddleWare = require('less-middleware'),
     route = require('./routes'),
@@ -82,7 +82,7 @@ persona(http, {
       userInfo.email = email;
     }
 
-    User.find( { "email" : email }, function (err, User) {
+    userHandle.model.find( { "email" : email }, function (err, User) {
       if (!User.length) {
         userInfo.exists = false;
       } else {
@@ -104,7 +104,7 @@ http.configure('production', function(){
   http.use(express.errorHandler());
 });
 
-route( http, User );
+route( http, userHandle );
 
 http.listen( env.get('PORT'), function() {
   logger.info("HTTP server listening on port " + env.get('PORT') + ".");

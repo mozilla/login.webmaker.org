@@ -105,5 +105,113 @@ module.exports = function ( connection ) {
   // we need this to make the virtuals availiable in the responses
   schema.set('toJSON', { virtuals: true });
 
-  return connection.model( 'User', schema );
+  var model = connection.model( 'User', schema );
+
+  /**
+   * Model Access methods
+   */  
+  return {
+    model: model,
+
+    /**
+     * getUser( id, callback )
+     * -
+     * id: username, email or _id
+     * callback: function( err, user )
+     */      
+    getUser: function( id, callback ) {
+      var query = {},
+          field = "email";
+
+      // Parse out field type
+      if ( id.match( /^\d+$/g ) ) {
+        field = "_id";
+      } else if ( id.match( /^[^@]+$/g ) ) {
+        field = "username";
+      } 
+      query[ field ] = id;
+
+      model.findOne( query, callback );
+    },
+    /**
+     * createUser( data, callback )
+     * -
+     * data: JSON object containing user fields
+     * callback: function( err, thisUser )
+     */      
+    createUser: function( data, callback ) {
+      var user = new this.model( data );
+      // Delegates all validation to mongoose during this step
+      user.save( callback );
+    },
+
+    /**
+     * updateUser( id, data, callback )
+     * -
+     * id: username, email or _id
+     * data: JSON object containing user fields
+     * callback: function( err, user )
+     */      
+    updateUser: function ( id, data, callback ) {
+      this.getUser( id, function( err, user ) {
+        if ( err || !user  ) {
+          return callback( err || "User not found!" );
+        } 
+
+        // Selectively update the user model
+        Object.keys( data ).forEach( function ( key ) {
+          user[ key ] = data[ key ];
+        });
+
+        user.save( callback );
+      });
+    },
+
+    /**
+     * deleteUser( data, callback )
+     * -
+     * id: _id
+     * callback: function( err, thisUser )
+     */      
+    deleteUser: function ( id, callback ) {
+      model.findByIdAndRemove( id , callback );
+    },
+
+    /**
+     * getAllUsers( callback )
+     * -
+     * callback: function( err, users )
+     */      
+    getAllUsers: function ( callback ) {
+      model.find( {}, callback );
+    },
+
+    /**
+     * checkUsername( username, callback )
+     * -
+     * username: username to be checked
+     * callback: function( err, restricted )
+     */      
+    checkUsername: function( username ) {
+      UserHandle.count( { username: username }, function( error, count ){
+        // DB error
+        if ( error ) {
+          return callback( error );
+        }
+
+        // Username in use
+        if ( count ) {
+          return callback( null, true );
+        }
+
+        // Username blacklisted
+        if ( badword( name ) ) {
+          return callback( "badword" );
+        }
+
+        // By default, username availiable 
+        callback( null, false );
+      });
+    }
+  }
 };
