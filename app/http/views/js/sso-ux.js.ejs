@@ -21,7 +21,7 @@
       var placeHolder = $("#identity"),
           userElement = $('div.user-name');
       if (userData) {
-        placeHolder.text(userData.name);
+        placeHolder.html('<a href="<%= hostname %>/account">' + userData.name + '</a>');
         placeHolder.before("<img src='http://www.gravatar.com/avatar/" + userData.hash + "?s=26' alt='" + userData.hash + "' />");
       } else {
         userElement.html("<span id='identity'></span>");
