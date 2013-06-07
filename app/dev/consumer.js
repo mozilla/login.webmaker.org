@@ -5,7 +5,8 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 var express = require( "express" ),
-    env = require( "../../config/environment" ),
+    habitat     = require('habitat'),
+    env = new habitat(),
     persona = require( "express-persona" ),
     // module is real, username/pass are hardcoded here
     // but obviously in your own app,/ should not be.

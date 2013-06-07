@@ -2,8 +2,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-var env = require('../../../config/environment');
-
+var habitat = require('habitat');
+var env = new habitat();
 exports.allowCorsRequests = function(req, resp, next){
   var allowed = env.get('ALLOWED_DOMAINS').split(' '),
       origin = req.get('origin'); // TODO: Check if this is spoof-proof

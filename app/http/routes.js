@@ -1,7 +1,8 @@
 module.exports = function( http, userHandle ){
   var qs = require('querystring'),
       basicAuth = require( 'express').basicAuth,
-      env = require('../../config/environment'),
+      habitat = require('habitat'),
+      env = new habitat(),
       routes = {
         site: require('./controllers/site'),
         user: require('./controllers/user')(userHandle)
