@@ -155,7 +155,8 @@
   // Which button do we show?
   var emailMeta = document.querySelector("meta[name='persona-email']"),
       cookieEmail = emailMeta.content ? emailMeta.content : "",
-      loggedIn = !!cookieEmail;
+      loggedIn = !!cookieEmail,
+      csrfMeta = document.querySelector("meta[name='csrf-token']");
 
   /*
     This code has been commented off, but not removed, due to
@@ -183,6 +184,11 @@
         type: 'POST',
         url: '/persona/verify',
         data: {assertion: assertion},
+        beforeSend: function (request) {
+          if(csrfMeta) {
+            request.setRequestHeader("X-CSRF-Token", csrfMeta.content);
+          }
+        },
         success: function(res, status, xhr) {
           ui.checkMaker( { loggedInUser:res.email }, $("#webmaker-nav"), function (err, loggedInUser, displayName) {
             // hook-out to the owning page, so that it can perform a
