@@ -69,7 +69,25 @@
           $formContainer = $(html).appendTo( $("#webmaker-nav"));
           $formContainer.slideDown();
           $formFrag = $("#sso_create", formAnchor );
+          $mailSignUp = $('#bsd');
           $formFrag.submit( function(data) {
+            if( $mailSignUp.is(':checked') ) {
+              $.ajax({
+                type: 'POST',
+                url: 'https://sendto.mozilla.org/page/s/webmaker',
+                data: {
+                  email: $('#username').val(),
+                  'custom-1216': 1
+                },
+                success: function(resp) {
+                  return true;
+                },
+                error: function(resp) {
+                  return false;
+                }
+              });
+            }
+
             $.ajax({
               type: "POST",
               url: "<%= hostname %>/user",
