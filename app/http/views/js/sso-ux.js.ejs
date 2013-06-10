@@ -194,6 +194,15 @@
     }
   */
 
+  // set up universal CSRF handling
+  $.ajaxSetup({
+    beforeSend: function (request) {
+      if(csrfMeta) {
+        request.setRequestHeader("X-CSRF-Token", csrfMeta.content);
+      }
+    }
+  });
+
   // Start listening for Persona events
   navigator.idSSO.watch({
     // Note: 'loggedInUser:cookieEmail' yet, see https://bugzilla.mozilla.org/show_bug.cgi?id=872710
@@ -202,11 +211,6 @@
         type: 'POST',
         url: '/persona/verify',
         data: {assertion: assertion},
-        beforeSend: function (request) {
-          if(csrfMeta) {
-            request.setRequestHeader("X-CSRF-Token", csrfMeta.content);
-          }
-        },
         success: function(res, status, xhr) {
           ui.checkMaker( { loggedInUser:res.email }, $("#webmaker-nav"), function (err, loggedInUser, displayName) {
             // hook-out to the owning page, so that it can perform a
