@@ -57,11 +57,6 @@ module.exports = function( http, userHandle ){
 
   // Devops
   http.get('/healthcheck', routes.site.healthcheck);
-
-  // Dev Tools
-  //
-  // FIXME: delete this as soon as we hit prod, PLEASE!!
-  // SEE: https://bugzilla.mozilla.org/show_bug.cgi?id=872204
-  http.get('/dev/delete', routes.user.devDelete);
+  
 };
 
