@@ -17,7 +17,9 @@ exports.account = function( req, res ){
   res.render('site/account', {
     email: req.session.email || "",
     audience: env.get( "AUDIENCE" ),
-    csrf: req.session._csrf
+    csrf: req.session._csrf,
+    ga_account: env.get( "GA_ACCOUNT" ),
+    ga_domain: env.get( "GA_DOMAIN" )
   });
 };
 
