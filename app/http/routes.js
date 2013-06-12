@@ -1,6 +1,8 @@
 module.exports = function( http, userHandle ){
   var qs = require('querystring'),
-      basicAuth = require( 'express').basicAuth,
+      express = require( "express" ),
+      basicAuth = express.basicAuth,
+      csrf = express.csrf(),
       env = require('../../config/environment'),
       routes = {
         site: require('./controllers/site'),
@@ -12,7 +14,8 @@ module.exports = function( http, userHandle ){
 
   // Shared middleware
   var authenticate = basicAuth( function( user, pass ) {
-      for ( var username in userList ) {
+      var username;
+      for ( username in userList ) {
         if ( userList.hasOwnProperty( username ) ) {
           if ( user === username && pass === userList[ username ] ) {
             return true;
@@ -33,12 +36,12 @@ module.exports = function( http, userHandle ){
   };
 
   // Static pages
-  http.get('/', authenticate, routes.site.index);
-  http.get('/console', authenticate, routes.site.console);
+  http.get('/', csrf, authenticate, routes.site.index);
+  http.get('/console', csrf, authenticate, routes.site.console);
 
   // Account
-  http.get('/account', routes.site.account);
-  http.post('/account/delete', checkpersona, routes.user.del);
+  http.get('/account', csrf, routes.site.account);
+  http.post('/account/delete', csrf, checkpersona, routes.user.del);
 
   // Resources
   http.get('/js/sso-ux.js', routes.site.js('sso-ux'));
