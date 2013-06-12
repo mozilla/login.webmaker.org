@@ -33,6 +33,11 @@ module.exports = function( http, userHandle ){
     } else {
       res.send( "You are not signed in :(" );
     }
+  },
+
+  allowCSRFHeaders = function( req, res, next ) {
+    res.header( "Access-Control-Allow-Headers", "X-CSRF-Token" );
+    res.send( 200 );
   };
 
   // Static pages
@@ -56,10 +61,13 @@ module.exports = function( http, userHandle ){
   http.del('/user/:id', authenticate, routes.user.del);
   http.post('/user', routes.user.create);
   http.get('/user/username/:name', authenticate, routes.user.checkUsername);
-  http.get( '/isAdmin', authenticate, routes.user.isAdmin );
+  http.get('/isAdmin', authenticate, routes.user.isAdmin);
+
+  // Allow CSRF Headers
+  http.options( '/user', allowCSRFHeaders );
+  http.options( '/user/:id', allowCSRFHeaders );
 
   // Devops
   http.get('/healthcheck', routes.site.healthcheck);
-  
-};
 
+};

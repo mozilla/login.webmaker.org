@@ -31,6 +31,9 @@
       $.ajax({
         type: "GET",
         url: "/user/" + userData.loggedInUser,
+        headers: {
+          "X-CSRF-Token": csrfMeta.content
+        },
         dataType: "json",
         success: function(resp) {
           ui.existingMaker({
@@ -91,6 +94,9 @@
             $.ajax({
               type: "POST",
               url: "<%= hostname %>/user",
+              headers: {
+                "X-CSRF-Token": csrfMeta.content
+              },
               dataType: "json",
               data: {
                 "_id": loggedInUser,
@@ -194,15 +200,6 @@
     }
   */
 
-  // set up universal CSRF handling
-  $.ajaxSetup({
-    beforeSend: function (request) {
-      if(csrfMeta) {
-        request.setRequestHeader("X-CSRF-Token", csrfMeta.content);
-      }
-    }
-  });
-
   // Start listening for Persona events
   navigator.idSSO.watch({
     // Note: 'loggedInUser:cookieEmail' yet, see https://bugzilla.mozilla.org/show_bug.cgi?id=872710
@@ -210,6 +207,9 @@
       $.ajax({
         type: 'POST',
         url: '/persona/verify',
+        headers: {
+          "X-CSRF-Token": csrfMeta.content
+        },
         data: {assertion: assertion},
         success: function(res, status, xhr) {
           ui.checkMaker( { loggedInUser:res.email }, $("#webmaker-nav"), function (err, loggedInUser, displayName) {
@@ -219,6 +219,9 @@
             $.ajax({
               type: 'GET',
               url: "/user/" + loggedInUser,
+              headers: {
+                "X-CSRF-Token": csrfMeta.content
+              },
               dataType: "json",
               success: function(res, status, xhr) {
                 if (res.status === "failed") {
@@ -257,6 +260,9 @@
       $.ajax({
         type: "POST",
         url: "/persona/logout",
+        headers: {
+          "X-CSRF-Token": csrfMeta.content
+        },
         async: true
       });
     }
