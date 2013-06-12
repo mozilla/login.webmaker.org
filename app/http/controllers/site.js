@@ -3,7 +3,6 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 var env = require('../../../config/environment');
-
 /**
  * GET home page.
  */
@@ -17,7 +16,8 @@ exports.index = function( req, res ){
 exports.account = function( req, res ){
   res.render('site/account', {
     email: req.session.email || "",
-    audience: env.get( "AUDIENCE" )
+    audience: env.get( "AUDIENCE" ),
+    csrf: req.session._csrf
   });
 };
 
@@ -25,7 +25,9 @@ exports.account = function( req, res ){
  * Get admin console
  */
 exports.console = function( req, res ){
-  res.render( 'site/console.html.ejs' );
+  res.render( 'site/console.html.ejs', {
+    csrf: req.session._csrf || "massive error"
+  });
 };
 
 /**
