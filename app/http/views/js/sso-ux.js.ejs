@@ -140,19 +140,6 @@
     }
   };
 
-
-  // Set up the login button's UX
-  var login = $("#webmaker-login").click(function() {
-    navigator.idSSO.request({
-      siteName: document.title
-    });
-  });
-
-  // Set up the logout button's UX
-  var logout = $("#webmaker-logout").click(function() {
-    navigator.idSSO.logout();
-  });
-
   // Set up the 'my makes' functionality.
   var makes = $("#webmaker-nav .my-projects-container"),
       makeButton = $("#webmaker-nav .makes button").click(function() {
@@ -182,24 +169,6 @@
       loggedIn = !!cookieEmail,
       csrfMeta = document.querySelector("meta[name='X-CSRF-Token']");
 
-  /*
-    This code has been commented off, but not removed, due to
-    bug https://bugzilla.mozilla.org/show_bug.cgi?id=880291
-
-    We want to renable this once the dust has settled on login
-    integration in all the apps, so that cache and cookies
-    don't get in the way. Technically there is no reason for
-    this code not to work, but cookie conflicts and stale
-    cache from testing with multiple instances of apps and
-    login services make this code extremely unreliable.
-
-    if(loggedIn) {
-      logout.show();
-    } else {
-      login.show();
-    }
-  */
-
   // Start listening for Persona events
   navigator.idSSO.watch({
     // Note: 'loggedInUser:cookieEmail' yet, see https://bugzilla.mozilla.org/show_bug.cgi?id=872710
@@ -220,7 +189,7 @@
               type: 'GET',
               url: "/user/" + loggedInUser,
               headers: {
-                "X-CSRF-Token": csrfMeta.content
+                "X-CSRF-Token": csrfMeta.getAttribute("content")
               },
               dataType: "json",
               success: function(res, status, xhr) {
@@ -231,8 +200,7 @@
                 } else {
                   // login succeeded, show this user as logged in
                   // and call the on-page onlogin handler.
-                  login.hide();
-                  logout.show();
+                  $("#webmaker-nav iframe.include-frame").addClass("loggedin");
                   $('body').addClass("loggedin");
                   navigator.idSSO.app.onlogin(loggedInUser, displayName, res.user);
                 }
@@ -250,10 +218,9 @@
     },
     onlogout: function() {
       ui.loggedOut();
-      login.show();
-      logout.hide();
       makes.removeClass("open");
       $('body').removeClass("loggedin");
+      $("#webmaker-nav iframe.include-frame").removeClass("loggedin");
       // make sure the page does whatever it needs to,
       navigator.idSSO.app.onlogout();
       // and make sure the app knows we're logged out.
