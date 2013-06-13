@@ -13,11 +13,7 @@ Once you have those you can get things up and running by:
 2. Install and start up a <a href="http://docs.mongodb.org/manual/tutorial/install-mongodb-on-os-x/">local MongoDB instance</a>
 3. Create and configure a `.env` file - copy the `.env.sample` file we've provided.
 4. Install <a href="http://ddollar.github.io/foreman/">foreman</a> (if you don't have it) - `gem install foreman`
-5. Run foreman - `foreman start -f Procfile.dev`
-
-Head to either <a href="http://localhost:3001">http://localhost:3001</a> or <a href="http://localhost:3002">http://localhost:3002</a> (or both) and sign in.
-
-On first-time login, the page will slide down a dialog that lets you pick a username to use. Fill in something interesting, accept the terms, and continue. On subsequent logins, you will not be faced with this dialog.
+5. Run foreman - `foreman start -f Procfile`
 
 ### Tests
 
