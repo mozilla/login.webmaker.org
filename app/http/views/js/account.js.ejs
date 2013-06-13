@@ -40,10 +40,13 @@
     $("#delete-me").click(function(e){
       if ( $("#email-check").val() === personaEmail ) {
         $.post( "/account/delete", function( data ) {
-          if ( data.user ) {
+          if ( !data.error ) {
             $(".wm-user-panel" ).fadeOut();
             $("#logout-message").fadeIn().text("Your user account was deleted!");
             navigator.idSSO.logout();
+            setTimeout(function() { 
+              window.location.href = $("a")[0].href; 
+            }, 2000);
           }
         });
       } else {
