@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <meta name="X-CSRF-Token" content="<%= csrf %>">  
+  <meta name="X-CSRF-Token" content="<%= csrf %>">
   <meta name="persona-email" content="<%= email %>">
   <title>Webmaker</title>
   <link rel="stylesheet" href="/css/account.css">
@@ -18,8 +18,7 @@
         Hi <span id="identity" class="user-name-container"></span>
       </li>
       <li>
-        <button id="webmaker-login">Sign in <span>Sign up</span></button>
-        <button id="webmaker-logout">Sign out</button>
+        <iframe src="<%= audience%>/sso/include.html" class="include-frame"></iframe>
       </li>
     </ul>
   </nav>

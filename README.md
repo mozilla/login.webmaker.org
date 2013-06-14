@@ -78,8 +78,7 @@ For staging/dev work, you can use `http://login.mofostaging.net` instead of the 
       </li>
       <li class="makes"><button>My makes</button></li>
       <li>
-        <button id="webmaker-login">Sign in to save <span>Sign up</span></button>
-        <button id="webmaker-logout">Sign out</button>
+        <iframe src="<%= audience %>/sso/include.html" class="include-frame"></iframe>
       </li>
     </ul>
   </nav>
@@ -94,8 +93,10 @@ For staging/dev work, you can use `http://login.mofostaging.net` instead of the 
 For the best performance put this at the bottom of your HTML file, just before the closing ```</body>```
 
 ```html
-<script src="http://webmaker.mofostaging.net/sso/include.js"></script>
+<script src="<%= audience %>/sso/include.js"></script>
 ```
+
+For staging tests, this can also just be `http://webmaker.mofostaging.net`.
 
 ### 6. If you need your own login / logout event handling
 
@@ -150,7 +151,7 @@ If `req.session.email` is known during page serving, the user may already be log
 
 ### 10 Include the `webmaker-loginapi` node module in your app
 
-Add `webmaker-loginapi` to your package.json, and follow its instructions in the README at https://github.com/mozilla/node-webmaker-loginapi. The module will give your app a new route, `/user/:userid`, which can be used to get a user's Webmaker username. 
+Add `webmaker-loginapi` to your package.json, and follow its instructions in the README at https://github.com/mozilla/node-webmaker-loginapi. The module will give your app a new route, `/user/:userid`, which can be used to get a user's Webmaker username.
 
 Calling the route with a Persona email as userid will either set a session value `req.session.username` to the user's Webmaker username, if they have one, or will not add the `username` property on `req.session`, signalling that the user is either unknown entirely, or does not have a username associated with his or her Persona login. For more detailed information, see the node-webmaker-loginapi repository.
 
