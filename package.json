@@ -10,7 +10,7 @@
   "dependencies": {
     "badword": "0.0.1",
     "ejs": "0.8.4",
-    "express-persona": "0.0.6",
+    "express-persona": "0.0.9",
     "express": "3.2.5",
     "habitat": "0.4.2",
     "helmet": "0.0.9",

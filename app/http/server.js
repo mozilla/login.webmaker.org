@@ -92,8 +92,8 @@ persona(http, {
 
       res.send(userInfo);
     });
-
-  } // end verify response
+  },
+  middleware: express.csrf
 });
 
 http.configure('development', function(){
