@@ -93,7 +93,7 @@ persona(http, {
       res.send(userInfo);
     });
   },
-  middleware: express.csrf
+  middleware: express.csrf()
 });
 
 http.configure('development', function(){

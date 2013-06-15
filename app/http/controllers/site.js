@@ -24,13 +24,30 @@ exports.account = function( req, res ){
 };
 
 /**
+ * Signin page for admin console
+ */
+exports.signin = function( req, res ){
+  res.render( 'site/login.html.ejs', {
+    csrf: req.session._csrf,
+    login: req.session.email || "",
+    sso_include: env.get( "SSO_INCLUDE_URL" ),
+    loginServer: env.get("HOSTNAME"),
+    audience: env.get("AUDIENCE")
+  });
+};
+/**
  * Get admin console
  */
 exports.console = function( req, res ){
   res.render( 'site/console.html.ejs', {
-    csrf: req.session._csrf || "massive error"
+    csrf: req.session._csrf,
+    login: req.session.email || "",
+    sso_include: env.get( "SSO_INCLUDE_URL" ),
+    loginServer: env.get("HOSTNAME"),
+    audience: env.get("AUDIENCE")
   });
 };
+
 
 /**
  * Get js files
