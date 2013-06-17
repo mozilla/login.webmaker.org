@@ -16,7 +16,7 @@ module.exports = function( http, userHandle ){
    * Shared middleware
    */
 
-  // basicAuth + Persona (admin) authentication 
+  // basicAuth + Persona authentication 
   var combinedAuth = function( req, res, next ) {
     var persona = req.session.email,
         authMiddleware = basicAuth( function( user, pass ) {
@@ -37,6 +37,12 @@ module.exports = function( http, userHandle ){
           return res.json( 403, "Internal error!" );
         }
         
+        // Allow a call from the browser if the user is initiating it themself
+        if ( user.email === persona ){
+          return next();
+        }
+
+        // Allow a call from the browser if the user is an admin
         if ( user.isAdmin ) {
           return next();
         } 
@@ -105,7 +111,7 @@ module.exports = function( http, userHandle ){
 
   // LoginAPI
   http.get('/user/:id', combinedAuth, routes.user.get);
-  http.get('/users', combinedAuth, routes.user.all);
+  http.get('/users', checkPersonaAdmin, routes.user.all);
   http.put('/user/:id', combinedAuth, routes.user.update);
   http.del('/user/:id', combinedAuth, routes.user.del);
   http.post('/user', routes.user.create);
