@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="X-CSRF-Token" content="<%= csrf %>">
+  <meta name="persona-email" content="<%= email %>">
+  <meta name="hostname" content="<%= hostname %>">
+  <meta name="audience" content="<%= audience %>">
+  <title>Webmaker</title>
+  <link rel="stylesheet" href="/css/newaccount.css">
+  <link rel="stylesheet" href="/css/nav.css">
+</head>
+<body>
+  <div id="webmaker-nav">
+  <!-- the webmaker bar -->
+  <nav class="webmaker-nav-container">
+    <a id="logo" href="https://webmaker.org"><img src="/img/webmaker-logo.png" alt="Mozilla Webmaker" /></a>
+    <ul class="webmaker-nav user-info">
+      <li class="user">
+        Hi <span id="identity" class="user-name-container"></span>
+      </li>
+      <li>
+        <iframe src="<%= audience%>/sso/include.html" class="include-frame"></iframe>
+      </li>
+    </ul>
+  </nav>
+  <div class="my-projects-container">
+  </div>
+</div>
+
+<div class="wm-user-panel">
+  <div class="ui-wrapper ui-body">
+      <div id="poster" class="ui-section">
+        <img id="claim-image" src="<%= audience%>/img/img-Get-Involved-feature.jpg" alt="Get Involved">
+          <div id="claim-message">
+            <h1>Claim your webmaker domain</h1>
+            <div class="form-wrapper">
+            <form id="sso_create" action="<%= process.env.AUDIENCE %>/user" method="POST">
+              <div id="claim-label"><input id="claim-input" placeholder="you" type="text" name="username" required> .webmaker.org</div>
+
+              <p id="error-container"></p>
+
+             <div class="checkboxes">
+              <div class="row">
+                <input type="checkbox" name="bsd" id="bsd" class="inline">
+                <label for="bsd" class="inline">Send me email updates about Mozilla Webmaker and other projects</label>
+              </div>
+              <div class="row">
+                <input type="checkbox" name="terms" id="terms" class="inline" required>
+                <label for="terms" class="inline">I agree to your <a href="<%= process.env.AUDIENCE %>/terms">terms</a>
+                 and <a href="<%= process.env.AUDIENCE %>/privacy">conditions</a></label>
+              </div>
+            </div>
+            <p><button type="submit" class="sign-up" class="ui-btn">Sign up</button></p>
+          </form>
+          </div>
+        </div>
+
+      </div>
+      <div class="ui-section">
+        <div class="ui-row">
+          <div class="subtitle">Mozilla Webmaker creates software, projects and events that
+            promote digital literacy through making and sharing. We're an open source project
+            powered by makers, mentors and community leaders. We'd love you to get involved.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="<%= audience%>/sso/include.js"></script>
+  <script src="/js/ext/require.js"></script>
+  <script>
+    requirejs.config({
+      paths: {
+        'jquery': '/js/ext/jquery-1.9.1.min',
+        'sso-ux': '/js/sso-ux'
+      },
+      shim: {
+        'sso-ux': ['jquery']
+      }
+    });
+
+    require(['jquery', 'sso-ux' ],
+      function ( $ ) {
+        "use strict";
+          var $formFrag = $("#sso_create");
+          var $mailSignUp = $('#bsd');
+          var $usernameInput = $("#claim-input");
+          var $errorContainer = $("#error-container");
+          var csrf = $("meta[name='X-CSRF-Token']").attr("content");
+          var email = $("meta[name='persona-email']").attr("content");
+          var AUDIENCE = $("meta[name='audience']").attr("content");
+
+
+          $formFrag.submit( function(data) {
+            if( $mailSignUp.is(':checked') ) {
+              $.ajax({
+                type: 'POST',
+                url: 'https://sendto.mozilla.org/page/s/webmaker',
+                data: {
+                  email: $usernameInput.val(),
+                  'custom-1216': 1
+                },
+                success: function(resp) {
+                  return true;
+                },
+                error: function(resp) {
+                  return false;
+                }
+              });
+            }
+
+            $.ajax({
+              type: "POST",
+              url: "/user",
+              headers: {
+                "X-CSRF-Token": csrf
+              },
+              dataType: "json",
+              data: {
+                "_id": email,
+                "email": email,
+                "username": $usernameInput.val()
+              },
+              success: function(resp) {
+                window.location = "/account";
+              },
+              error: function(resp) {
+                var error = JSON.parse(resp.responseText);
+                console.log( error );
+                if(error.error.code === 11000 ) {
+                  $errorContainer.text("Sorry, the username "+ $usernameInput.val() + " is taken!");
+                  $usernameInput.val("");
+                }
+                return false;
+              }
+            });
+            return false;
+          });
+    });
+  </script>
+
+  <% if (ga_account) { %>
+  <script type="text/javascript">
+    var _gaq = _gaq || [],
+        domain = "<%= ga_domain %>";
+
+    _gaq.push(['_setAccount', '<%= ga_account %>']);
+    if (domain) {
+      _gaq.push(['_setDomainName', domain]);
+    }
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+  <% } %>
+
+</body>
+</html>

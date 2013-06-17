@@ -18,6 +18,41 @@ exports.account = function( req, res ){
     email: req.session.email || "",
     audience: env.get( "AUDIENCE" ),
     csrf: req.session._csrf,
+    hostname: env.get("HOSTNAME"),
+    ga_account: env.get( "GA_ACCOUNT" ),
+    ga_domain: env.get( "GA_DOMAIN" )
+  });
+};
+
+/**
+ * New account page
+ */
+exports.newaccount = function( req, res ){
+  if (req.session.username) {
+    return res.redirect("/account");
+  }
+  res.render('site/newaccount', {
+    email: req.session.email || "",
+    audience: env.get( "AUDIENCE" ),
+    csrf: req.session._csrf,
+    hostname: env.get("HOSTNAME"),
+    ga_account: env.get( "GA_ACCOUNT" ),
+    ga_domain: env.get( "GA_DOMAIN" )
+  });
+};
+
+/**
+ * Sign in with persona
+ */
+exports.persona = function( req, res ){
+  if (req.session.username) {
+    return res.redirect("/account");
+  }
+  res.render('site/persona', {
+    email: req.session.email || "",
+    audience: env.get( "AUDIENCE" ),
+    csrf: req.session._csrf,
+    hostname: env.get("HOSTNAME"),
     ga_account: env.get( "GA_ACCOUNT" ),
     ga_domain: env.get( "GA_DOMAIN" )
   });

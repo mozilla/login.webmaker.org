@@ -4,8 +4,10 @@
   <meta charset="utf-8">
   <meta name="X-CSRF-Token" content="<%= csrf %>">
   <meta name="persona-email" content="<%= email %>">
+  <meta name="hostname" content="<%= hostname %>">
+  <meta name="audience" content="<%= audience %>">
   <title>Webmaker</title>
-  <link rel="stylesheet" href="/css/account.css">
+  <link rel="stylesheet" href="/css/persona.css">
   <link rel="stylesheet" href="/css/nav.css">
 </head>
 <body>
@@ -17,48 +19,48 @@
       <li class="user">
         Hi <span id="identity" class="user-name-container"></span>
       </li>
-      <li>
-        <iframe id="persona-iframe" src="<%= audience%>/sso/include.html" class="include-frame"></iframe>
-      </li>
     </ul>
   </nav>
   <div class="my-projects-container">
   </div>
 </div>
+
 <div class="wm-user-panel">
   <div class="ui-wrapper ui-body">
-      <div class="ui-poster">
+      <div id="poster" class="ui-section">
+          <div class="ui-row">
+            <div class="g-4"><h1>Webmaker uses Persona,<br>a secure way to sign in.</h1></div>
+            <div class="g-2"><div id="persona-container">
+              <a href="#" class="persona-button"><span class="text">Sign in</span><span class="tip"></span><iframe id="persona-iframe" src="<%= audience%>/sso/sso.html"></iframe></a>
+            </div></div>
+          </div>
+      </div>
+      <div class="ui-section">
         <div class="ui-row">
-          <div class="g-3">
-            <div id="user-avatar" class="ui-circle-frame"></div>
-          </div>
-          <div class="g-5">
-            <h1>Hi <span class="wm-username"></span>!</h1>
-            <ul class="user-info-list">
-              <li><span class="field-label">Username</span><span class="wm-username"></span></li>
-              <li><span class="field-label">Email</span><span class="wm-email"></span></li>
-            </ul>
-            <p><a id="delete-account">Delete account?</a></p>
-          </div>
+          <div class="subtitle">Mozilla Webmaker creates software, projects and events that
+            promote digital literacy through making and sharing. We're an open source project
+            powered by makers, mentors and community leaders. We'd love you to get involved.</div>
         </div>
       </div>
     </div>
-    <div id="confirm-delete" class="ui-wrapper ui-body">
-      <h2>Are you sure you want to leave?</h2>
-      <p>Enter your email to confirm:</p>
-      <p><input id="email-check"></p>
-      <p><a id="delete-me" class="ui-btn">Delete me forever</a></p>
-    </div>
   </div>
-  <div class="ui-wrapper ui-body" id="logout-message"></div>
-   </div>
-  </div>
+  <script src="<%= audience%>/sso/include.js"></script>
   <script src="/js/ext/require.js"></script>
   <script>
-    requirejs.config({baseUrl: '/js'});
-    require(["account"]);
+    requirejs.config({
+      paths: {
+        'jquery': '/js/ext/jquery-1.9.1.min',
+        'sso-ux': '/js/sso-ux-require',
+      }
+    });
+    require(['jquery', 'sso-ux' ],
+      function ( $ ) {
+        "use strict";
+        navigator.idSSO.app.onlogin = function(user) {
+          window.location = "/account";
+        };
+    });
   </script>
-
   <% if (ga_account) { %>
   <script type="text/javascript">
     var _gaq = _gaq || [],
