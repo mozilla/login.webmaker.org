@@ -21,7 +21,6 @@ define([ 'jquery' ], function( $ ){
       }
     },
     checkMaker: function(userData, callback) {
-      console.log(userData);
       $.ajax({
         type: "GET",
         url: "/user/" + userData.loggedInUser,

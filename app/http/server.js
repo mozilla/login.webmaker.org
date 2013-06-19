@@ -47,6 +47,22 @@ http.configure(function(){
     },
     proxy: true
   }));
+
+  http.locals({
+    hostname: env.get('HOSTNAME'),
+    audience: env.get('AUDIENCE'),
+    ga_account: env.get('GA_ACCOUNT'),
+    ga_domain: env.get('GA_DOMAIN')
+  });
+
+  http.use(function(req, res, next){
+    res.locals({
+      email: req.session.email || "",
+      csrf: req.session._csrf
+    });
+    next();
+  });
+
   http.use(http.router);
 
   var optimize = env.get("NODE_ENV") !== "development",
@@ -61,21 +77,6 @@ http.configure(function(){
     optimization: optimize ? 0 : 2
   }));
   http.use(express.static(tmpDir));
-});
-
-http.locals({
-  hostname: env.get('HOSTNAME'),
-  audience: env.get('AUDIENCE'),
-  ga_account: env.get('GA_ACCOUNT'),
-  ga_domain: env.get('GA_DOMAIN')
-});
-
-http.use(function(req, res, next){
-  res.locals({
-    email: req.session.email || "",
-    csrf: req.session._csrf
-  });
-  next();
 });
 
 

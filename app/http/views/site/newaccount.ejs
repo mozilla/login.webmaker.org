@@ -126,7 +126,6 @@
               },
               error: function(resp) {
                 var error = JSON.parse(resp.responseText);
-                console.log( error );
                 if(error.error.code === 11000 ) {
                   $errorContainer.text("Sorry, the username "+ $usernameInput.val() + " is taken!");
                   $usernameInput.val("");
