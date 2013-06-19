@@ -45,11 +45,7 @@
         error: function(resp) {
           if (resp.status === 404) {
             // we're expecting this error for a new maker
-            if ( navigator.idSSO.app.onnewuser ) {
-              navigator.idSSO.app.onnewuser();
-            } else {
-              ui.newMaker(userData.loggedInUser, $('#webmaker-nav'), callback);
-            }
+            ui.newMaker(userData.loggedInUser, $('#webmaker-nav'), callback);
             return false;
           }
           // TODO - handle errors - at this point it's a new error!
