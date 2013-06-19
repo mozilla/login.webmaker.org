@@ -12,7 +12,7 @@ mongoose_validator.extend( 'isUsername', function () {
 
   return ( "string" === typeof( str ) &&
     ( str.length <= 20 && str.length >= 1 ) &&
-    str.search(/^[a-zA-Z0-9\-\_]+$/) !== -1
+      str.search(/^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\-\_]+$/) !== -1
   );
 }, "Invalid username. All usernames must be between 1-20 characters, and only include \"-\", \"_\" and alphanumeric characters");
 
@@ -34,8 +34,9 @@ module.exports = function ( connection ) {
       validate: validate('isEmail')
     },
     /**
-     * username - the user's chosen username, like Twitter's @name.
-     * This is also the user's subdomain.
+     * username - the lowercased version of 
+     * the user's chosen username.  It also
+     * serves as the subdomain.
      *
      * unique index
      */
@@ -46,7 +47,8 @@ module.exports = function ( connection ) {
       validate: [validate('isUsername'), validate('isBlackListed')]
     },
     /**
-     * fullName - the user's [optional] real name
+     * fullName - The original-cased version
+     * of the username, stored for future use
      */
     fullName: {
       type: String,
@@ -140,8 +142,23 @@ module.exports = function ( connection ) {
      * callback: function( err, thisUser )
      */      
     createUser: function( data, callback ) {
-      var user = new this.model( data );
-      // Delegates all validation to mongoose during this step
+      var user;
+
+      if ( !data ) {
+        return callback( "No data passed!" );
+      }
+
+      if ( !data.username ) {
+        return callback( "No username passed!" )
+      }
+
+      // Copies user input for username verbatim before lowercasing
+      data.fullName = data.username;
+      data.username = data.username.toLowerCase();
+
+      user = new this.model( data );
+
+      // Delegates all server-side validation to mongoose during this step
       user.save( callback );
     },
 
