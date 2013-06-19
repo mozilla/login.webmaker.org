@@ -4,28 +4,19 @@
 
 var env = require('../../../config/environment');
 /**
- * GET home page.
+ * GET home page - login!
  */
 exports.index = function( req, res ){
   res.render('site/index');
 };
 
 /**
- * Account, login
+ * Accounts
  */
-exports.persona = function( req, res ){
-  if (req.session.username) {
-    return res.redirect("/account");
-  }
-  res.render('site/persona');
-};
 exports.account = function( req, res ){
   res.render('site/account');
 };
 exports.newaccount = function( req, res ){
-  if (req.session.username) {
-    return res.redirect("/account");
-  }
   res.render('site/newaccount');
 };
 

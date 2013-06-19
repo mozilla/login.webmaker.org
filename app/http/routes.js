@@ -81,7 +81,7 @@ module.exports = function( http, userHandle ){
       req.params.id = req.session.email;
       next();
     } else {
-      res.redirect( "/persona" );
+      res.redirect( "/" );
     }
   },
 
@@ -94,13 +94,14 @@ module.exports = function( http, userHandle ){
    * Routes declaration
    */
 
+
+  http.get('/', csrf, routes.site.index);
+
   // Static pages
-  http.get('/', routes.site.index);
   http.get('/console', csrf, checkPersonaAdmin, routes.site.console);
   http.get('/console/signin', csrf, routes.site.signin);
 
   // Account
-  http.get('/persona', csrf, routes.site.persona);
   http.get('/account', csrf, checkPersona, routes.site.account);
   http.get('/account/new', csrf, checkPersona, routes.site.newaccount);
   http.post('/account/delete', csrf, checkPersona, routes.user.del);
