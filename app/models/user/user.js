@@ -5,7 +5,7 @@ var mongoose_validator = require('mongoose-validator'),
 
 mongoose_validator.extend( 'isBlackListed', function() {
   return !badword(this.str);
-}, "Oooooh that's a bad word");
+}, "blacklisted");
 
 mongoose_validator.extend( 'isUsername', function () {
   var str = this.str;
