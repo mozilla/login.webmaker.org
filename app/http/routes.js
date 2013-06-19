@@ -16,7 +16,7 @@ module.exports = function( http, userHandle ){
    * Shared middleware
    */
 
-  // basicAuth + Persona authentication 
+  // basicAuth + Persona authentication
   var combinedAuth = function( req, res, next ) {
     var persona = req.session.email,
         authMiddleware = basicAuth( function( user, pass ) {
@@ -30,13 +30,17 @@ module.exports = function( http, userHandle ){
           return false;
         });
 
-    // SSO Auth    
+    // SSO Auth
     if ( persona ) {
       userHandle.getUser( persona, function( err, user ) {
-        if ( err || !user ) {
-          return res.json( 403, "Internal error!" );
+        if ( err ) {
+          return res.json( 403, {error: err });
         }
-        
+
+        if ( !user ) {
+          return res.json( 403, {error:"Internal error - no user" });
+        }
+
         // Allow a call from the browser if the user is initiating it themself
         if ( user.email === persona ){
           return next();
@@ -45,9 +49,9 @@ module.exports = function( http, userHandle ){
         // Allow a call from the browser if the user is an admin
         if ( user.isAdmin ) {
           return next();
-        } 
+        }
 
-        return res.json( 403, "Error, admin privileges required!" );
+        return res.json( 403, {error: "Error, admin privileges required!" });
       });
     } else {
       // BasicAuth
@@ -60,18 +64,22 @@ module.exports = function( http, userHandle ){
     var persona = req.session.email;
     if ( persona ) {
       userHandle.getUser( persona, function( err, user ) {
-        if ( err || !user ) {
-          return res.json( 403, "Internal error!" );
+        if ( err ) {
+          return res.json( 403, {error: err });
+        }
+
+        if ( !user ) {
+          return res.json( 403, {error: "Internal error - no user" });
         }
 
         if ( user.isAdmin ) {
           return next();
-        } 
+        }
 
-        return res.json( 403, "Error, admin privileges required!" );
+        return res.json( 403, {error: "Error, admin privileges required!" });
       });
     } else {
-      return res.json( 403, "Persona account required!" );
+      return res.json( 403, {error: "Persona account required!" });
     }
   };
 
@@ -81,7 +89,7 @@ module.exports = function( http, userHandle ){
       req.params.id = req.session.email;
       next();
     } else {
-      res.send( "You are not signed in :(" );
+      res.json( 403, {error:"You are not signed in :(" });
     }
   },
 
@@ -123,5 +131,5 @@ module.exports = function( http, userHandle ){
   http.options( '/user/:id', allowCSRFHeaders );
 
   // Devops
-  http.get('/healthcheck', routes.site.healthcheck); 
+  http.get('/healthcheck', routes.site.healthcheck);
 };
