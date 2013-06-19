@@ -55,8 +55,18 @@
   </div>
   <script src="/js/ext/require.js"></script>
   <script>
-    requirejs.config({baseUrl: '/js'});
-    require(["account"]);
+    requirejs.config({
+      baseUrl: '/js',
+      paths: {
+        'jquery': '/js/ext/jquery-1.9.1.min',
+        'persona-sso': '<%= audience %>/sso/include'
+      },
+      shim: {
+        'persona-sso': [],
+        'sso-ux': ['jquery', 'persona-sso']
+      }
+    });
+    require(["site/account"]);
   </script>
 
   <% if (ga_account) { %>

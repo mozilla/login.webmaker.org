@@ -1,5 +1,5 @@
 define(['jquery'],
-  function($) {
+  function($){
   "use strict";
     // Which button do we show?
   var emailMeta = document.querySelector("meta[name='persona-email']"),

@@ -48,18 +48,13 @@
   <script src="/js/ext/require.js"></script>
   <script>
     requirejs.config({
+      baseUrl: "/js",
       paths: {
         'jquery': '/js/ext/jquery-1.9.1.min',
         'sso-ux': '/js/sso-ux-require',
       }
     });
-    require(['jquery', 'sso-ux' ],
-      function ( $ ) {
-        "use strict";
-        navigator.idSSO.app.onlogin = function(user) {
-          window.location = "/account";
-        };
-    });
+    require(['site/index');
   </script>
   <% if (ga_account) { %>
   <script type="text/javascript">
