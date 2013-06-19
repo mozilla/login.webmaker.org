@@ -1,5 +1,6 @@
-define([ 'jquery' ], function( $ ){
-
+define(['jquery'],
+  function($) {
+  "use strict";
     // Which button do we show?
   var emailMeta = document.querySelector("meta[name='persona-email']"),
       cookieEmail = emailMeta.content ? emailMeta.content : "",
@@ -149,5 +150,4 @@ define([ 'jquery' ], function( $ ){
       });
     }
   });
-
 });

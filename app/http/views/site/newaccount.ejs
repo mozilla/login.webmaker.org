@@ -70,6 +70,7 @@
   <script src="/js/ext/require.js"></script>
   <script>
     requirejs.config({
+      baseUrl:'/js',
       paths: {
         'jquery': '/js/ext/jquery-1.9.1.min',
         'sso-ux': '/js/sso-ux'
@@ -78,7 +79,6 @@
         'sso-ux': ['jquery']
       }
     });
-
     require(['newaccount']);
   </script>
 
