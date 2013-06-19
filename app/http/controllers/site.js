@@ -4,24 +4,22 @@
 
 var env = require('../../../config/environment');
 /**
- * GET home page.
+ * GET home page - login!
  */
 exports.index = function( req, res ){
   res.render('site/index');
 };
 
 /**
- * Get account page
+ * Accounts
  */
 exports.account = function( req, res ){
-  res.render('site/account', {
-    email: req.session.email || "",
-    audience: env.get( "AUDIENCE" ),
-    csrf: req.session._csrf,
-    ga_account: env.get( "GA_ACCOUNT" ),
-    ga_domain: env.get( "GA_DOMAIN" )
-  });
+  res.render('site/account');
 };
+exports.newaccount = function( req, res ){
+  res.render('site/newaccount');
+};
+
 
 /**
  * Signin page for admin console
@@ -29,10 +27,7 @@ exports.account = function( req, res ){
 exports.signin = function( req, res ){
   res.render( 'site/login.html.ejs', {
     csrf: req.session._csrf,
-    login: req.session.email || "",
-    sso_include: env.get( "SSO_INCLUDE_URL" ),
-    loginServer: env.get("HOSTNAME"),
-    audience: env.get("AUDIENCE")
+    login: req.session.email || ""
   });
 };
 /**
@@ -41,10 +36,7 @@ exports.signin = function( req, res ){
 exports.console = function( req, res ){
   res.render( 'site/console.html.ejs', {
     csrf: req.session._csrf,
-    login: req.session.email || "",
-    sso_include: env.get( "SSO_INCLUDE_URL" ),
-    loginServer: env.get("HOSTNAME"),
-    audience: env.get("AUDIENCE")
+    login: req.session.email || ""
   });
 };
 
@@ -55,10 +47,7 @@ exports.console = function( req, res ){
 exports.js = function( filename ) {
   return function( req, res ){
     res.set('Content-Type', 'application/javascript');
-    res.render( 'js/' + filename + '.js.ejs', {
-      hostname: env.get( "HOSTNAME" ),
-      audience: env.get( "AUDIENCE" )
-    });
+    res.render( 'js/' + filename + '.js.ejs' );
   };
 };
 

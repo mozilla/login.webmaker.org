@@ -18,7 +18,7 @@
         Hi <span id="identity" class="user-name-container"></span>
       </li>
       <li>
-        <iframe src="<%= audience%>/sso/include.html" class="include-frame"></iframe>
+        <iframe id="persona-iframe" src="<%= audience%>/sso/include.html" class="include-frame"></iframe>
       </li>
     </ul>
   </nav>
@@ -53,7 +53,21 @@
   <div class="ui-wrapper ui-body" id="logout-message"></div>
    </div>
   </div>
-  <script src="/js/ext/require.js" data-main="/js/account"></script>
+  <script src="/js/ext/require.js"></script>
+  <script>
+    requirejs.config({
+      baseUrl: '/js',
+      paths: {
+        'jquery': '/js/ext/jquery-1.9.1.min',
+        'persona-sso': '<%= audience %>/sso/include'
+      },
+      shim: {
+        'persona-sso': [],
+        'sso-ux': ['jquery', 'persona-sso']
+      }
+    });
+    require(["site/account"]);
+  </script>
 
   <% if (ga_account) { %>
   <script type="text/javascript">

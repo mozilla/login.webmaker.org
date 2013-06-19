@@ -7,7 +7,7 @@
   <meta name="hostname" content="<%= hostname %>">
   <meta name="audience" content="<%= audience %>">
   <title>Webmaker</title>
-  <link rel="stylesheet" href="/css/persona.css">
+  <link rel="stylesheet" href="/css/newaccount.css">
   <link rel="stylesheet" href="/css/nav.css">
 </head>
 <body>
@@ -19,6 +19,9 @@
       <li class="user">
         Hi <span id="identity" class="user-name-container"></span>
       </li>
+      <li>
+        <iframe src="<%= audience %>/sso/include.html" class="include-frame"></iframe>
+      </li>
     </ul>
   </nav>
   <div class="my-projects-container">
@@ -28,12 +31,31 @@
 <div class="wm-user-panel">
   <div class="ui-wrapper ui-body">
       <div id="poster" class="ui-section">
-          <div class="ui-row">
-            <div class="g-4"><h1>Webmaker uses Persona,<br>a secure way to sign in.</h1></div>
-            <div class="g-2"><div id="persona-container">
-              <a href="#" class="persona-button"><span class="text">Sign in</span><span class="tip"></span><iframe id="persona-iframe" src="<%= audience%>/sso/sso.html"></iframe></a>
-            </div></div>
+        <img id="claim-image" src="<%= audience %>/img/img-Get-Involved-feature.jpg" alt="Get Involved">
+          <div id="claim-message">
+            <h1>Claim your webmaker domain</h1>
+            <div class="form-wrapper">
+            <form id="sso_create" action="<%= audience %>/user" method="POST">
+              <div id="claim-label"><input id="claim-input" placeholder="you" type="text" name="username" required> .webmaker.org</div>
+
+              <p id="error-container"></p>
+
+             <div class="checkboxes">
+              <div class="row">
+                <input type="checkbox" name="bsd" id="bsd" class="inline">
+                <label for="bsd" class="inline">Send me email updates about Mozilla Webmaker and other projects</label>
+              </div>
+              <div class="row">
+                <input type="checkbox" name="terms" id="terms" class="inline" required>
+                <label for="terms" class="inline">I agree to your <a href="<%= audience %>/terms">terms</a>
+                 and <a href="<%= audience %>/privacy">conditions</a></label>
+              </div>
+            </div>
+            <p><button type="submit" class="sign-up" class="ui-btn">Sign up</button></p>
+          </form>
           </div>
+        </div>
+
       </div>
       <div class="ui-section">
         <div class="ui-row">
@@ -44,18 +66,22 @@
       </div>
     </div>
   </div>
-  <script src="<%= audience%>/sso/include.js"></script>
+  <script src="<%= audience %>/sso/include.js"></script>
   <script src="/js/ext/require.js"></script>
   <script>
     requirejs.config({
-      baseUrl: "/js",
+      baseUrl:'/js',
       paths: {
         'jquery': '/js/ext/jquery-1.9.1.min',
-        'sso-ux': '/js/sso-ux-require',
+        'sso-ux': '/js/sso-ux'
+      },
+      shim: {
+        'sso-ux': ['jquery']
       }
     });
-    require(['site/index']);
+    require(['site/newaccount']);
   </script>
+
   <% if (ga_account) { %>
   <script type="text/javascript">
     var _gaq = _gaq || [],

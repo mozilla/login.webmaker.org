@@ -66,7 +66,7 @@ module.exports = function( http, userHandle ){
 
         if ( user.isAdmin ) {
           return next();
-        } 
+        }
 
         return res.json( 403, "Error, admin privileges required!" );
       });
@@ -81,7 +81,7 @@ module.exports = function( http, userHandle ){
       req.params.id = req.session.email;
       next();
     } else {
-      res.send( "You are not signed in :(" );
+      res.redirect( "/" );
     }
   },
 
@@ -94,13 +94,16 @@ module.exports = function( http, userHandle ){
    * Routes declaration
    */
 
+
+  http.get('/', csrf, routes.site.index);
+
   // Static pages
-  http.get('/',  routes.site.index);
   http.get('/console', csrf, checkPersonaAdmin, routes.site.console);
   http.get('/console/signin', csrf, routes.site.signin);
 
   // Account
-  http.get('/account', csrf, routes.site.account);
+  http.get('/account', csrf, checkPersona, routes.site.account);
+  http.get('/account/new', csrf, checkPersona, routes.site.newaccount);
   http.post('/account/delete', csrf, checkPersona, routes.user.del);
 
   // Resources
@@ -123,5 +126,5 @@ module.exports = function( http, userHandle ){
   http.options( '/user/:id', allowCSRFHeaders );
 
   // Devops
-  http.get('/healthcheck', routes.site.healthcheck); 
+  http.get('/healthcheck', routes.site.healthcheck);
 };
