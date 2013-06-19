@@ -1,4 +1,5 @@
  requirejs.config({
+    baseUrl: './js',
     paths: {
       'jquery': '/js/ext/jquery-1.9.1.min',
       'persona-sso': '<%= audience %>/sso/include'
@@ -18,7 +19,7 @@
        request.setRequestHeader('X-CSRF-Token', csrf_token);
       }
     });
-    
+
     navigator.idSSO.app.onlogin = function( email, username, data ) {
       personaEmail = email;
       $("#logout-message").hide();

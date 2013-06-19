@@ -20,7 +20,7 @@
         Hi <span id="identity" class="user-name-container"></span>
       </li>
       <li>
-        <iframe src="<%= audience%>/sso/include.html" class="include-frame"></iframe>
+        <iframe src="<%= audience %>/sso/include.html" class="include-frame"></iframe>
       </li>
     </ul>
   </nav>
@@ -31,11 +31,11 @@
 <div class="wm-user-panel">
   <div class="ui-wrapper ui-body">
       <div id="poster" class="ui-section">
-        <img id="claim-image" src="<%= audience%>/img/img-Get-Involved-feature.jpg" alt="Get Involved">
+        <img id="claim-image" src="<%= audience %>/img/img-Get-Involved-feature.jpg" alt="Get Involved">
           <div id="claim-message">
             <h1>Claim your webmaker domain</h1>
             <div class="form-wrapper">
-            <form id="sso_create" action="<%= process.env.AUDIENCE %>/user" method="POST">
+            <form id="sso_create" action="<%= audience %>/user" method="POST">
               <div id="claim-label"><input id="claim-input" placeholder="you" type="text" name="username" required> .webmaker.org</div>
 
               <p id="error-container"></p>
@@ -47,8 +47,8 @@
               </div>
               <div class="row">
                 <input type="checkbox" name="terms" id="terms" class="inline" required>
-                <label for="terms" class="inline">I agree to your <a href="<%= process.env.AUDIENCE %>/terms">terms</a>
-                 and <a href="<%= process.env.AUDIENCE %>/privacy">conditions</a></label>
+                <label for="terms" class="inline">I agree to your <a href="<%= audience %>/terms">terms</a>
+                 and <a href="<%= audience %>/privacy">conditions</a></label>
               </div>
             </div>
             <p><button type="submit" class="sign-up" class="ui-btn">Sign up</button></p>
@@ -66,7 +66,7 @@
       </div>
     </div>
   </div>
-  <script src="<%= audience%>/sso/include.js"></script>
+  <script src="<%= audience %>/sso/include.js"></script>
   <script src="/js/ext/require.js"></script>
   <script>
     requirejs.config({
