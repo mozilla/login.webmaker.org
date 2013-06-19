@@ -90,20 +90,6 @@ module.exports = function( http, userHandle ){
     res.send( 200 );
   };
 
-  http.locals({
-    hostname: env.get('HOSTNAME'),
-    audience: env.get('AUDIENCE'),
-    ga_account: env.get('GA_ACCOUNT'),
-    ga_domain: env.get('GA_DOMAIN')
-  });
-
-  http.use(function(err, req, res, next){
-    res.locals.username = req.session.username;
-    res.locals.email = req.session.email;
-    res.locals.csrf = req.session._csrf;
-    next();
-  });
-
   /**
    * Routes declaration
    */

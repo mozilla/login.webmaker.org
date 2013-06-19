@@ -63,6 +63,22 @@ http.configure(function(){
   http.use(express.static(tmpDir));
 });
 
+http.locals({
+  hostname: env.get('HOSTNAME'),
+  audience: env.get('AUDIENCE'),
+  ga_account: env.get('GA_ACCOUNT'),
+  ga_domain: env.get('GA_DOMAIN')
+});
+
+http.use(function(req, res, next){
+  res.locals({
+    email: req.session.email || "",
+    csrf: req.session._csrf
+  });
+  next();
+});
+
+
 persona(http, {
   audience: env.get('audience'),
   verifyResponse: function(err, req, res, email) {
