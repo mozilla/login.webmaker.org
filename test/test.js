@@ -234,16 +234,16 @@ describe( 'POST /user (create)', function() {
     });
   });
 
-  it( 'should create the "sendNotifications" user model field as true by default', function ( done ) {
+  it( 'should create the "sendNotifications" user model field as false by default', function ( done ) {
     apiHelper( 'post', api, 200, unique(), function( err, res, body ) {
-      assert.equal(body.user.sendNotifications, true);
+      assert.equal(body.user.sendNotifications, false);
       done();
     });
   });
 
-  it( 'should create the "sendEngagements" user model field as true by default', function ( done ) {
+  it( 'should create the "sendEngagements" user model field as false by default', function ( done ) {
     apiHelper( 'post', api, 200, unique(), function( err, res, body ) {
-      assert.equal(body.user.sendEngagements, true);
+      assert.equal(body.user.sendEngagements, false);
       done();
     });
   });

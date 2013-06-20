@@ -79,11 +79,11 @@ module.exports = function ( connection ) {
     },
     sendNotifications: {
       type: Boolean,
-      "default": true
+      "default": false
     },
     sendEngagements: {
       type: Boolean,
-      "default": true
+      "default": false
     }
     // TODO: Avatar support
   });
