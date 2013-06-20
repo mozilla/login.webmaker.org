@@ -17,11 +17,22 @@ var assert = require( 'assert' ),
 function startServer( done ) {
   // Spin-up the server as a child process
   child = fork( 'app.js', null, {} );
+  
+  // Listen for success, or error with the DB
   child.on( 'message', function( msg ) {
     if ( msg === 'Started' ) {
       done();
     }
   });
+  child.on( 'message', function( msg ) {
+    if ( msg === 'noConnection' ) {
+      console.log( "Database not connected! Tests will fail." );
+      child.kill();
+      process.exit(1);
+    }
+  });
+
+
 }
 
 function stopServer( done ) {
