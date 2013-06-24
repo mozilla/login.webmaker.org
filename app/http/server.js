@@ -66,34 +66,50 @@ http.configure(function(){
 persona(http, {
   audience: env.get('audience'),
   verifyResponse: function(err, req, res, email) {
-    var userInfo = {
-      status: null,
-      reason: null,
-      user: null,
-      exists: null
-    };
 
+    // Persona auth fail
     if (err) {
-      userInfo.status = "failure";
-      userInfo.reason = err;
-    }
-    else {
-      userInfo.status = "okay";
-      userInfo.email = email;
+      return res.json( { status: "failure", reason: err } );
     }
 
-    userHandle.model.find( { "email" : email }, function (err, User) {
-      if (!User.length) {
-        userInfo.exists = false;
-      } else {
-        userInfo.exists = true;
-        userInfo.user = User[0];
+    // Check if user is a webmaker
+    User.findOne( { _id : email }, function ( err, User ) {
+      if ( err || !User ) {
+        return res.json({
+          error: err,
+          exists: false,
+          email: email,
+          status: "okay"
+        });
       }
 
-      res.send(userInfo);
+      // Set session data
+      req.session.auth = {
+        _id: email
+      };
+
+      res.json({
+        exists: true,
+        user: User,
+        email: email,
+        status: "okay"
+      });
     });
   },
-  middleware: express.csrf()
+  middleware: express.csrf(),
+  logoutResponse: function(err, req, res) {
+    // Clear authentication data
+    if ( req.session ) {
+      delete req.session;
+    }
+
+    // Determine response
+    if (err) {
+      return res.json( { status: "failure", reason: err } );
+    }
+    
+    res.json( { status: "okay" } );
+  }
 });
 
 http.configure('development', function(){
