@@ -65,6 +65,11 @@ exports.js = function( filename ) {
 /**
  * GET health check for app
  */
+ var version = require("../../../package").version;
+
 exports.healthcheck = function( req, res ){
-  res.json({ http: 'okay' });
+  res.json({
+    http: 'okay',
+    version: version
+  });
 };
