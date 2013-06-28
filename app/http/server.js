@@ -66,15 +66,14 @@ http.configure(function(){
 persona(http, {
   audience: env.get('audience'),
   verifyResponse: function(err, req, res, email) {
-
     // Persona auth fail
     if (err) {
       return res.json( { status: "failure", reason: err } );
     }
 
     // Check if user is a webmaker
-    User.findOne( { _id : email }, function ( err, User ) {
-      if ( err || !User ) {
+    userHandle.getUser( email, function ( err, user ) {
+      if ( err || !user ) {
         return res.json({
           error: err,
           exists: false,
@@ -83,14 +82,9 @@ persona(http, {
         });
       }
 
-      // Set session data
-      req.session.auth = {
-        _id: email
-      };
-
       res.json({
         exists: true,
-        user: User,
+        user: user,
         email: email,
         status: "okay"
       });
@@ -98,9 +92,9 @@ persona(http, {
   },
   middleware: express.csrf(),
   logoutResponse: function(err, req, res) {
-    // Clear authentication data
     if ( req.session ) {
-      delete req.session;
+      delete req.session.username;
+      delete req.session.email;
     }
 
     // Determine response
