@@ -2,7 +2,7 @@
     baseUrl: './js',
     paths: {
       'jquery': 'ext/jquery-1.9.1.min',
-      'persona-sso': '<%= audience %>/sso/include'
+      'persona-sso': '{{ audience }}/sso/include'
     },
     shim: {
       'persona-sso': [],

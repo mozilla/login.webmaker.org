@@ -14,18 +14,21 @@ var express     = require('express'),
     env         = require('../../config/environment'),
     helmet      = require('helmet'),
     mongo       = require('../../lib/mongoose')(env),
+    nunjucks    = require( "nunjucks" ),
     userHandle  = require('../models/user')(mongo.conn),
     persona     = require("express-persona"),
     lessMiddleWare = require('less-middleware'),
     route = require('./routes'),
     path = require('path');
 
-var http = express();
+var http = express(),
+    nunjucksEnv = new nunjucks.Environment( new nunjucks.FileSystemLoader( path.join( __dirname, 'views' )));
 
 // Express Configuration
 http.configure(function(){
-  http.set('views', path.join(__dirname, 'views'));
-  http.set('view engine', 'ejs');
+
+  nunjucksEnv.express( http );
+
   http.disable("x-powered-by");
   http.use(mongo.healthCheck);
   http.use(application.allowCorsRequests);

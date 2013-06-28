@@ -60,7 +60,7 @@ and your app's `LOGIN` variable can be set to the following:
 ### 3. Include this app's CSS file in your master template
 
 ```html
-<link rel="stylesheet" href="<%= login %>/css/nav.css" />
+<link rel="stylesheet" href="{{ login }}/css/nav.css" />
 ```
 
 For staging/dev work, you can use `http://login.mofostaging.net` instead of the `login` variable.
@@ -71,19 +71,19 @@ For staging/dev work, you can use `http://login.mofostaging.net` instead of the 
 <div id="webmaker-nav">
   <!-- the webmaker bar -->
   <nav class="webmaker-nav-container">
-    <a id="logo" href="https://webmaker.org"><img src="<%= login %>/img/webmaker-logo.png" alt="Mozilla Webmaker" /></a>
+    <a id="logo" href="https://webmaker.org"><img src="{{ login }}/img/webmaker-logo.png" alt="Mozilla Webmaker" /></a>
     <ul class="webmaker-nav user-info">
       <li class="user">
         Hi <span id="identity" class="user-name-container"></span>
       </li>
       <li class="makes"><button>My makes</button></li>
       <li>
-        <iframe src="<%= audience %>/sso/include.html" class="include-frame"></iframe>
+        <iframe src="{{ audience }}/sso/include.html" class="include-frame"></iframe>
       </li>
     </ul>
   </nav>
   <div class="my-projects-container">
-    <iframe src="<%= audience %>/myprojects?app=<%= appname %>&email=<%= email %>"></iframe>
+    <iframe src="{{ audience }}/myprojects?app={{ appname }}&email={{ email }}"></iframe>
   </div>
 </div>
 ```
@@ -93,7 +93,7 @@ For staging/dev work, you can use `http://login.mofostaging.net` instead of the 
 For the best performance put this at the bottom of your HTML file, just before the closing ```</body>```
 
 ```html
-<script src="<%= audience %>/sso/include.js"></script>
+<script src="{{ audience }}/sso/include.js"></script>
 ```
 
 For staging tests, this can also just be `http://webmaker.mofostaging.net`.

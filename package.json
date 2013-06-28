@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "badword": "0.0.1",
-    "ejs": "0.8.4",
     "express-persona": "0.0.9",
     "express": "3.2.5",
     "habitat": "0.4.2",
@@ -19,6 +18,7 @@
     "mongoose": "3.6.11",
     "mongoose-validator": "0.2.1",
     "newrelic": "0.9.20",
+    "nunjucks": "0.1.8a",
     "node-statsd": "0.0.7",
     "winston": "0.7.1",
     "webmaker-loginapi": "0.1.6"

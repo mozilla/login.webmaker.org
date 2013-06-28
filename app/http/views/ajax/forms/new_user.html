@@ -1,5 +1,5 @@
 <div class="webmaker-create-user">
-  <form id="sso_create" action="<%= process.env.AUDIENCE %>/user" method="POST">
+  <form id="sso_create" action="{{ process.env.AUDIENCE }}/user" method="POST">
     <legend>Claim your webmaker space</legend>
     <div class="display-username-container row">
       <label for="username" class="visually-hidden">Display username</label>
@@ -11,8 +11,8 @@
     </div>
     <div class="row">
       <input type="checkbox" name="terms" id="terms" class="inline" required>
-      <label for="terms" class="inline">I agree to your <a href="<%= process.env.AUDIENCE %>/terms">terms</a>
-       and <a href="<%= process.env.AUDIENCE %>/privacy">conditions</a></label>
+      <label for="terms" class="inline">I agree to your <a href="{{ process.env.AUDIENCE }}/terms">terms</a>
+       and <a href="{{ process.env.AUDIENCE }}/privacy">conditions</a></label>
     </div>
     <input class="create-user-submit" type="submit" value="Create my account">
   </form>
