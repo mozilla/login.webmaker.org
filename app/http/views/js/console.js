@@ -1,6 +1,6 @@
 (function() {
   // Cache config
-  var loginUri = "<%= hostname %>";
+  var loginUri = "{{ hostname }}";
 
   // Cache jQuery references
   var jQuery = {

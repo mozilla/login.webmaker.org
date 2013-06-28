@@ -120,7 +120,7 @@ module.exports = function ( UserHandle ) {
   }; 
   
   controller.userForm = function( req, res ) {
-    res.render( "ajax/forms/new_user", {
+    res.render( "ajax/forms/new_user.html", {
       ssoAudience: env.get('AUDIENCE')
     } );
   };

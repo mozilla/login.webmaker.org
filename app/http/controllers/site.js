@@ -7,14 +7,14 @@ var env = require('../../../config/environment');
  * GET home page.
  */
 exports.index = function( req, res ){
-  res.render('site/index');
+  res.render('site/index.html');
 };
 
 /**
  * Get account page
  */
 exports.account = function( req, res ){
-  res.render('site/account', {
+  res.render('site/account.html', {
     email: req.session.email || "",
     audience: env.get( "AUDIENCE" ),
     csrf: req.session._csrf,
@@ -27,7 +27,7 @@ exports.account = function( req, res ){
  * Signin page for admin console
  */
 exports.signin = function( req, res ){
-  res.render( 'site/login.html.ejs', {
+  res.render( 'site/login.html', {
     csrf: req.session._csrf,
     login: req.session.email || "",
     sso_include: env.get( "SSO_INCLUDE_URL" ),
@@ -39,7 +39,7 @@ exports.signin = function( req, res ){
  * Get admin console
  */
 exports.console = function( req, res ){
-  res.render( 'site/console.html.ejs', {
+  res.render( 'site/console.html', {
     csrf: req.session._csrf,
     login: req.session.email || "",
     sso_include: env.get( "SSO_INCLUDE_URL" ),
@@ -55,7 +55,7 @@ exports.console = function( req, res ){
 exports.js = function( filename ) {
   return function( req, res ){
     res.set('Content-Type', 'application/javascript');
-    res.render( 'js/' + filename + '.js.ejs', {
+    res.render( 'js/' + filename + '.js', {
       hostname: env.get( "HOSTNAME" ),
       audience: env.get( "AUDIENCE" )
     });
