@@ -6,7 +6,7 @@
   // make sure jQuery is available to us
   if(!$) {
     var jq = document.createElement("script");
-    jq.src = "<%= hostname %>/js/ext/jquery-1.9.1.min.js";
+    jq.src = "{{ hostname }}/js/ext/jquery-1.9.1.min.js";
     jq.onload = function() {
       // retry, this time in the knowledge that we have jQuery
       setupUIHandler(window, document, window.jQuery);
@@ -21,7 +21,7 @@
       var placeHolder = $("#identity"),
           userElement = $('div.user-name');
       if (userData) {
-        placeHolder.html('<a href="<%= hostname %>/account">' + userData.name + '</a>');
+        placeHolder.html('<a href="{{ hostname }}/account">' + userData.name + '</a>');
         placeHolder.before("<img src='https://secure.gravatar.com/avatar/" + userData.hash + "?s=26&d=http%3A%2F%2Fstuff.webmaker.org%2Favatars%2Fwebmaker-avatar-44x44.png' alt='" + userData.hash + "'>");
       } else {
         userElement.html("<span id='identity'></span>");
@@ -72,7 +72,7 @@
 
       $formContainer = $(".webmaker-create-user", formAnchor);
       if ( !$formContainer.length ) {
-        $.get("<%= hostname %>/ajax/forms/new_user.html", function(html) {
+        $.get("{{ hostname }}/ajax/forms/new_user.html", function(html) {
           $formContainer = $(html).appendTo( $("#webmaker-nav"));
           $formContainer.slideDown();
           $formFrag = $("#sso_create", formAnchor );
@@ -97,7 +97,7 @@
 
             $.ajax({
               type: "POST",
-              url: "<%= hostname %>/user",
+              url: "{{ hostname }}/user",
               headers: {
                 "X-CSRF-Token": csrfMeta.content
               },
