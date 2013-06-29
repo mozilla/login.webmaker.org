@@ -1,5 +1,5 @@
  requirejs.config({
-    baseUrl: './js',
+    baseUrl: '/js',
     paths: {
       'jquery': 'ext/jquery-1.9.1.min',
       'persona-sso': '{{ audience }}/sso/include'
@@ -42,7 +42,7 @@
         $.post( "/account/delete", function( data ) {
           if ( !data.error ) {
             $(".wm-user-panel" ).fadeOut();
-            $("#logout-message").fadeIn().text("Your user account was deleted!");
+            $("#logout-message").fadeIn();
             navigator.idSSO.logout();
             setTimeout(function() {
               window.location.href = "{{ audience }}";
@@ -50,7 +50,10 @@
           }
         });
       } else {
-        alert( "Looks like that isn't your email :(" );
+        $("#wrong-email").fadeIn();
+        setTimeout(function() { 
+          $("#wrong-email" ).fadeOut(); 
+          }, 3000);        
       }
     });
 
