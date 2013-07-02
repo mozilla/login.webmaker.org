@@ -18,7 +18,7 @@
     "mongoose": "3.6.11",
     "mongoose-validator": "0.2.1",
     "newrelic": "0.9.20",
-    "nunjucks": "0.1.8a",
+    "nunjucks": "0.1.9",
     "node-statsd": "0.0.7",
     "winston": "0.7.1",
     "webmaker-loginapi": "0.1.6"
