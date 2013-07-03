@@ -51,8 +51,8 @@ module.exports = function ( UserHandle ) {
       if ( err || !user ) {
         metrics.increment( "user.update.error" );
         return res.json( 404, { error: err || "User not found for ID: " + id } );
-      }      
-      
+      }
+
       return res.json( 200, { user: user } );
    });
   };
@@ -100,7 +100,7 @@ module.exports = function ( UserHandle ) {
   controller.checkUsername = function ( req, res ) {
     var name = req.param( 'name' ),
         badword = require( 'badword' );
-    
+
     UserHandle.checkUsername( name, function ( err, restricted ) {
       if ( err ) {
         // blacklisted
@@ -115,40 +115,14 @@ module.exports = function ( UserHandle ) {
         return res.json( 200, "username given in '" + name + "' is good and being used" );
       }
 
-      res.json( 404, "username given in '" + name + "' is available" );  
+      res.json( 404, "username given in '" + name + "' is available" );
     });
-  }; 
-  
+  };
+
   controller.userForm = function( req, res ) {
     res.render( "ajax/forms/new_user.html", {
       ssoAudience: env.get('AUDIENCE')
     } );
-  };
-
-
-  /**
-  * Access this route from your browser to clear the database of accounts with the emails listed below.
-  * e.g. "http://localhost:3000/dev/delete"
-  *
-  * Obviously this should never go anywhere near production.
-  * See bug: https://bugzilla.mozilla.org/show_bug.cgi?id=863781
-  */
-  controller.devDelete = function( req, res ) {
-    var email = [
-      'ross@mozillafoundation.org',
-      'ross@ross-eats.co.uk',
-      'rossbruniges10@yahoo.co.uk',
-      'rossbruniges@gmail.com',
-      'kieran.sedgwick@gmail.com',
-      'pomax@mozillafoundation.org',
-      'jon@mozillafoundation.org'
-    ];
-
-    email.forEach(function( email ) {
-      UserHandle.model.find({ email:email }).remove();
-    });
-
-    res.send("DELETED!!!");
   };
 
   return controller;
