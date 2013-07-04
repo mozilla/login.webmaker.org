@@ -16,7 +16,6 @@ var express     = require('express'),
     mongo       = require('../../lib/mongoose')(env),
     nunjucks    = require( "nunjucks" ),
     userHandle  = require('../models/user')(mongo.conn),
-    persona     = require("express-persona"),
     lessMiddleWare = require('less-middleware'),
     route = require('./routes'),
     path = require('path');
@@ -66,47 +65,9 @@ http.configure(function(){
   http.use(express.static(tmpDir));
 });
 
-persona(http, {
-  audience: env.get('audience'),
-  verifyResponse: function(err, req, res, email) {
-    // Persona auth fail
-    if (err) {
-      return res.json( { status: "failure", reason: err } );
-    }
-
-    // Check if user is a webmaker
-    userHandle.getUser( email, function ( err, user ) {
-      if ( err || !user ) {
-        return res.json({
-          error: err,
-          exists: false,
-          email: email,
-          status: "okay"
-        });
-      }
-
-      res.json({
-        exists: true,
-        user: user,
-        email: email,
-        status: "okay"
-      });
-    });
-  },
-  middleware: express.csrf(),
-  logoutResponse: function(err, req, res) {
-    if ( req.session ) {
-      delete req.session.username;
-      delete req.session.email;
-    }
-
-    // Determine response
-    if (err) {
-      return res.json( { status: "failure", reason: err } );
-    }
-    
-    res.json( { status: "okay" } );
-  }
+require('webmaker-loginapi')(http, {
+  loginURL: env.get('LOGINAPI'),
+  audience: env.get('audience')
 });
 
 http.configure('development', function(){

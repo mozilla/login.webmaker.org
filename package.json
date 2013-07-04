@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "badword": "0.0.1",
-    "express-persona": "0.0.9",
     "express": "3.2.5",
     "habitat": "0.4.2",
     "helmet": "0.0.9",
@@ -21,7 +20,7 @@
     "nunjucks": "0.1.9",
     "node-statsd": "0.0.7",
     "winston": "0.7.1",
-    "webmaker-loginapi": "0.1.6"
+    "webmaker-loginapi": "0.1.7"
   },
   "devDependencies": {
     "grunt": "0.4.1",
