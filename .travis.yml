@@ -7,4 +7,4 @@ services:
 before_script:
   - npm install -g grunt-cli
 env:
-  - PORT=3000 HOSTNAME="http://localhost" MONGO_URL="mongodb://localhost:27017/local_webmakers" SESSION_SECRET="secret" ALLOWED_USERS="travis:travis" ALLOWED_DOMAINS="http://localhost:3001 http://localhost:3002"
+  - PORT=3000 HOSTNAME="http://localhost" MONGO_URL="mongodb://localhost:27017/local_webmakers" SESSION_SECRET="secret" ALLOWED_USERS="travis:travis" ALLOWED_DOMAINS="http://localhost:3001 http://localhost:3002 LOGINAPI="http://travis:travis@localhost:3000""
