@@ -20,7 +20,7 @@
     "nunjucks": "0.1.9",
     "node-statsd": "0.0.7",
     "winston": "0.7.1",
-    "webmaker-loginapi": "0.1.7"
+    "webmaker-loginapi": "0.1.8"
   },
   "devDependencies": {
     "grunt": "0.4.1",

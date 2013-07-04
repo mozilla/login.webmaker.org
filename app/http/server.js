@@ -67,7 +67,8 @@ http.configure(function(){
 
 require('webmaker-loginapi')(http, {
   loginURL: env.get('LOGINAPI'),
-  audience: env.get('audience')
+  audience: env.get('audience'),
+  middleware: express.csrf()
 });
 
 http.configure('development', function(){
