@@ -27,36 +27,6 @@
         userElement.html("<span id='identity'></span>");
       }
     },
-    checkMaker: function(userData, elementAnchor, callback) {
-      $.ajax({
-        type: "GET",
-        url: "/user/" + userData.loggedInUser,
-        headers: {
-          "X-CSRF-Token": csrfMeta.content
-        },
-        dataType: "json",
-        success: function(resp) {
-          ui.existingMaker({
-            name: resp.user.username,
-            hash: resp.user.emailHash
-          });
-          callback(null, userData.loggedInUser, resp.user.username);
-        },
-        error: function(resp) {
-          if (resp.status === 404) {
-            // we're expecting this error for a new maker
-            if ( navigator.idSSO.app.onnewuser ) {
-              navigator.idSSO.app.onnewuser();
-            } else {
-              ui.newMaker(userData.loggedInUser, $('#webmaker-nav'), callback);
-            }
-            return false;
-          }
-          callback(resp.status + resp.text);
-          return false;
-        }
-      });
-    },
     newMaker: function(loggedInUser, formAnchor, callback) {
       /**
        * load in HTML include containing the HTML form
@@ -171,9 +141,8 @@
   var emailMeta = document.querySelector("meta[name='persona-email']"),
       cookieEmail = emailMeta.content ? emailMeta.content : "",
       loggedIn = !!cookieEmail,
-      csrfMeta = document.querySelector("meta[name='X-CSRF-Token']");
-
-  var err_msg;
+      csrfMeta = document.querySelector("meta[name='X-CSRF-Token']"),
+      err_msg;
 
   // Start listening for Persona events
   navigator.idSSO.watch({
@@ -187,44 +156,52 @@
         },
         data: {assertion: assertion},
         success: function(res, status, xhr) {
-          ui.checkMaker( { loggedInUser:res.email }, $("#webmaker-nav"), function (err, loggedInUser, displayName) {
-            // hook-out to the owning page, so that it can perform a
-            // webmaker-loginAPI lookup, allowing it to bind the user's
-            // email and webmaker ID in its req.session.[...]
-            if (err) {
-              err_msg = err;
-              return navigator.idSSO.logout();
-            }
-            $.ajax({
-              type: 'GET',
-              url: "/user/" + loggedInUser,
-              headers: {
-                "X-CSRF-Token": csrfMeta.getAttribute("content")
-              },
-              dataType: "json",
-              success: function(res, status, xhr) {
-                if (res.status === "failed") {
-                  navigator.idSSO.logout();
-                } else if (res.user.username !== displayName) {
-                  navigator.idSSO.logout();
-                } else {
+          // login succeeded, show this user as logged in
+          // and call the on-page onlogin handler.
+          ui.existingMaker({
+            name: res.user.username,
+            hash: res.user.emailHash
+          });
+          $("#webmaker-nav iframe.include-frame").addClass("loggedin");
+          $('body').addClass("loggedin");
+          navigator.idSSO.app.onlogin(res.email, res.user.username, res.user);
+        },
+        error: function(xhr, status, err) {
+          var error = JSON.parse(xhr.responseText);
+
+          if(xhr.status === 404 && error.status === "failure") {
+            ui.newMaker( error.email, $("#webmaker-nav"), function (err, loggedInUser, displayName) {
+              // hook-out to the owning page, so that it can perform a
+              // webmaker-loginAPI lookup, allowing it to bind the user's
+              // email and webmaker ID in its req.session.[...]
+              if (err) {
+                err_msg = err;
+                return navigator.idSSO.logout();
+              }
+              $.ajax({
+                type: 'POST',
+                url: "/persona/verify",
+                headers: {
+                  "X-CSRF-Token": csrfMeta.content
+                },
+                data: {assertion: assertion},
+                success: function(res, status, xhr) {
                   // login succeeded, show this user as logged in
                   // and call the on-page onlogin handler.
                   $("#webmaker-nav iframe.include-frame").addClass("loggedin");
                   $('body').addClass("loggedin");
                   navigator.idSSO.app.onlogin(loggedInUser, displayName, res.user);
+                },
+                error: function(xhr, status, err) {
+                  err_msg = err;
+                  navigator.idSSO.logout();
                 }
-              },
-              error: function(xhr, status, err) {
-                err_msg = err;
-                navigator.idSSO.logout();
-              }
+              });
             });
-          });
-        },
-        error: function(xhr, status, err) {
-          err_msg = err;
-          navigator.idSSO.logout();
+          } else {
+            err_msg = err;
+            navigator.idSSO.logout();
+          }
         }
       });
     },

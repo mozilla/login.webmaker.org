@@ -32,13 +32,13 @@ Bugs can be found in Bugzilla - this is what <a href="https://bugzilla.mozilla.o
 
 If you wish to use the webmaker user bar in your webmaker.org app, you will need to implement the following steps.
 
-### 1. Add express-persona and the webmaker-loginapi modules
+### 1. Add the webmaker-loginapi module
 
-Your app will need to be able to speak to persona (for server-side validation and logout), as well as the webmaker login API. You will need the `express-persona`, https://github.com/jbuck/express-persona, and `webmaker-loginapi`, https://github.com/mozilla/node-webmaker-loginapi, modules installed.
+Your app will need to be able to speak to persona (for server-side validation and logout). You will need the `webmaker-loginapi` https://github.com/mozilla/node-webmaker-loginapi module installed to accomplish this.
 
 Also note that the login API requires that  the `username:password` combination that you use to create your loginapi instance with needs to be known by the login server you are accessing. As such, you will have to make sure that it is one of the possible `username:password` combinations specified in the login server's environment variable `ALLOWED_USERS`.
 
-Also, it is recommended to not hardcode the loginapi's endpoint with user credentials in your app, but to use an environment variable that you refer to in the code: `var loginapi = require("webmaker-loginapi")({make this an env. var});`.
+Also, it is recommended to not hardcode the loginapi's endpoint with user credentials in your app, but to use an environment variable that you refer to in the code: `var loginapi = require("webmaker-loginapi")( expressInstance, optionsObject );`.
 
 ### 2. Set up your environment variables
 
