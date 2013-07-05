@@ -20,7 +20,7 @@
     "nunjucks": "0.1.9",
     "node-statsd": "0.0.7",
     "winston": "0.7.1",
-    "webmaker-loginapi": "0.1.8"
+    "webmaker-loginapi": "https://github.com/mozilla/node-webmaker-loginapi/tarball/v0.1.9"
   },
   "devDependencies": {
     "grunt": "0.4.1",
