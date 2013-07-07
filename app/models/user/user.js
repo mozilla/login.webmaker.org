@@ -130,6 +130,7 @@ module.exports = function ( connection ) {
         field = "_id";
       } else if ( id.match( /^[^@]+$/g ) ) {
         field = "username";
+        id = id.toLowerCase();
       } 
       query[ field ] = id;
 
