@@ -10,7 +10,6 @@ module.exports = function ( UserHandle ) {
 
   controller.create = function ( req, res ) {
     var userInfo = req.body;
-    userInfo._id = userInfo.email;
 
     UserHandle.createUser( userInfo, function( err, thisUser ) {
       if ( err || !thisUser ) {
@@ -60,15 +59,24 @@ module.exports = function ( UserHandle ) {
   controller.del = function ( req, res ) {
     var id = req.params.id;
 
-    UserHandle.deleteUser( id , function ( err, user ) {
-      if ( err || !user ) {
-        metrics.increment( "user.delete.error" );
-        res.json( 404, { error: err || "User not found for ID: " + id } );
-        return;
+    // Confirm user exists (Sequelize happily deletes non-existent users)
+    UserHandle.getUser( id, function( err, user ) {
+      if ( err || !user ) { console.log( "in error! error? ", err );
+        metrics.increment( "user.get.error" );
+        return res.json( 404, { error: err || "User not found for ID: " + id } );
       }
 
-      metrics.increment( "user.delete.success" );
-      res.json( 200 );
+      // Delete user
+      UserHandle.deleteUser( id , function ( err ) {
+        if ( err ) {
+          metrics.increment( "user.delete.error" );
+          res.json( 500, { error: err } );
+          return;
+        }
+
+        metrics.increment( "user.delete.success" );
+        res.json( 200 );
+      });
     });
   };
 
@@ -101,7 +109,11 @@ module.exports = function ( UserHandle ) {
     var name = req.param( "name" ),
         badword = require( "badword" );
 
-    UserHandle.checkUsername( name, function ( err, restricted ) {
+    if ( !name ) {
+      return res.json( 400, ":name parameter required!" );
+    }
+
+    UserHandle.checkUsername( name, function ( err, isUserUnavailable ) {
       if ( err ) {
         // blacklisted
         if ( err === "badword" )  {
@@ -111,8 +123,8 @@ module.exports = function ( UserHandle ) {
         return res.json( 500, "Error checking username!" );
       }
 
-      if ( restricted ) {
-        return res.json( 200, "username given in '" + name + "' is good and being used" );
+      if ( isUserUnavailable ) {
+        return res.json( 200, "username given in '" + name + "' is valid and being in use" );
       }
 
       res.json( 404, "username given in '" + name + "' is available" );

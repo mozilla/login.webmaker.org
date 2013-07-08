@@ -79,7 +79,6 @@
               },
               dataType: "json",
               data: {
-                "_id": loggedInUser,
                 "email": loggedInUser,
                 "username": $( "#username" ).val()
               },
