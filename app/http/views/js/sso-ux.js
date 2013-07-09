@@ -40,6 +40,10 @@
       var $formContainer,
           $formFrag;
 
+      if ( !errMsg ) {
+        $(".row.error-message").html("");
+      }
+
       $formContainer = $(".webmaker-create-user", formAnchor);
       if ( !$formContainer.length ) {
         $.get("{{ hostname }}/ajax/forms/new_user.html", function(html) {
@@ -86,7 +90,7 @@
                 callback(null, loggedInUser, resp.user.username);
               },
               error: function(resp) {
-                callback(resp.status + resp.text);
+                callback(JSON.parse(resp.responseText).error, $('#username').val());
                 return false;
               }
             });
@@ -142,7 +146,7 @@
       cookieEmail = emailMeta.content ? emailMeta.content : "",
       loggedIn = !!cookieEmail,
       csrfMeta = document.querySelector("meta[name='X-CSRF-Token']"),
-      err_msg;
+      errMsg;
 
   // Start listening for Persona events
   navigator.idSSO.watch({
@@ -169,37 +173,46 @@
         error: function(xhr, status, err) {
           var error = JSON.parse(xhr.responseText);
 
-          if(xhr.status === 404 && error.status === "failure") {
-            ui.newMaker( error.email, $("#webmaker-nav"), function (err, loggedInUser, displayName) {
-              // hook-out to the owning page, so that it can perform a
-              // webmaker-loginAPI lookup, allowing it to bind the user's
-              // email and webmaker ID in its req.session.[...]
-              if (err) {
-                err_msg = err;
-                return navigator.idSSO.logout();
+          function newMaker (err, loggedInUser, displayName) {
+            // hook-out to the owning page, so that it can perform a
+            // webmaker-loginAPI lookup, allowing it to bind the user's
+            // email and webmaker ID in its req.session.[...]
+            if (err) {
+              errMsg = err;
+              // Username existed
+              if (err.code === 11000) {
+                $(".row.error-message").html("Another user has already claimed <strong>" + loggedInUser + "</strong>!");
+                ui.newMaker(error.email, $("#webmaker-nav"), newMaker);
+                return;
               }
-              $.ajax({
-                type: 'POST',
-                url: "/persona/verify",
-                headers: {
-                  "X-CSRF-Token": csrfMeta.content
-                },
-                data: {assertion: assertion},
-                success: function(res, status, xhr) {
-                  // login succeeded, show this user as logged in
-                  // and call the on-page onlogin handler.
-                  $("#webmaker-nav iframe.include-frame").addClass("loggedin");
-                  $('body').addClass("loggedin");
-                  navigator.idSSO.app.onlogin(loggedInUser, displayName, res.user);
-                },
-                error: function(xhr, status, err) {
-                  err_msg = err;
-                  navigator.idSSO.logout();
-                }
-              });
+              return navigator.idSSO.logout();
+            }
+            $.ajax({
+              type: 'POST',
+              url: "/persona/verify",
+              headers: {
+                "X-CSRF-Token": csrfMeta.content
+              },
+              data: {assertion: assertion},
+              success: function(res, status, xhr) {
+                // login succeeded, show this user as logged in
+                // and call the on-page onlogin handler.
+                errMsg = null;
+                $("#webmaker-nav iframe.include-frame").addClass("loggedin");
+                $('body').addClass("loggedin");
+                navigator.idSSO.app.onlogin(loggedInUser, displayName, res.user);
+              },
+              error: function(xhr, status, err) {
+                errMsg = err;
+                navigator.idSSO.logout();
+              }
             });
+          }
+
+          if(xhr.status === 404 && error.status === "failure") {
+            ui.newMaker(error.email, $("#webmaker-nav"), newMaker);
           } else {
-            err_msg = err;
+            errMsg = err;
             navigator.idSSO.logout();
           }
         }
@@ -211,8 +224,8 @@
       $('body').removeClass("loggedin");
       $("#webmaker-nav iframe.include-frame").removeClass("loggedin");
       // make sure the page does whatever it needs to,
-      navigator.idSSO.app.onlogout(err_msg);
-      err_msg = null;
+      navigator.idSSO.app.onlogout(errMsg);
+      errMsg = null;
       // and make sure the app knows we're logged out.
       $.ajax({
         type: "POST",
