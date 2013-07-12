@@ -45,7 +45,7 @@
             $("#logout-message").fadeIn().text("Your user account was deleted!");
             navigator.idSSO.logout();
             setTimeout(function() { 
-              window.location.href = $("a")[0].href; 
+              window.location.href = "{{ audience }}"; 
             }, 2000);
           }
         });
