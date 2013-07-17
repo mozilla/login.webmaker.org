@@ -13,8 +13,9 @@ var express     = require('express'),
     application = require('./controllers/application'),
     env         = require('../../config/environment'),
     helmet      = require('helmet'),
+    i18n        = require('i18n-abide'),
     mongo       = require('../../lib/mongoose')(env),
-    nunjucks    = require( "nunjucks" ),
+    nunjucks    = require('nunjucks'),
     userHandle  = require('../models/user')(mongo.conn),
     lessMiddleWare = require('less-middleware'),
     route = require('./routes'),
@@ -36,7 +37,20 @@ http.configure(function(){
     http.use(helmet.hsts());
     http.enable('trust proxy');
   }
+
   http.use(express.static( path.join(__dirname, 'public')));
+
+  // Setup locales with i18n
+  http.use( i18n.abide({
+    supported_languages: [
+      'en-US'
+    ],
+    default_lang: "en_US",
+    translation_type: "key-value-json",
+    translation_directory: "locale",
+    locale_on_url: true
+  }));  
+
   http.use(express.cookieParser());
   http.use(express.bodyParser());
   http.use(express.methodOverride());

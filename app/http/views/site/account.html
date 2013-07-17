@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="{{ lang }}" dir="{{ lang_dir }}">
 <head>
   <meta charset="utf-8">
   <meta name="X-CSRF-Token" content="{{ csrf }}">
@@ -15,7 +15,7 @@
     <a id="logo" href="https://webmaker.org"><img src="/img/webmaker-logo.png" alt="Mozilla Webmaker" /></a>
     <ul class="webmaker-nav user-info">
       <li class="user">
-        Hi <span id="identity" class="user-name-container"></span>
+        {{ gettext('Hi') }} <span id="identity" class="user-name-container"></span>
       </li>
       <li>
         <iframe src="{{ audience }}/sso/include.html" class="include-frame"></iframe>
@@ -33,24 +33,25 @@
             <div id="user-avatar" class="ui-circle-frame"></div>
           </div>
           <div class="g-5">
-            <h1>Hi <span class="wm-username"></span>!</h1>
+            <h1>{{ gettext('Hi') }} <span class="wm-username"></span>!</h1>
             <ul class="user-info-list">
-              <li><span class="field-label">Username</span><span class="wm-username"></span></li>
-              <li><span class="field-label">Email</span><span class="wm-email"></span></li>
+              <li><span class="field-label">{{ gettext('Username') }}</span><span class="wm-username"></span></li>
+              <li><span class="field-label">{{ gettext('Email') }}</span><span class="wm-email"></span></li>
             </ul>
-            <p><a id="delete-account">Delete account?</a></p>
+            <p><a id="delete-account">{{ gettext('Delete account?') }}</a></p>
           </div>
         </div>
       </div>
     </div>
     <div id="confirm-delete" class="ui-wrapper ui-body">
-      <h2>Are you sure you want to leave?</h2>
-      <p>Enter your email to confirm:</p>
+      <h2>{{ gettext('Are you sure you want to leave?') }}</h2>
+      <p>{{ gettext('Enter your email to confirm:') }}</p>
       <p><input id="email-check"></p>
-      <p><a id="delete-me" class="ui-btn">Delete me forever</a></p>
+      <p><a id="delete-me" class="ui-btn">{{ gettext('Delete me forever') }}</a></p>
     </div>
   </div>
-  <div class="ui-wrapper ui-body" id="logout-message"></div>
+  <div class="ui-wrapper ui-body" id="logout-message">{{ gettext('Your user account was deleted!') }}</div>
+  <div class="ui-wrapper ui-body" id="wrong-email">{{ gettext("Looks like that isn't your email") }}</div>
    </div>
   </div>
   <script src="/js/ext/require.js" data-main="/js/account"></script>
