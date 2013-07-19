@@ -1,34 +1,34 @@
-var assert = require( 'assert' ),
-    fork = require( 'child_process' ).fork,
-    request = require( 'request' ),
+var assert = require( "assert" ),
+    fork = require( "child_process" ).fork,
+    request = require( "request" ),
     now = Date.now(),
     child,
-    hostAuth = 'http://travis:travis@localhost:3000',
-    hostNoAuth = 'http://localhost:3000',
+    hostAuth = "http://travis:travis@localhost:3000",
+    hostNoAuth = "http://localhost:3000",
     illegalChars = "` ! @ # $ % ^ & * ( ) + = ; : ' \" , < . > / ?".split( " " );
 
     // Adding a space to the illegalChars list
     illegalChars.push(" ");
 
 /**
- * Server functions 
+ * Server functions
  */
 
 function startServer( done ) {
   // Spin-up the server as a child process
-  child = fork( 'app.js', null, {} );
-  
+  child = fork( "app.js", null, {} );
+
   // Listen for success, or error with the DB
-  child.on( 'message', function( msg ) {
-    if ( msg === 'Started' ) {
+  child.on( "message", function( msg ) {
+    if ( msg === "Started" ) {
       done();
     }
   });
-  child.on( 'message', function( msg ) {
-    if ( msg === 'noConnection' ) {
+  child.on( "message", function( msg ) {
+    if ( msg === "noConnection" ) {
       console.log( "Database not connected! Tests will fail." );
       child.kill();
-      process.exit(1);
+      process.exit( 1 );
     }
   });
 
@@ -51,7 +51,7 @@ function apiHelper( verb, uri, httpCode, data, callback, customAssertions ) {
   // Parameter handling
   if ( typeof( data ) === "function" ) {
     callback = data;
-    data = {}; 
+    data = {};
   } else {
     data = data || {};
   }
@@ -99,14 +99,14 @@ var userTracer = (function() {
       }
     },
     unwatchUser: function ( email ) {
-      var index = newUsers.indexOf( email ); 
+      var index = newUsers.indexOf( email );
 
       if ( index !== -1 ){
         // Remove user from email
         newUsers.splice( index, 1 );
       }
     },
-    userCleanup: function( callback ) {      
+    userCleanup: function( callback ) {
       var userCount = newUsers.length;
 
       callback = callback || function() {};
@@ -119,7 +119,7 @@ var userTracer = (function() {
       newUsers.forEach( function ( user ) {
         // Delete each user in turn, then kill the process and
         // run the callback (if present)
-        apiHelper( "delete", hostAuth + '/user/' + user, 200, function( err, res, body ){ 
+        apiHelper( "delete", hostAuth + '/user/' + user, 200, function( err, res, body ){
           if ( !--userCount ) {
             callback();
           }
@@ -129,11 +129,11 @@ var userTracer = (function() {
       // Reset tracking array
       newUsers = [];
     }
-  }; 
+  };
 })();
 
 /**
- * User functions 
+ * User functions
  */
 
 function unique() {
@@ -261,7 +261,7 @@ describe( 'POST /user (create)', function() {
 
   it( 'should error if webmaker already exists (i.e. the email field is a duplicate)', function ( done ) {
     var user = unique();
-    
+
     // Create a user, then create another one with the same email
     apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
       var newUser = unique();
@@ -278,7 +278,7 @@ describe( 'PUT /user/:id (update)', function() {
   before( function( done ) {
     startServer( done );
   });
-  
+
   after( function( done ) {
     stopServer( done );
   });
@@ -348,8 +348,8 @@ describe( 'DELETE /user/:id', function() {
 
   it( 'should successfully delete an account when attempting the action on an existing user', function ( done ) {
     var user = unique();
-    
-    // Create a user, then attempt to delete it 
+
+    // Create a user, then attempt to delete it
     apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
       apiHelper( 'delete', hostAuth + "/user/" + user.email, 200, user, done );
     });
@@ -357,7 +357,7 @@ describe( 'DELETE /user/:id', function() {
 
   it( 'should error on attempting to delete a non-existant account', function ( done ) {
     apiHelper( 'delete', hostAuth + "/user/" + unique().email, 404, {}, done );
-  });  
+  });
 });
 
 describe( 'GET /user/:id', function() {
@@ -373,8 +373,8 @@ describe( 'GET /user/:id', function() {
 
   it( 'should successfully return an account when attempting the retrieve an existing user by email', function ( done ) {
     var user = unique();
-    
-    // Create a user, then attempt to retrieve it 
+
+    // Create a user, then attempt to retrieve it
     apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
       apiHelper( 'get', hostAuth + "/user/" + user.email, 200, {}, done );
     });
@@ -382,8 +382,8 @@ describe( 'GET /user/:id', function() {
 
   it( 'should successfully return an account when attempting the retrieve an existing user by username', function ( done ) {
     var user = unique();
-    
-    // Create a user, then attempt to retrieve it 
+
+    // Create a user, then attempt to retrieve it
     apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
       apiHelper( 'get', hostAuth + "/user/" + user.username, 200, {}, done );
     });
@@ -391,7 +391,7 @@ describe( 'GET /user/:id', function() {
 
   it( 'should error on attempting to retrieve a non-existant account', function ( done ) {
     apiHelper( 'get', hostAuth + "/user/" + unique().email, 404, {}, done );
-  });  
+  });
 });
 
 describe( 'GET /isAdmin/:id', function() {
@@ -409,8 +409,8 @@ describe( 'GET /isAdmin/:id', function() {
     var user = unique();
 
     user.isAdmin = true;
-    
-    // Create a user, then attempt to check it 
+
+    // Create a user, then attempt to check it
     apiHelper( 'post',  hostAuth + '/user', 200, user, done, function ( err, res, body, done ) {
       apiHelper( 'get', api + user.email, 200, {}, function( err, res, body ) {
         assert.equal( body.isAdmin, true );
@@ -421,7 +421,7 @@ describe( 'GET /isAdmin/:id', function() {
 
   it( 'should error on attempting to check a non-existant account', function ( done ) {
     apiHelper( 'get', api + unique().email, 404, {}, done );
-  });  
+  });
 });
 
 describe( 'basicauth', function() {
@@ -438,8 +438,8 @@ describe( 'basicauth', function() {
 
   it( 'should error when auth is incorrect', function( done ) {
     var user = unique();
-    
-    // Create a user, then attempt to check it 
+
+    // Create a user, then attempt to check it
     apiHelper( 'post',  hostAuth + '/user', 200, user, done, function ( err, res, body, done ) {
       apiHelper( 'get', invalidAuthAPI + user.email, 401, {}, done);
     });
