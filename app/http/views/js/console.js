@@ -4,7 +4,6 @@
 
   // Cache jQuery references
   var jQuery = {
-        users: $( "#users" ),
         _id: $( "#_id" ),
         email: $( "#email" ),
         username: $( "#username" ),
@@ -16,9 +15,9 @@
         newUser: $( "#newUser" ),
         submit: $( "#submit" ),
         clear: $( "#clear" ),
-        emailError: $( "#email-error" ),
-        usernameError: $( "#username-error" ),
-        fullnameError: $( "#fullname-error" )
+        error: $( "#error" ),
+        searchInput: $( "#user-search" ),
+        search: $( "#search" )
       };
 
   /**
@@ -44,8 +43,8 @@
     // Parse arguments
     options = options || {};
     if ( !options.uri ) {
-      // Error case
-      return console.log( "No URL passed to ajaxHelper" );
+      jQuery.error.html( "No URL passed to ajaxHelper" );
+      return;
     }
     options.method = options.method || "get";
     options.data = options.data || {};
@@ -76,6 +75,7 @@
       jQuery.sendNotifications.prop( "checked", "" );
       jQuery.sendEngagements.prop( "checked", "" );
       jQuery.newUser.prop( "value", "true" );
+      jQuery.error.html( "" );
 
       // Reset validation
       valid = false;
@@ -89,11 +89,11 @@
           uri: loginUri + "/user/" + id,
           method: "delete",
           error: function( xhr, status, error ) {
-            console.log( "Error deleting: ", xhr.responseText );
+            var resp = JSON.parse( xhr.responseText );
+            jQuery.error.html( "Error: " + resp.error );
           },
           success: function( data, status, xhr ) {
             domHelper.clearForm();
-            domHelper.displayUsers();
           }
         });
       } // END-IF
@@ -121,24 +121,30 @@
         method: method,
         data: userData,
         error: function ( xhr, status, error ) {
-          console.log( "Error! ", xhr.responseText );
-          domHelper.clearForm();
+          var resp = JSON.parse( xhr.responseText );
+          if ( resp.error.name === "ValidationError" ) {
+            resp.error = resp.error.message + " for " + Object.keys( resp.error.errors ).join( " and " );
+          }
+
+          jQuery.error.html( "Error: " + resp.error );
         },
-        success: function() {
-          domHelper.clearForm();
-          domHelper.displayUsers();
+        success: function( xhr, status, error ) {
+          jQuery.error.html( "" );
+          alert( "Save Successful." );
         }
       });
-
-      // Redisplay page
     },
     editUser: function( username ) {
+      //clear everything
+      domHelper.clearForm();
+
       // Collect user data
-      ajaxHelper( {
+      ajaxHelper({
         uri: loginUri + "/user/" + username,
         method: "get",
         error: function( xhr, status, error ) {
-          console.log( "Error! ", xhr.responseText );
+          var resp = JSON.parse( xhr.responseText );
+          jQuery.error.html( "Error: " + resp.error );
         },
         success: function( data, status, xhr ) {
         // Populate form with data
@@ -150,7 +156,6 @@
           jQuery.username.prop( "value", user.username );
           jQuery.fullname.prop( "value", user.fullName );
 
-
           // Checkboxes
           jQuery.isAdmin.prop( "checked", user.isAdmin === true ? true : false );
           jQuery.isSuspended.prop( "checked", user.isSuspended === true ? true : false );
@@ -161,96 +166,27 @@
           jQuery.newUser.prop( "value", "false" );
         }
       });
-    },
-    displayUsers: function() {
-      // Set core data
-      var error,
-          success;
-
-      // Error case handling
-      error = function( xhr, status, error ) {
-        jQuery.users.empty();
-        jQuery.users.append( "<td colspan=\"3\"><h4>" + "Users not found, or server error" + "</h4></td>" );
-      };
-
-      // Success case handling
-      success = function( data, status, xhr ) {
-        // Unique HTML ID incrementers
-        var rowID = 0;
-
-        jQuery.users.empty();
-        data.users.forEach(function( user ) {
-          rowID++;
-
-          // Add a row
-          jQuery.users.append( "<tr>" +
-                               "<th>" + user._id + "</th>" +
-                               "<td>" + ( user.isAdmin ? "admin" : "none" ) + "</td>" +
-                               "<td><button id=\"" + rowID + "\">" + ( user.isAdmin ? "Remove admin" : "Add admin" ) + "</button></td>" +
-                               "<td><button id=\"" + user.username + "\">" + "Edit user" + "</button></td>" +
-                               "<td><button id=\"" + user.username + "del" + "\">" + "Delete user" + "</button></td>" +
-                               "</tr>" );
-
-          // Bind click events for admin changes
-          $( "#" + rowID ).on( 'click', function() {
-            ajaxHelper({
-              uri: loginUri + "/user/" + user._id,
-              method: "put",
-              data: { isAdmin: !user.isAdmin },
-              error: function( xhr, status, error ) {
-                alert("Error! " + error);
-              },
-              success: function( data, status, xhr ) {
-                domHelper.clearForm();
-                domHelper.displayUsers();
-              }
-            });
-          }); // END-BIND
-
-          // Bind click events for edit user
-          $( "#" + user.username ).on( "click", function() {
-            domHelper.editUser( user.username );
-          }); // END-BIND
-
-          // Bind click events for delete user
-          $( "#" + user.username + "del" ).on( "click", function() {
-            domHelper.deleteUser( user._id );
-          }); // END-BIND
-        });
-      };
-
-      // Invoke ajax helper
-      ajaxHelper( {
-        uri: loginUri + "/users",
-        method: "get",
-        data: {},
-        error: error,
-        success: success
-      });
     }
   };
 
   /**
    * General event bindings
    **/
-
   jQuery.submit.on( "click", function() {
     domHelper.saveUser();
   });
   jQuery.clear.on( "click", function() {
     domHelper.clearForm();
   });
-  jQuery.clear.on( "click", function() {
-    domHelper.clearForm();
+  jQuery.search.on( "click", function() {
+    domHelper.editUser( jQuery.searchInput.val() );
   });
-  jQuery.clear.on( "click", function() {
-    domHelper.clearForm();
+  jQuery.searchInput.on( "keypress", function( e ) {
+    if ( e.which === 13 ) {
+      e.preventDefault();
+      e.stopPropagation();
+      domHelper.editUser( jQuery.searchInput.val() );
+    }
   });
-
-  /**
-   * Control Logic
-   **/
-
-  domHelper.displayUsers();
 })();
 

@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">    
+    <meta charset="utf-8">
     <meta name="X-CSRF-Token" content="{{ csrf }}">
     <meta name="persona-email" content="{{ login }}">
     <title>LoginAPI Admin Console</title>
     <!-- Bootstrap -->
     <link href="/ext/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link rel="stylesheet" href="css/nav.css" />
+    <style type="text/css">
+      div#error { color: #ff0000; }
+    </style>
   </head>
   <body>
     <div id="webmaker-nav">
@@ -31,21 +34,32 @@
       </div>
     </div>
     <div class="row">
-      <div class="span8 offset2">
-        <h4>User List</h2>
-
-        <table class="table well well-small">
-          <thead>
-            <tr>
-              <th>User ID</th>
-              <th>Permissions</th>
-          </thead>
-          <tbody id="users">
-          </tbody>
-        </table>
+      <div class="span6 offset2">
+        <fieldset>
+          <div class="control-group">
+            <label class="control-label" for="user-search">
+              <strong>Find user:</strong>
+            </label>
+            <div class="controls">
+              <input id="user-search" name="user-search" title="" placeholder="username/email/id" class="input-xlarge" type="text">
+              <p class="help-block">You can search by username, email or user ID number</p>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="search"></label>
+            <div class="controls">
+              <button id="search" type="button" name="search" class="btn btn-success">Search</button>
+            </div>
+          </div>
+        </fieldset>
       </div>
-      <div class="span6">
-        <h4>Add a user</h4>
+    </div>
+    <div class="row">
+      <div class="span6 offset2" id="error"></div>
+    </div>
+    <div class="row">
+      <div class="span6 offset2">
+        <h4>User Account</h4>
 
         <table class="table well well-small">
           <thead>
