@@ -23,11 +23,11 @@
 
   /**
    * Ajax helper
-   * Expects: { 
+   * Expects: {
    *   uri: loginAPI endpoing,
    *   method: GET/POST/PUT/DELETE,
    *   data: {},
-   *   error: function ( xhr, status, error ) 
+   *   error: function ( xhr, status, error )
    *   success: function ( data, status, xhr )
    * }
    **/
@@ -46,12 +46,12 @@
     if ( !options.uri ) {
       // Error case
       return console.log( "No URL passed to ajaxHelper" );
-    }  
+    }
     options.method = options.method || "get";
     options.data = options.data || {};
     options.success = options.success || defaults.success;
     options.error = options.error || defaults.error;
- 
+
 
     $.ajax({
       url: options.uri,
@@ -60,22 +60,22 @@
       error: options.error,
       success: options.success
     });
-  }; // END AJAX-HELPER  
+  }; // END AJAX-HELPER
 
   /**
    * DOM Manipulation helper
    **/
   var domHelper = {
     clearForm: function() {
-      jQuery._id.prop( "value", "");
-      jQuery.email.prop( "value", "");
-      jQuery.username.prop( "value", "");
-      jQuery.fullname.prop( "value", "");
-      jQuery.isAdmin.prop( "checked", "");
-      jQuery.isSuspended.prop( "checked", "");
-      jQuery.sendNotifications.prop( "checked", "");
-      jQuery.sendEngagements.prop( "checked", "");
-      jQuery.newUser.prop( "value", "true");
+      jQuery._id.prop( "value", "" );
+      jQuery.email.prop( "value", "" );
+      jQuery.username.prop( "value", "" );
+      jQuery.fullname.prop( "value", "" );
+      jQuery.isAdmin.prop( "checked", "" );
+      jQuery.isSuspended.prop( "checked", "" );
+      jQuery.sendNotifications.prop( "checked", "" );
+      jQuery.sendEngagements.prop( "checked", "" );
+      jQuery.newUser.prop( "value", "true" );
 
       // Reset validation
       valid = false;
@@ -84,7 +84,7 @@
       // Ask for confirmation
       var goForIt = confirm( "Really delete " + id + "?" );
 
-      if (goForIt) {
+      if ( goForIt ) {
         ajaxHelper({
           uri: loginUri + "/user/" + id,
           method: "delete",
@@ -139,30 +139,30 @@
         method: "get",
         error: function( xhr, status, error ) {
           console.log( "Error! ", xhr.responseText );
-        },  
+        },
         success: function( data, status, xhr ) {
         // Populate form with data
           var user = data.user;
-         
+
           // Text boxes
-          jQuery._id.prop( "value", user._id);
-          jQuery.email.prop( "value", user.email);
-          jQuery.username.prop( "value", user.username);
-          jQuery.fullname.prop( "value", user.fullName);
+          jQuery._id.prop( "value", user._id );
+          jQuery.email.prop( "value", user.email );
+          jQuery.username.prop( "value", user.username );
+          jQuery.fullname.prop( "value", user.fullName );
 
 
           // Checkboxes
-          jQuery.isAdmin.prop( "checked", user.isAdmin === true ? true : false);
-          jQuery.isSuspended.prop( "checked", user.isSuspended === true ? true : false);
-          jQuery.sendNotifications.prop( "checked", user.sendNotifications === true ? true : false);
-          jQuery.sendEngagements.prop( "checked", user.sendEngagements === true ? true : false);
+          jQuery.isAdmin.prop( "checked", user.isAdmin === true ? true : false );
+          jQuery.isSuspended.prop( "checked", user.isSuspended === true ? true : false );
+          jQuery.sendNotifications.prop( "checked", user.sendNotifications === true ? true : false );
+          jQuery.sendEngagements.prop( "checked", user.sendEngagements === true ? true : false );
 
           // Hidden field
           jQuery.newUser.prop( "value", "false" );
         }
       });
-    },    
-    displayUsers: function() { 
+    },
+    displayUsers: function() {
       // Set core data
       var error,
           success;
@@ -170,7 +170,7 @@
       // Error case handling
       error = function( xhr, status, error ) {
         jQuery.users.empty();
-        jQuery.users.append( "<td colspan=\"3\"><h4>" + ( "Users not found, or server error" ) + "</h4></td>" );
+        jQuery.users.append( "<td colspan=\"3\"><h4>" + "Users not found, or server error" + "</h4></td>" );
       };
 
       // Success case handling
@@ -179,11 +179,11 @@
         var rowID = 0;
 
         jQuery.users.empty();
-        data.users.forEach( function( user ) {
+        data.users.forEach(function( user ) {
           rowID++;
 
           // Add a row
-          jQuery.users.append( "<tr>" + 
+          jQuery.users.append( "<tr>" +
                                "<th>" + user._id + "</th>" +
                                "<td>" + ( user.isAdmin ? "admin" : "none" ) + "</td>" +
                                "<td><button id=\"" + rowID + "\">" + ( user.isAdmin ? "Remove admin" : "Add admin" ) + "</button></td>" +
@@ -203,17 +203,17 @@
               success: function( data, status, xhr ) {
                 domHelper.clearForm();
                 domHelper.displayUsers();
-              }  
+              }
             });
           }); // END-BIND
 
-          // Bind click events for edit user          
-          $( "#" + user.username ).on( 'click', function() {
+          // Bind click events for edit user
+          $( "#" + user.username ).on( "click", function() {
             domHelper.editUser( user.username );
           }); // END-BIND
 
           // Bind click events for delete user
-          $( "#" + user.username + "del").on( 'click', function() {
+          $( "#" + user.username + "del" ).on( "click", function() {
             domHelper.deleteUser( user._id );
           }); // END-BIND
         });
@@ -232,24 +232,24 @@
 
   /**
    * General event bindings
-   **/  
+   **/
 
-  jQuery.submit.on( 'click', function() {
+  jQuery.submit.on( "click", function() {
     domHelper.saveUser();
   });
-  jQuery.clear.on( 'click', function() {
+  jQuery.clear.on( "click", function() {
     domHelper.clearForm();
   });
-  jQuery.clear.on( 'click', function() {
+  jQuery.clear.on( "click", function() {
     domHelper.clearForm();
   });
-  jQuery.clear.on( 'click', function() {
+  jQuery.clear.on( "click", function() {
     domHelper.clearForm();
   });
 
   /**
    * Control Logic
-   **/  
+   **/
 
   domHelper.displayUsers();
 })();
