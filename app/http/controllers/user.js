@@ -2,8 +2,8 @@
 * License, v. 2.0. If a copy of the MPL was not distributed with this file,
 * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-var env = require("../../../config/environment"),
-    metrics = require("../../../lib/metrics")( env );
+var env = require( "../../../config/environment" ),
+    metrics = require( "../../../lib/metrics" )( env );
 
 module.exports = function ( UserHandle ) {
   var controller = {};
@@ -98,8 +98,8 @@ module.exports = function ( UserHandle ) {
   };
 
   controller.checkUsername = function ( req, res ) {
-    var name = req.param( 'name' ),
-        badword = require( 'badword' );
+    var name = req.param( "name" ),
+        badword = require( "badword" );
 
     UserHandle.checkUsername( name, function ( err, restricted ) {
       if ( err ) {
@@ -121,7 +121,7 @@ module.exports = function ( UserHandle ) {
 
   controller.userForm = function( req, res ) {
     res.render( "ajax/forms/new_user.html", {
-      ssoAudience: env.get('AUDIENCE')
+      ssoAudience: env.get( "AUDIENCE" )
     } );
   };
 
