@@ -62,7 +62,7 @@ module.exports = function ( env ) {
         }
 
         if ( user ) {
-          return callback( null, user );
+          return callback( null, user.getValues() );
         }
 
         // No user, check mongo
@@ -81,7 +81,7 @@ module.exports = function ( env ) {
               return callback( err );
             }
 
-            return callback( null, thisUser );
+            return callback( null, thisUser.getValues() );
           });
         });
       });
