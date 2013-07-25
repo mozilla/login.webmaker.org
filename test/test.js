@@ -12,8 +12,8 @@ var assert = require( "assert" ),
     illegalChars.push(" ");
 
     // Parse URLS
-    hostAuth = 'http://' + env.get("ALLOWED_USERS").split(",")[0] + "@" + env.get("HOSTNAME").split("//")[1];
-    hostNoAuth = env.get("HOSTNAME");
+    hostAuth = 'http://' + env.get( "ALLOWED_USERS" ).split( "," )[0] + "@" + env.get( "HOSTNAME" ).split( "//" )[1];
+    hostNoAuth = env.get( "HOSTNAME" );
 
 /**
  * Server functions
@@ -71,10 +71,17 @@ function apiHelper( verb, uri, httpCode, data, callback, customAssertions ) {
     data = data || {};
   }
   callback = callback || function(){};
-  var assertion = customAssertions || function ( err, res, body, callback ) {
+  customAssertions = customAssertions || function( err, res, body, callback) {
+    callback( err, res, body );
+  };
+  var assertion = function ( err, res, body, callback ) {
+    if ( !body ) {
+      err = err || "No response body found!";
+    }
+
     assert.ok( !err );
     assert.equal( res.statusCode, httpCode );
-    callback( err, res, body );
+    customAssertions( err, res, body, callback );
   };
 
   request({
@@ -384,7 +391,51 @@ describe( 'DELETE /user/:id', function() {
 });
 
 describe( 'GET /user/:id', function() {
-  var api = hostAuth + '/user';
+  var api = hostAuth + '/user',
+      getAssertions;
+
+  getAssertions = function getAssertions( err, res, body, callback ) {
+    var user = body.user;
+
+    assert.ok( user.hasOwnProperty( "id" ) );
+    assert.notDeepEqual( user.id, "undefined" );
+    assert.notDeepEqual( user.id, "null" );
+    assert.ok( user.hasOwnProperty( "email" ) );
+    assert.notDeepEqual( user.email, "undefined" );
+    assert.notDeepEqual( user.email, "null" );
+    assert.ok( user.hasOwnProperty( "username" ) );
+    assert.notDeepEqual( user.username, "undefined" );
+    assert.notDeepEqual( user.username, "null" );
+    assert.ok( user.hasOwnProperty( "fullName" ) );
+    assert.notDeepEqual( user.fullName, "undefined" );
+    assert.notDeepEqual( user.fullName, "null" );
+    assert.ok( user.hasOwnProperty( "deletedAt" ) );
+    assert.notDeepEqual( user.deletedAt, "undefined" );
+    assert.notDeepEqual( user.deletedAt, "null" );
+    assert.ok( user.hasOwnProperty( "isAdmin" ) );
+    assert.notDeepEqual( user.isAdmin, "undefined" );
+    assert.notDeepEqual( user.isAdmin, "null" );
+    assert.ok( user.hasOwnProperty( "sendNotifications" ) );
+    assert.notDeepEqual( user.sendNotifications, "undefined" );
+    assert.notDeepEqual( user.sendNotifications, "null" );
+    assert.ok( user.hasOwnProperty( "sendEngagements" ) );
+    assert.notDeepEqual( user.sendEngagements, "undefined" );
+    assert.notDeepEqual( user.sendEngagements, "null" );
+    assert.ok( user.hasOwnProperty( "createdAt" ) );
+    assert.notDeepEqual( user.createdAt, "undefined" );
+    assert.notDeepEqual( user.createdAt, "null" );
+    assert.ok( user.hasOwnProperty( "updatedAt" ) );
+    assert.notDeepEqual( user.updatedAt, "undefined" );
+    assert.notDeepEqual( user.updatedAt, "null" );
+    assert.ok( user.hasOwnProperty( "displayName" ) );
+    assert.notDeepEqual( user.displayName, "undefined" );
+    assert.notDeepEqual( user.displayName, "null" );
+    assert.ok( user.hasOwnProperty( "emailHash" ) );
+    assert.notDeepEqual( user.emailHash, "undefined" );
+    assert.notDeepEqual( user.emailHash, "null" );
+
+    callback( err, res, body );
+  };
 
   before( function( done ) {
     startServer( done );
@@ -399,7 +450,7 @@ describe( 'GET /user/:id', function() {
 
     // Create a user, then attempt to retrieve it
     apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
-      apiHelper( 'get', hostAuth + "/user/" + user.email, 200, {}, done );
+      apiHelper( 'get', hostAuth + "/user/" + user.email, 200, {}, done, getAssertions );
     });
   });
 
@@ -408,7 +459,7 @@ describe( 'GET /user/:id', function() {
 
     // Create a user, then attempt to retrieve it
     apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
-      apiHelper( 'get', hostAuth + "/user/" + user.username, 200, {}, done );
+      apiHelper( 'get', hostAuth + "/user/" + user.username, 200, {}, done, getAssertions );
     });
   });
 
@@ -417,7 +468,7 @@ describe( 'GET /user/:id', function() {
 
     // Create a user, then attempt to retrieve it
     apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
-      apiHelper( 'get', hostAuth + "/user/" + body.user.id, 200, {}, done );
+      apiHelper( 'get', hostAuth + "/user/" + body.user.id, 200, {}, done, getAssertions );
     });
   });
 
