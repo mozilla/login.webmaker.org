@@ -10,7 +10,8 @@ The app is written using <a href="http://nodejs.org/">nodejs</a>, requires npm f
 Once you have those you can get things up and running by:
 
 1. Install npm modules - `npm install`
-2. Install and start up a <a href="http://docs.mongodb.org/manual/tutorial/install-mongodb-on-os-x/">local MongoDB instance</a>
+2. Install and start up a <a href="http://dev.mysql.com/doc/refman/5.7/en/tutorial.html">local MySQL instance</a>, or ignore this step if you choose to use sqlite. **SPECIAL NOTE**: While we are migrating from MongoDB to MySQL, a  <a href="http://docs.mongodb.org/manual/tutorial/install-mongodb-on-os-x/">MongoDB instance will also need to be running</a> for the server to operate.
+
 3. Create and configure a `.env` file - copy the `env.sample` file we've provided.
 4. Install <a href="http://ddollar.github.io/foreman/">foreman</a> (if you don't have it) - `gem install foreman`
 5. Run foreman - `foreman start -f Procfile`

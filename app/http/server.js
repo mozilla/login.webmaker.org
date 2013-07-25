@@ -14,9 +14,8 @@ var express     = require( "express" ),
     env         = require( "../../config/environment" ),
     helmet      = require( "helmet" ),
     i18n        = require( "i18n-abide" ),
-    mongo       = require( "../../lib/mongoose" )( env ),
     nunjucks    = require( "nunjucks" ),
-    userHandle  = require( "../models/user" )( mongo.conn ),
+    userHandle  = require( "../models/user" )( env ),
     lessMiddleWare = require( "less-middleware" ),
     route = require( "./routes" ),
     path = require( "path" );
@@ -30,7 +29,7 @@ http.configure(function(){
   nunjucksEnv.express( http );
 
   http.disable( "x-powered-by" );
-  http.use( mongo.healthCheck );
+  http.use( userHandle.dbHealthCheck );
   http.use( application.allowCorsRequests );
   http.use( express.logger() );
   if ( !!env.get( "FORCE_SSL" ) ) {

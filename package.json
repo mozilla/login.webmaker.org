@@ -16,9 +16,11 @@
     "MD5": "1.0.3",
     "mongoose": "3.6.11",
     "mongoose-validator": "0.2.1",
+    "mysql": "2.0.0-alpha8",
     "newrelic": "0.9.20",
     "nunjucks": "0.1.9",
     "node-statsd": "0.0.7",
+    "sequelize": "1.6.0",
     "winston": "0.7.1",
     "webmaker-loginapi": "https://github.com/mozilla/node-webmaker-loginapi/tarball/v0.1.9",
     "i18n-abide": "0.0.10"
@@ -29,6 +31,9 @@
     "grunt-contrib-jshint": "0.4.3",
     "mocha": "1.9.0",
     "request": "2.20.0"
+  },
+  "optionalDependencies": {
+    "sqlite3": "2.1.7"
   },
   "scripts": {
     "test": "grunt travis --verbose && mocha --timeout 10000 --reporter spec"

@@ -34,7 +34,7 @@ module.exports = function ( connection ) {
       validate: validate('isEmail')
     },
     /**
-     * username - the lowercased version of 
+     * username - the lowercased version of
      * the user's chosen username.  It also
      * serves as the subdomain.
      *
@@ -111,7 +111,7 @@ module.exports = function ( connection ) {
 
   /**
    * Model Access methods
-   */  
+   */
   return {
     model: model,
 
@@ -120,18 +120,16 @@ module.exports = function ( connection ) {
      * -
      * id: username, email or _id
      * callback: function( err, user )
-     */      
+     */
     getUser: function( id, callback ) {
       var query = {},
           field = "email";
 
       // Parse out field type
-      if ( id.match( /^\d+$/g ) ) {
-        field = "_id";
-      } else if ( id.match( /^[^@]+$/g ) ) {
+      if ( id.match( /^[^@]+$/g ) ) {
         field = "username";
         id = id.toLowerCase();
-      } 
+      }
       query[ field ] = id;
 
       model.findOne( query, callback );
@@ -141,7 +139,7 @@ module.exports = function ( connection ) {
      * -
      * data: JSON object containing user fields
      * callback: function( err, thisUser )
-     */      
+     */
     createUser: function( data, callback ) {
       var user;
 
@@ -150,7 +148,7 @@ module.exports = function ( connection ) {
       }
 
       if ( !data.username ) {
-        return callback( "No username passed!" )
+        return callback( "No username passed!" );
       }
 
       // Copies user input for username verbatim before lowercasing
@@ -169,12 +167,12 @@ module.exports = function ( connection ) {
      * id: username, email or _id
      * data: JSON object containing user fields
      * callback: function( err, user )
-     */      
+     */
     updateUser: function ( id, data, callback ) {
       this.getUser( id, function( err, user ) {
         if ( err || !user  ) {
           return callback( err || "User not found!" );
-        } 
+        }
 
         // Selectively update the user model
         Object.keys( data ).forEach( function ( key ) {
@@ -190,7 +188,7 @@ module.exports = function ( connection ) {
      * -
      * id: _id
      * callback: function( err, thisUser )
-     */      
+     */
     deleteUser: function ( id, callback ) {
       model.findByIdAndRemove( id , callback );
     },
@@ -199,7 +197,7 @@ module.exports = function ( connection ) {
      * getAllUsers( callback )
      * -
      * callback: function( err, users )
-     */      
+     */
     getAllUsers: function ( callback ) {
       model.find( {}, callback );
     },
@@ -209,9 +207,13 @@ module.exports = function ( connection ) {
      * -
      * username: username to be checked
      * callback: function( err, restricted )
-     */      
-    checkUsername: function( username ) {
-      UserHandle.count( { username: username }, function( error, count ){
+     */
+    checkUsername: function( username, callback ) {
+      if ( !username ) {
+        return callback ( "Username must be provided!" );
+      }
+
+      model.count( { username: username }, function( error, count ){
         // DB error
         if ( error ) {
           return callback( error );
@@ -223,13 +225,13 @@ module.exports = function ( connection ) {
         }
 
         // Username blacklisted
-        if ( badword( name ) ) {
+        if ( badword( username ) ) {
           return callback( "badword" );
         }
 
-        // By default, username availiable 
+        // By default, username availiable
         callback( null, false );
       });
     }
-  }
+  };
 };
