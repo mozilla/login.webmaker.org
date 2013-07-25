@@ -77,12 +77,25 @@ module.exports = function( sequelize, DataTypes ) {
       defaultValue: false
     }
   }, {
-    getterMethods: {
-      displayName: function() {
-        return this.getDataValue("fullName") || this.getDataValue("username");
-      },
-      emailHash: function() {
-        return md5( this.getDataValue("email") );
+    instanceMethods: {
+      getValues: function() {
+        var obj = this.values;
+
+        return {
+          id: obj.id,
+          email: obj.email,
+          username: obj.username,
+          fullName: obj.fullName,
+          deletedAt: obj.deletedAt,
+          isAdmin: obj.isAdmin,
+          sendNotifications: obj.sendNotifications,
+          sendEngagements: obj.sendEngagements,
+          // wasMigrated: obj.wasMigrated,
+          createdAt: obj.createdAt,
+          updatedAt: obj.updatedAt,
+          displayName: obj.fullName,
+          emailHash: md5( obj.email )
+        };
       }
     }
   });
