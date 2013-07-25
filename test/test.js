@@ -2,37 +2,52 @@ var assert = require( "assert" ),
     fork = require( "child_process" ).fork,
     request = require( "request" ),
     now = Date.now(),
+    env = require( "../config/environment" ),
     child,
-    hostAuth = "http://travis:travis@localhost:3000",
-    hostNoAuth = "http://localhost:3000",
+    hostAuth,
+    hostNoAuth,
     illegalChars = "` ! @ # $ % ^ & * ( ) + = ; : ' \" , < . > / ?".split( " " );
 
     // Adding a space to the illegalChars list
     illegalChars.push(" ");
+
+    // Parse URLS
+    hostAuth = 'http://' + env.get("ALLOWED_USERS").split(",")[0] + "@" + env.get("HOSTNAME").split("//")[1];
+    hostNoAuth = env.get("HOSTNAME");
 
 /**
  * Server functions
  */
 
 function startServer( done ) {
+  var mongoDbCheck = false,
+      sqlDbCheck = false;
+
   // Spin-up the server as a child process
   child = fork( "app.js", null, {} );
 
   // Listen for success, or error with the DB
-  child.on( "message", function( msg ) {
-    if ( msg === "Started" ) {
-      done();
+  child.on( 'message', function( msg ) {
+    if ( msg === 'mongoStarted' ) {
+      mongoDbCheck = true;
     }
-  });
-  child.on( "message", function( msg ) {
-    if ( msg === "noConnection" ) {
-      console.log( "Database not connected! Tests will fail." );
+    if ( msg === 'sqlStarted' ) {
+      sqlDbCheck = true;
+    }
+    if ( msg === 'mongoNoConnection' ) {
+      console.log( "Mongo database not connected! Tests will fail." );
       child.kill();
       process.exit( 1 );
     }
+    if ( msg === 'sqlNoConnection' ) {
+      console.log( "MySQL database not connected! Tests will fail." );
+      child.kill();
+      process.exit(1);
+    }
+    if ( mongoDbCheck && sqlDbCheck ) {
+      done();
+    }
   });
-
-
 }
 
 function stopServer( done ) {
@@ -62,21 +77,26 @@ function apiHelper( verb, uri, httpCode, data, callback, customAssertions ) {
     callback( err, res, body );
   };
 
-  // Track new user, if applicable
-  if ( verb === "post" && httpCode == 200 ) {
-    userTracer.watchUser( data.email );
-  }
-
-  // Remove user from tracker, if applicable
-  if ( verb === "delete" && httpCode == 200 ) {
-    userTracer.unwatchUser( data.email );
-  }
-
   request({
     url: uri,
     method: verb,
     json: data
   }, function( err, res, body ) {
+    var user;
+
+    if ( err ) {
+      return callback( err );
+    }
+
+    if ( body ) {
+      user = body.user;
+    }
+
+    // Track new user, if applicable
+    if ( verb === "post" && httpCode == 200 && user ) {
+      userTracer.watchUser( user.id );
+    }
+
     assertion( err, res, body, callback );
   });
 }
@@ -92,17 +112,17 @@ var userTracer = (function() {
   var newUsers = [];
 
   return {
-    watchUser: function ( email ) {
+    watchUser: function ( id ) {
       // Prevent duplicate entries
-      if ( newUsers.indexOf( email ) === -1 ){
-        newUsers.push( email );
+      if ( newUsers.indexOf( id ) === -1 ){
+        newUsers.push( id );
       }
     },
-    unwatchUser: function ( email ) {
-      var index = newUsers.indexOf( email );
+    unwatchUser: function ( id ) {
+      var index = newUsers.indexOf( id );
 
       if ( index !== -1 ){
-        // Remove user from email
+        // Remove user from list
         newUsers.splice( index, 1 );
       }
     },
@@ -168,7 +188,7 @@ describe( 'POST /user (create)', function() {
     var user = unique();
 
     apiHelper( 'post', api, 200, user, function( err, res, body ) {
-      assert.equal( body.user._id, user.email );
+      assert.equal( body.user.fullName, user.username );
       assert.equal( body.user.email, user.email );
       done();
     });
@@ -330,7 +350,7 @@ describe( 'PUT /user/:id (update)', function() {
       var invalidEmail = "invalid";
 
       // Update user
-      apiHelper( 'put', hostAuth + "/user/" + user.email, 404, { email: invalidEmail, _id: invalidEmail }, done );
+      apiHelper( 'put', hostAuth + "/user/" + user.email, 404, { email: invalidEmail, id: invalidEmail }, done );
     });
   });
 });
@@ -351,6 +371,9 @@ describe( 'DELETE /user/:id', function() {
 
     // Create a user, then attempt to delete it
     apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
+      // Remove user from auto-delete after test suite
+      userTracer.unwatchUser( body.user.id );
+
       apiHelper( 'delete', hostAuth + "/user/" + user.email, 200, user, done );
     });
   });
@@ -389,6 +412,15 @@ describe( 'GET /user/:id', function() {
     });
   });
 
+  it( 'should successfully return an account when attempting the retrieve an existing user by id', function ( done ) {
+    var user = unique();
+
+    // Create a user, then attempt to retrieve it
+    apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
+      apiHelper( 'get', hostAuth + "/user/" + body.user.id, 200, {}, done );
+    });
+  });
+
   it( 'should error on attempting to retrieve a non-existant account', function ( done ) {
     apiHelper( 'get', hostAuth + "/user/" + unique().email, 404, {}, done );
   });
@@ -424,9 +456,42 @@ describe( 'GET /isAdmin/:id', function() {
   });
 });
 
+describe( 'GET /user/username/:userid', function() {
+  var api = hostAuth + '/user';
+
+  before( function( done ) {
+    startServer( done );
+  });
+
+  after( function( done ) {
+    stopServer( done );
+  });
+
+  it( 'should error if no userid is passed', function( done ) {
+    apiHelper( 'get', api + "/username/", 404, done );
+  });
+
+  it( 'should return 200 if username in use', function( done ) {
+    var user = unique();
+
+    // Create a user, then attempt to retrieve it
+    apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
+      apiHelper( 'get', api + "/username/" + body.user.username, 200, done );
+    });
+  });
+
+  it( 'should return 403 if username is a badword', function( done ) {
+    apiHelper( 'get', api + "/username/" + "damn", 403, {}, done );
+  });
+
+  it( 'should return 404 if username is available', function( done ) {
+    apiHelper( 'get', api + "/username/" + unique().username.toLowerCase(), 404, {}, done );
+  });
+});
+
 describe( 'basicauth', function() {
   // Rather complicated way of stripping correct auth and replacing with bad values
-  var invalidAuthAPI = hostAuth.replace( /travis/g, "wrongstring" ) + "/isAdmin?id=";
+  var invalidAuthAPI = hostAuth.replace( new RegExp( env.get("ALLOWED_USERS").split(",")[0] ), "wrong:string" ) + "/isAdmin?id=";
 
   before( function( done ) {
     startServer( done );
