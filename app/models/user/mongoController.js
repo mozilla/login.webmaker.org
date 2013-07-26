@@ -125,6 +125,10 @@ module.exports = function ( connection ) {
       var query = {},
           field = "email";
 
+      if ( !id ) {
+        return callback({ code: 400, message: "Invalid webmaker identifier! Email, numeric ID or username only." });
+      }
+
       // Parse out field type
       if ( id.match( /^[^@]+$/g ) ) {
         field = "username";
@@ -132,7 +136,17 @@ module.exports = function ( connection ) {
       }
       query[ field ] = id;
 
-      model.findOne( query, callback );
+      model.findOne( query, function( err, user ){
+        if ( err ) {
+          return callback({ code: 500, message: err });
+        }
+
+        if ( !user ) {
+          return callback({ code: 404, message: "User not found for " + field + " " + id });
+        }
+
+        callback( null, user );
+      });
     },
     /**
      * createUser( data, callback )
@@ -143,12 +157,12 @@ module.exports = function ( connection ) {
     createUser: function( data, callback ) {
       var user;
 
-      if ( !data ) {
-        return callback( "No data passed!" );
+      if ( !data ) { // 400
+        return callback({ code: 400, message: "No data passed!" });
       }
 
-      if ( !data.username ) {
-        return callback( "No username passed!" );
+      if ( !data.username ) { // 400
+        return callback({ code: 400, message: "No username passed!" });
       }
 
       // Copies user input for username verbatim before lowercasing
@@ -158,7 +172,13 @@ module.exports = function ( connection ) {
       user = new this.model( data );
 
       // Delegates all server-side validation to mongoose during this step
-      user.save( callback );
+      user.save(function( err, user ){
+        if ( err ){
+          return callback({ code: 500, message: err });
+        }
+
+        return callback( null, user ); // 200
+      });
     },
 
     /**
@@ -170,8 +190,12 @@ module.exports = function ( connection ) {
      */
     updateUser: function ( id, data, callback ) {
       this.getUser( id, function( err, user ) {
-        if ( err || !user  ) {
-          return callback( err || "User not found!" );
+        if ( err ) {
+          return callback({ code: 500, message: err }); //500
+        }
+
+        if ( !user ) {
+          return callback({ code: 404, message: "User not found for ID " + id }); //404
         }
 
         // Selectively update the user model
@@ -179,7 +203,13 @@ module.exports = function ( connection ) {
           user[ key ] = data[ key ];
         });
 
-        user.save( callback );
+        user.save(function( err, user ){
+          if ( err ) {
+            return callback({ code: 500, message: err }); //500
+          }
+
+          callback( null, user ); // 200
+        });
       });
     },
 
@@ -190,7 +220,17 @@ module.exports = function ( connection ) {
      * callback: function( err, thisUser )
      */
     deleteUser: function ( id, callback ) {
-      model.findByIdAndRemove( id , callback );
+      if ( !id ) {
+        return callback( "No ID passed to MongoHelper object!" ); // 400
+      }
+
+      model.findByIdAndRemove( id , function( err ) {
+        if ( err ) {
+          return callback({ code: 404, message: err });
+        }
+
+        callback();
+      }); // 500, 404, 200
     },
 
     /**
@@ -199,7 +239,7 @@ module.exports = function ( connection ) {
      * callback: function( err, users )
      */
     getAllUsers: function ( callback ) {
-      model.find( {}, callback );
+      model.find( {}, callback ); // 500, 404, 200
     },
 
     /**
@@ -210,27 +250,27 @@ module.exports = function ( connection ) {
      */
     checkUsername: function( username, callback ) {
       if ( !username ) {
-        return callback ( "Username must be provided!" );
+        return callback ({ code: 400, message: "Username must be provided!" }); // 400
       }
 
       model.count( { username: username }, function( error, count ){
         // DB error
         if ( error ) {
-          return callback( error );
+          return callback({ code: 500, message: error }); // 500
         }
 
         // Username in use
         if ( count ) {
-          return callback( null, true );
+          return callback( null, true ); // 200
         }
 
         // Username blacklisted
         if ( badword( username ) ) {
-          return callback( "badword" );
+          return callback({ code: 403, message: "badword" }); // 403
         }
 
         // By default, username availiable
-        callback( null, false );
+        callback( null, false ); // 404
       });
     }
   };

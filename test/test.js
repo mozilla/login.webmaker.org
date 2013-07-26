@@ -79,8 +79,8 @@ function apiHelper( verb, uri, httpCode, data, callback, customAssertions ) {
       err = err || "No response body found!";
     }
 
-    assert.ok( !err );
-    assert.equal( res.statusCode, httpCode );
+    assert.ok( !err, err ? "Failed, with error code " + err && err.code +", reporting: " + err && err.message : "" );
+    assert.equal( res.statusCode, httpCode, "Expected HTTP code '" + httpCode + "' but received '" + res.statusCode + "'" );
     customAssertions( err, res, body, callback );
   };
 
@@ -188,7 +188,7 @@ describe( 'POST /user (create)', function() {
   });
 
   it( 'should error when missing required username', function( done ) {
-    apiHelper( 'post', api, 404, { email: unique().email }, done );
+    apiHelper( 'post', api, 400, { email: unique().email }, done );
   });
 
   it( 'should create a new login with minimum required fields', function( done ) {
@@ -205,23 +205,23 @@ describe( 'POST /user (create)', function() {
     var user = unique();
     user.username = "123456789012345678901";
 
-    apiHelper( 'post', api, 404, user, done );
+    apiHelper( 'post', api, 400, user, done );
   });
 
   it( 'should error when username is too short', function( done ) {
     var user = unique();
     user.username = "";
 
-    apiHelper( 'post', api, 404, user, done );
+    apiHelper( 'post', api, 400, user, done );
   });
 
-  // Test username for 404 on illegal characters
+  // Test username for 400 on illegal characters
   illegalChars.forEach( function( badString ) {
     it( 'should error when username contains the illegal character "' + badString + '"', function( done ) {
       var user = unique();
       user.username = badString;
 
-      apiHelper( 'post', api, 404, user, done );
+      apiHelper( 'post', api, 400, user, done );
     });
   });
 
@@ -229,7 +229,7 @@ describe( 'POST /user (create)', function() {
     var user = unique();
     user.username = "damn";
 
-    apiHelper( 'post', api, 404, user, done );
+    apiHelper( 'post', api, 400, user, done );
   });
 
   it( 'should error when username already exists', function ( done ) {
@@ -240,34 +240,34 @@ describe( 'POST /user (create)', function() {
       var newUser = unique();
       newUser.username = user.username;
 
-      apiHelper( 'post', api, 404, newUser, done );
+      apiHelper( 'post', api, 400, newUser, done );
     });
   });
 
   it( 'should create the "createdAt" user model field by default', function ( done ) {
     apiHelper( 'post', api, 200, unique(), function( err, res, body ) {
-      assert.ok(!!body.user.createdAt);
+      assert.ok( !!body.user.createdAt );
       done();
     });
   });
 
   it( 'should create the "updatedAt" user model field by default', function ( done ) {
     apiHelper( 'post', api, 200, unique(), function( err, res, body ) {
-      assert.ok(!!body.user.updatedAt);
+      assert.ok( !!body.user.updatedAt );
       done();
     });
   });
 
   it( 'should create the "isAdmin" user model field as false by default', function ( done ) {
     apiHelper( 'post', api, 200, unique(), function( err, res, body ) {
-      assert.equal(body.user.isAdmin, false);
+      assert.equal( body.user.isAdmin, false );
       done();
     });
   });
 
   it( 'should create the "isSuspended" user model field as false by default', function ( done ) {
     apiHelper( 'post', api, 200, unique(), function( err, res, body ) {
-      assert.equal(body.user.isSuspended, false);
+      assert.equal( body.user.isSuspended, false );
       done();
     });
   });
@@ -294,7 +294,7 @@ describe( 'POST /user (create)', function() {
       var newUser = unique();
       newUser.email = user.email;
 
-      apiHelper( 'post', api, 404, newUser, done );
+      apiHelper( 'post', api, 400 , newUser, done );
     });
   });
 });
@@ -345,7 +345,7 @@ describe( 'PUT /user/:id (update)', function() {
       user.username = "damn";
 
       // Update user
-      apiHelper( 'put', hostAuth + "/user/" + user.email, 404, user, done );
+      apiHelper( 'put', hostAuth + "/user/" + user.email, 400, user, done );
     });
   });
 
@@ -357,7 +357,7 @@ describe( 'PUT /user/:id (update)', function() {
       var invalidEmail = "invalid";
 
       // Update user
-      apiHelper( 'put', hostAuth + "/user/" + user.email, 404, { email: invalidEmail, id: invalidEmail }, done );
+      apiHelper( 'put', hostAuth + "/user/" + user.email, 400, { email: invalidEmail }, done );
     });
   });
 });
