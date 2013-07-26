@@ -15,12 +15,12 @@ module.exports = function ( env ) {
     getUser: function( id, callback ) {
       // First, check the MySQL db
       sqlHandle.getUser( id, function( err, user ){
-        if ( err ) {
-          return callback( err, null );
+        if ( err  && ( err.code !== 404 ) ) {
+          return callback( err );
         }
 
         if ( user ) {
-          return callback( null, user.getValues() );
+          return callback( null, user );
         }
 
         return callback();
@@ -52,6 +52,11 @@ module.exports = function ( env ) {
 
           callback( null, user );
         });
+     // this.getUser( data.email, function( err, user ){
+     //   if ( err && ( err.code === 404 ) ) {
+     //     return sqlHandle.createUser( data, callback );
+     //   }
+     //   return callback({ code: 400, err: "This email is already associated with a Webmaker account!" });
       });
     },
 
@@ -64,14 +69,14 @@ module.exports = function ( env ) {
      */
     updateUser: function ( id, data, callback ) {
       this.getUser( id, function( err, user ) {
-        var error;
-
         if ( err ) {
           return callback( err );
         }
 
+        // If there's no user object, and no error,
+        // something weird is going on
         if ( !user  ) {
-          return callback( "User not found!" );
+          throw new Error( "Database helper failure!" );
         }
 
         sqlHandle.updateUser( user.id, data, callback );
@@ -88,14 +93,14 @@ module.exports = function ( env ) {
       // Check user exists (sequelize happily deletes
       // non existant-users)
       this.getUser( id, function( err, user ) {
-        var error;
-
         if ( err ) {
           return callback( err );
         }
 
+        // If there's no user object, and no error,
+        // something weird is going on
         if ( !user  ) {
-          return callback( "User not found!" );
+          throw new Error( "Database helper failure!" );
         }
 
         // Delete user
