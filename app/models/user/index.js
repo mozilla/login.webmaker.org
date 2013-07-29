@@ -25,25 +25,6 @@ module.exports = function ( env ) {
       sqlHandle = require( "./sqlController" )( env ),
       mongoHandle = require( "./mongoController" )( mongoose.conn );
 
-  // Healthcheck middleware
-  dbHealthCheck = function dbHealthCheck( req, res, next ) {
-    var err = null;
-
-    if ( !mongoose.health.connected ) {
-      err += "MongoDB not connected! Error: " + mongoose.health.err + "\n";
-    }
-
-    if ( !sqlHandle.health.connected ) {
-      err += "MySQL connection error: " + sqlHandle.health.err + "\n";
-    }
-
-    if ( err ) {
-      next( new Error( err ) );
-    } else {
-      next();
-    }
-  };
-
   /**
    * Model Access methods
    */
@@ -180,7 +161,6 @@ module.exports = function ( env ) {
 
         mongoHandle.checkUsername( username, callback );
       });
-    },
-    dbHealthCheck: dbHealthCheck
+    }
   };
 };

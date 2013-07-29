@@ -29,7 +29,6 @@ http.configure(function(){
   nunjucksEnv.express( http );
 
   http.disable( "x-powered-by" );
-  http.use( userHandle.dbHealthCheck );
   http.use( application.allowCorsRequests );
   http.use( express.logger() );
   if ( !!env.get( "FORCE_SSL" ) ) {
