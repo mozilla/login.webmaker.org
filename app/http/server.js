@@ -7,18 +7,18 @@
 // Module dependencies.
 require( "../../lib/extensions/number" );
 
-var express     = require( "express" ),
-    logger      = require( "../../lib/logger" ),
-    util        = require( "util" ),
-    application = require( "./controllers/application" ),
-    env         = require( "../../config/environment" ),
+var application = require( "./controllers/application" ),
+    env = require( "../../config/environment" );
+    express     = require( "express" ),
     helmet      = require( "helmet" ),
     i18n        = require( "i18n-abide" ),
-    nunjucks    = require( "nunjucks" ),
-    userHandle  = require( "../models/user" )( env ),
     lessMiddleWare = require( "less-middleware" ),
-    route = require( "./routes" ),
-    path = require( "path" );
+    logger      = require( "../../lib/logger" ),
+    nunjucks    = require( "nunjucks" ),
+    path        = require( "path" ),
+    route       = require( "./routes" ),
+    userHandle  = require( "../models/user" )( env ),
+    util        = require( "util" );
 
 var http = express(),
     nunjucksEnv = new nunjucks.Environment( new nunjucks.FileSystemLoader( path.join( __dirname, "views" ) ) );
