@@ -52,12 +52,13 @@
     options.error = options.error || defaults.error;
 
 
-    $.ajax({
+   $.ajax({
       url: options.uri,
       method: options.method,
-      data: options.data,
+      data: JSON.stringify( options.data ),
       error: options.error,
-      success: options.success
+      success: options.success,
+      contentType: "application/json"
     });
   }; // END AJAX-HELPER
 
@@ -102,7 +103,7 @@
       // Collect data
       var userData = {};
 
-      userData.email = userData._id = jQuery.email.prop( "value" );
+      userData.email = jQuery.email.prop( "value" );
       userData.username = jQuery.username.prop( "value" );
       userData.fullName = jQuery.fullname.prop( "value" );
 

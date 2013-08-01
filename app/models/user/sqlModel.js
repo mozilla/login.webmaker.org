@@ -88,6 +88,7 @@ module.exports = function( sequelize, DataTypes ) {
           fullName: obj.fullName,
           deletedAt: obj.deletedAt,
           isAdmin: obj.isAdmin,
+          isSuspended: obj.isSuspended,
           sendNotifications: obj.sendNotifications,
           sendEngagements: obj.sendEngagements,
           // wasMigrated: obj.wasMigrated,
