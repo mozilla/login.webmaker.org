@@ -174,42 +174,51 @@ module.exports = function( env ) {
         return callback({ code: 400, message: "No username passed!" });
       }
 
-      // Parse information
-      if ( data._id ){
-        // MongoDB compatibility hack (deleting `data._id` and passing `data` wasn't working :/)
-        userData.email = data.email;
-        userData.username = data.username;
-        userData.fullName = data.fullName;
-        userData.sendEngagements = data.sendEngagements;
-        userData.sendNotifications = data.sendNotifications;
-        userData.isAdmin = data.isAdmin;
-        userData.isSuspended = data.isSuspended;
-        userData.wasMigrated = true;
-      } else {
-        userData = data;
-
-        // Copies user input for username verbatim before lowercasing
-        userData.fullName = userData.username;
-        userData.username = userData.username.toLowerCase();
-      }
-      user = model.build( userData );
-
-      // Validate
-      err = user.validate();
-      if ( err ) {
-        return callback({ code: 400, message: err });
-      }
-      user.save().complete(function( err, user ){
+      // Confirm username is free
+      this.checkUsername( data.username, function( err, unavailable ) {
         if ( err ) {
-          if ( err.code === "ER_DUP_ENTRY" ) {
-            return callback({code: 400, message: "The username " + userData.username + " is taken!" });
-          }
-
-          return callback({ code: 500, message: err });
+          return callback( err );
         }
 
-        return callback( null, user.getValues() );
+        if ( unavailable ) {
+          return callback({ code: 400, message: "The username " + userData.username + " is taken!" });
+        }
+
+        // Parse information
+        if ( data._id ){
+          // MongoDB compatibility hack (deleting `data._id` and passing `data` wasn't working :/)
+          userData.email = data.email;
+          userData.username = data.username;
+          userData.fullName = data.fullName;
+          userData.sendEngagements = data.sendEngagements;
+          userData.sendNotifications = data.sendNotifications;
+          userData.isAdmin = data.isAdmin;
+          userData.isSuspended = data.isSuspended;
+          userData.wasMigrated = true;
+        } else {
+          userData = data;
+
+          // Copies user input for username verbatim before lowercasing
+          userData.fullName = userData.username;
+          userData.username = userData.username.toLowerCase();
+        }
+        user = model.build( userData );
+
+        // Validate
+        err = user.validate();
+        if ( err ) {
+          return callback({ code: 400, message: err });
+        }
+
+        user.save().complete(function( err, user ){
+          if ( err ) {
+            return callback({ code: 500, message: err });
+          }
+
+          return callback( null, user.getValues() );
+        });
       });
+
     },
 
     /**
@@ -261,20 +270,20 @@ module.exports = function( env ) {
       model.find({
         where: parseQuery( id )
       }).complete(function( err, user ){
-        if ( err ) { // 500
+        if ( err ) {
           return callback({ code: 500, message: err });
         }
 
-        if ( !user ) { // 404
+        if ( !user ) {
           return callback({ code: 404, message: "User not found for ID " + id });
         }
 
         user.destroy().complete(function( err ) {
           if ( err ) {
-            return callback({ code: 500, message: err }); // 500
+            return callback({ code: 500, message: err });
           }
 
-          return callback(); // 200
+          return callback();
         });
       });
     },
@@ -305,22 +314,22 @@ module.exports = function( env ) {
         }
       }).complete(function( error, count ) {
         // DB error
-        if ( error ) { // 500
+        if ( error ) {
           return callback({ code: 500, message: error });
         }
 
         // Username in use
         if ( count > 0 ) {
-          return callback( null, true ); // 200
+          return callback( null, true );
         }
 
         // Username blacklisted
         if ( badword( username ) ) {
-          return callback({ code: 403, message: "badword" }); // 200
+          return callback({ code: 403, message: "badword" });
         }
 
         // By default, username not taken
-        callback( null, false ); // 404
+        callback( null, false );
       });
     },
     health: health

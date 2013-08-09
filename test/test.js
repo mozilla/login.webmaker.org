@@ -220,7 +220,7 @@ describe( 'POST /user (create)', function() {
     var user = unique();
     user.username = "damn";
 
-    apiHelper( 'post', api, 400, user, done );
+    apiHelper( 'post', api, 403, user, done );
   });
 
   it( 'should error when username already exists', function ( done ) {
