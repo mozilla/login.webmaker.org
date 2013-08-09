@@ -157,11 +157,11 @@ module.exports = function ( connection ) {
     createUser: function( data, callback ) {
       var user;
 
-      if ( !data ) { // 400
+      if ( !data ) {
         return callback({ code: 400, message: "No data passed!" });
       }
 
-      if ( !data.username ) { // 400
+      if ( !data.username ) {
         return callback({ code: 400, message: "No username passed!" });
       }
 
@@ -177,7 +177,7 @@ module.exports = function ( connection ) {
           return callback({ code: 500, message: err });
         }
 
-        return callback( null, user ); // 200
+        return callback( null, user );
       });
     },
 
@@ -191,11 +191,11 @@ module.exports = function ( connection ) {
     updateUser: function ( id, data, callback ) {
       this.getUser( id, function( err, user ) {
         if ( err ) {
-          return callback({ code: 500, message: err }); //500
+          return callback({ code: 500, message: err });
         }
 
         if ( !user ) {
-          return callback({ code: 404, message: "User not found for ID " + id }); //404
+          return callback({ code: 404, message: "User not found for ID " + id });
         }
 
         // Selectively update the user model
@@ -205,10 +205,10 @@ module.exports = function ( connection ) {
 
         user.save(function( err, user ){
           if ( err ) {
-            return callback({ code: 500, message: err }); //500
+            return callback({ code: 500, message: err });
           }
 
-          callback( null, user ); // 200
+          callback( null, user );
         });
       });
     },
@@ -221,7 +221,7 @@ module.exports = function ( connection ) {
      */
     deleteUser: function ( id, callback ) {
       if ( !id ) {
-        return callback( "No ID passed to MongoHelper object!" ); // 400
+        return callback({ code: 400, message: "No ID passed to MongoHelper object!" });
       }
 
       model.findByIdAndRemove( id , function( err ) {
@@ -230,7 +230,7 @@ module.exports = function ( connection ) {
         }
 
         callback();
-      }); // 500, 404, 200
+      });
     },
 
     /**
@@ -239,7 +239,7 @@ module.exports = function ( connection ) {
      * callback: function( err, users )
      */
     getAllUsers: function ( callback ) {
-      model.find( {}, callback ); // 500, 404, 200
+      model.find( {}, callback );
     },
 
     /**
@@ -250,27 +250,27 @@ module.exports = function ( connection ) {
      */
     checkUsername: function( username, callback ) {
       if ( !username ) {
-        return callback ({ code: 400, message: "Username must be provided!" }); // 400
+        return callback ({ code: 400, message: "Username must be provided!" });
       }
 
       model.count( { username: username }, function( error, count ){
         // DB error
         if ( error ) {
-          return callback({ code: 500, message: error }); // 500
+          return callback({ code: 500, message: error });
         }
 
         // Username in use
         if ( count ) {
-          return callback( null, true ); // 200
+          return callback( null, true );
         }
 
         // Username blacklisted
         if ( badword( username ) ) {
-          return callback({ code: 403, message: "badword" }); // 403
+          return callback({ code: 403, message: "badword" });
         }
 
         // By default, username availiable
-        callback( null, false ); // 404
+        callback( null, false );
       });
     }
   };

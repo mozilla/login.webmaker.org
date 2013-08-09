@@ -36,7 +36,7 @@ module.exports = function ( UserHandle ) {
       // something weird is going on
       if ( !user ) {
         metrics.increment( "user.get.error" );
-        throw new Error( "Database helper failure" );
+        return res.json( 500, "Database helper failure" );
       }
 
       metrics.increment( "user.get.success" );
@@ -58,7 +58,7 @@ module.exports = function ( UserHandle ) {
       // something weird is going on
       if ( !user ) {
         metrics.increment( "user.update.error" );
-        throw new Error( "Database helper failure" );
+        return res.json( 500, "Database helper failure" );
       }
 
       metrics.increment( "user.update.success" );
@@ -80,7 +80,7 @@ module.exports = function ( UserHandle ) {
       // something weird is going on
       if ( !user ) {
         metrics.increment( "user.get.error" );
-        throw new Error( "Database helper failure" );
+        return res.json( 500, "Database helper failure" );
       }
       metrics.increment( "user.get.success" );
 
@@ -123,7 +123,7 @@ module.exports = function ( UserHandle ) {
       // something weird is going on
       if ( !user ) {
         metrics.increment( "user.get.error" );
-        throw new Error( "Database helper failure" );
+        return res.json( 500, "Database helper failure" );
       }
       metrics.increment( "user.get.success" );
       metrics.increment( "user.isAdmin.success" );

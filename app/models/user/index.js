@@ -55,7 +55,7 @@ module.exports = function ( env ) {
           // If there's no user object, and no error,
           // something weird is going on
           if ( !user  ) {
-            throw new Error( "Database helper failure!" );
+            return callback({ code: 500, message: "Database helper failure" });
           }
 
           sqlHandle.createUser( user, function( err, user ){
@@ -99,7 +99,7 @@ module.exports = function ( env ) {
         // If there's no user object, and no error,
         // something weird is going on
         if ( !user  ) {
-          throw new Error( "Database helper failure!" );
+          return callback({ code: 500, message: "Database helper failure" });
         }
 
         sqlHandle.updateUser( user.id, data, callback );
@@ -123,7 +123,7 @@ module.exports = function ( env ) {
         // If there's no user object, and no error,
         // something weird is going on
         if ( !user  ) {
-          throw new Error( "Database helper failure!" );
+          return callback({ code: 500, message: "Database helper failure" });
         }
 
         // Delete user
@@ -133,11 +133,7 @@ module.exports = function ( env ) {
           }
 
           mongoHandle.deleteUser( user.email, function( err ) {
-            if ( err ) {
-              return callback( err );
-            }
-
-            return callback();
+            return callback( err );
           });
         });
       });
