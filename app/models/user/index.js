@@ -38,31 +38,32 @@ module.exports = function ( env ) {
     getUser: function( id, callback ) {
       // First, check the MySQL db
       sqlHandle.getUser( id, function( err, user ){
-        if ( err ) {
-          return callback( err, null );
+        if ( err  && ( err.code !== 404 ) ) {
+          return callback( err );
         }
 
         if ( user ) {
-          return callback( null, user.getValues() );
+          return callback( null, user );
         }
 
         // No user, check mongo
         mongoHandle.getUser( id, function( err, user ){
           if ( err ) {
-            return callback( err, null );
+            return callback( err );
           }
 
-          // No user at all?
-          if ( !user ) {
-            return callback();
+          // If there's no user object, and no error,
+          // something weird is going on
+          if ( !user  ) {
+            return callback({ code: 500, message: "Database helper failure" });
           }
 
-          sqlHandle.createUser( user, function( err, thisUser ){
+          sqlHandle.createUser( user, function( err, user ){
             if ( err ) {
               return callback( err );
             }
 
-            return callback( null, thisUser.getValues() );
+            return callback( null, user );
           });
         });
       });
@@ -74,7 +75,12 @@ module.exports = function ( env ) {
      * callback: function( err, thisUser )
      */
     createUser: function( data, callback ) {
-      sqlHandle.createUser( data, callback );
+      this.getUser( data.email, function( err, user ){
+        if ( err && ( err.code === 404 ) ) {
+          return sqlHandle.createUser( data, callback );
+        }
+        return callback({ code: 400, err: "This email is already associated with a Webmaker account!" });
+      });
     },
 
     /**
@@ -86,14 +92,14 @@ module.exports = function ( env ) {
      */
     updateUser: function ( id, data, callback ) {
       this.getUser( id, function( err, user ) {
-        var error;
-
         if ( err ) {
           return callback( err );
         }
 
+        // If there's no user object, and no error,
+        // something weird is going on
         if ( !user  ) {
-          return callback( "User not found!" );
+          return callback({ code: 500, message: "Database helper failure" });
         }
 
         sqlHandle.updateUser( user.id, data, callback );
@@ -110,14 +116,14 @@ module.exports = function ( env ) {
       // Check user exists (sequelize happily deletes
       // non existant-users)
       this.getUser( id, function( err, user ) {
-        var error;
-
         if ( err ) {
           return callback( err );
         }
 
+        // If there's no user object, and no error,
+        // something weird is going on
         if ( !user  ) {
-          return callback( "User not found!" );
+          return callback({ code: 500, message: "Database helper failure" });
         }
 
         // Delete user
@@ -127,7 +133,7 @@ module.exports = function ( env ) {
           }
 
           mongoHandle.deleteUser( user.email, function( err ) {
-            return callback();
+            return callback( err );
           });
         });
       });

@@ -5,7 +5,8 @@ var Sequelize = require( "sequelize" ),
     forkSuccessHandling,
     dbHealthCheck,
     dbErrorHandling,
-    parseQuery;
+    parseQuery,
+    findUserObject;
 
 // Health state
 health = {
@@ -40,15 +41,6 @@ forkSuccessHandling = function forkSuccessHandling() {
   }
 };
 
-// Healthcheck middleware
-dbHealthCheck = function dbHealthCheck( req, res, next ) {
-  if ( health.connected ) {
-    next();
-  } else {
-    next( new Error( "MySQL Error!\n", health.err ) );
-  }
-};
-
 // Display a database error
 dbErrorHandling = function dbErrorHandling( err, callback ) {
   callback = callback || function() {};
@@ -73,6 +65,10 @@ parseQuery = function parseQuery( id ) {
   var query = {},
       field = "email";
 
+  if ( !id ) {
+    return null;
+  }
+
   // Parse out field type
   if ( typeof( id ) === "number" || id.match( /^\d+$/g ) ) {
     field = "id";
@@ -85,6 +81,14 @@ parseQuery = function parseQuery( id ) {
   return query;
 };
 
+/**
+ * findUserObject( id )
+ * -
+ * id: username, email or _id
+ */
+findUserObject = function findUserObject ( model, id, callback ) {
+  model.find({ where: parseQuery( id ) }).complete( callback );
+};
 
 // Exports
 module.exports = function( env ) {
@@ -137,7 +141,19 @@ module.exports = function( env ) {
      * callback: function( err, user )
      */
     getUser: function( id, callback ) {
-      model.find({ where: parseQuery( id ) }).complete( callback );
+      if ( !id ) {
+        return callback({ code: 400, err: "Invalid webmaker identifier! Email, numeric ID or username only." });
+      }
+
+      findUserObject( model, id, function( err, user ) {
+        if ( err ) {
+          return callback({ code: 500, message: err });
+        }
+        if ( !user ) {
+          return callback({ code: 404, message: err });
+        }
+        return callback( null, user.getValues() );
+      });
     },
     /**
      * createUser( data, callback )
@@ -151,41 +167,58 @@ module.exports = function( env ) {
           userData = {};
 
       if ( !data ) {
-        return callback( "No data passed!" );
+        return callback({ code: 400, message: "No data passed!" });
       }
 
       if ( !data.username ) {
-        return callback( "No username passed!" );
+        return callback({ code: 400, message: "No username passed!" });
       }
 
-      // Parse information
-      if ( data._id ){
-        // MongoDB compatibility hack (deleting _id wasn't working :/)
-        userData.email = data.email;
-        userData.username = data.username;
-        userData.fullName = data.fullName;
-        userData.sendEngagements = data.sendEngagements;
-        userData.sendNotifications = data.sendNotifications;
-        userData.isAdmin = data.isAdmin;
-        userData.isSuspended = data.isSuspended;
-        userData.wasMigrated = true;
-      } else {
-        userData = data;
+      // Confirm username is free
+      this.checkUsername( data.username, function( err, unavailable ) {
+        if ( err ) {
+          return callback( err );
+        }
 
-        // Copies user input for username verbatim before lowercasing
-        userData.fullName = userData.username;
-        userData.username = userData.username.toLowerCase();
-      }
-      user = model.build( userData );
+        if ( unavailable ) {
+          return callback({ code: 400, message: "The username " + userData.username + " is taken!" });
+        }
 
-      // Validate
-      err = user.validate();
-      if ( err ) {
-        return callback( err );
-      }
+        // Parse information
+        if ( data._id ){
+          // MongoDB compatibility hack (deleting `data._id` and passing `data` wasn't working :/)
+          userData.email = data.email;
+          userData.username = data.username;
+          userData.fullName = data.fullName;
+          userData.sendEngagements = data.sendEngagements;
+          userData.sendNotifications = data.sendNotifications;
+          userData.isAdmin = data.isAdmin;
+          userData.isSuspended = data.isSuspended;
+          userData.wasMigrated = true;
+        } else {
+          userData = data;
 
-      // Delegates all server-side validation to sequelize during this step
-      user.save().complete( callback );
+          // Copies user input for username verbatim before lowercasing
+          userData.fullName = userData.username;
+          userData.username = userData.username.toLowerCase();
+        }
+        user = model.build( userData );
+
+        // Validate
+        err = user.validate();
+        if ( err ) {
+          return callback({ code: 400, message: err });
+        }
+
+        user.save().complete(function( err, user ){
+          if ( err ) {
+            return callback({ code: 500, message: err });
+          }
+
+          return callback( null, user.getValues() );
+        });
+      });
+
     },
 
     /**
@@ -196,15 +229,15 @@ module.exports = function( env ) {
      * callback: function( err, user )
      */
     updateUser: function ( id, data, callback ) {
-      this.getUser( id, function( err, user ) {
+      findUserObject( model, id, function( err, user ) {
         var error;
 
         if ( err ) {
-          return callback( err );
+          return callback({ code: 500, message: err });
         }
 
         if ( !user  ) {
-          return callback( "User not found!" );
+          return callback({ code: 404, message: "User not found!" });
         }
 
         // Selectively update the user model
@@ -214,10 +247,16 @@ module.exports = function( env ) {
 
         error = user.validate();
         if ( error ) {
-          return callback( error );
+          return callback({ code: 400, message: error });
         }
 
-        user.save().complete( callback );
+        user.save().complete(function ( err, user ){
+          if ( err ) {
+            return callback({ code: 500, message: err });
+          }
+
+          callback( null, user.getValues() );
+        });
       });
     },
 
@@ -229,18 +268,24 @@ module.exports = function( env ) {
      */
     deleteUser: function ( id, callback ) {
       model.find({
-          where: parseQuery( id )
-        }).complete(function( err, user ){
+        where: parseQuery( id )
+      }).complete(function( err, user ){
+        if ( err ) {
+          return callback({ code: 500, message: err });
+        }
+
+        if ( !user ) {
+          return callback({ code: 404, message: "User not found for ID " + id });
+        }
+
+        user.destroy().complete(function( err ) {
           if ( err ) {
-            return callback( err );
+            return callback({ code: 500, message: err });
           }
 
-          if ( !user ) {
-            return callback( "User not found for ID " + id );
-          }
-
-          user.destroy().complete( callback );
+          return callback();
         });
+      });
     },
 
     /**
@@ -260,7 +305,7 @@ module.exports = function( env ) {
      */
     checkUsername: function( username, callback ) {
       if ( !username ) {
-        return callback ( "Username must be provided!" );
+        return callback ({ code: 400, message: "Username must be provided!" });
       }
 
       model.count({
@@ -270,7 +315,7 @@ module.exports = function( env ) {
       }).complete(function( error, count ) {
         // DB error
         if ( error ) {
-          return callback( error );
+          return callback({ code: 500, message: error });
         }
 
         // Username in use
@@ -280,7 +325,7 @@ module.exports = function( env ) {
 
         // Username blacklisted
         if ( badword( username ) ) {
-          return callback( "badword" );
+          return callback({ code: 403, message: "badword" });
         }
 
         // By default, username not taken

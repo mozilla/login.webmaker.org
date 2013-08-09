@@ -125,6 +125,10 @@ module.exports = function ( connection ) {
       var query = {},
           field = "email";
 
+      if ( !id ) {
+        return callback({ code: 400, message: "Invalid webmaker identifier! Email, numeric ID or username only." });
+      }
+
       // Parse out field type
       if ( id.match( /^[^@]+$/g ) ) {
         field = "username";
@@ -132,7 +136,17 @@ module.exports = function ( connection ) {
       }
       query[ field ] = id;
 
-      model.findOne( query, callback );
+      model.findOne( query, function( err, user ){
+        if ( err ) {
+          return callback({ code: 500, message: err });
+        }
+
+        if ( !user ) {
+          return callback({ code: 404, message: "User not found for " + field + " " + id });
+        }
+
+        callback( null, user );
+      });
     },
     /**
      * createUser( data, callback )
@@ -144,11 +158,11 @@ module.exports = function ( connection ) {
       var user;
 
       if ( !data ) {
-        return callback( "No data passed!" );
+        return callback({ code: 400, message: "No data passed!" });
       }
 
       if ( !data.username ) {
-        return callback( "No username passed!" );
+        return callback({ code: 400, message: "No username passed!" });
       }
 
       // Copies user input for username verbatim before lowercasing
@@ -158,7 +172,13 @@ module.exports = function ( connection ) {
       user = new this.model( data );
 
       // Delegates all server-side validation to mongoose during this step
-      user.save( callback );
+      user.save(function( err, user ){
+        if ( err ){
+          return callback({ code: 500, message: err });
+        }
+
+        return callback( null, user );
+      });
     },
 
     /**
@@ -170,8 +190,12 @@ module.exports = function ( connection ) {
      */
     updateUser: function ( id, data, callback ) {
       this.getUser( id, function( err, user ) {
-        if ( err || !user  ) {
-          return callback( err || "User not found!" );
+        if ( err ) {
+          return callback({ code: 500, message: err });
+        }
+
+        if ( !user ) {
+          return callback({ code: 404, message: "User not found for ID " + id });
         }
 
         // Selectively update the user model
@@ -179,7 +203,13 @@ module.exports = function ( connection ) {
           user[ key ] = data[ key ];
         });
 
-        user.save( callback );
+        user.save(function( err, user ){
+          if ( err ) {
+            return callback({ code: 500, message: err });
+          }
+
+          callback( null, user );
+        });
       });
     },
 
@@ -190,7 +220,17 @@ module.exports = function ( connection ) {
      * callback: function( err, thisUser )
      */
     deleteUser: function ( id, callback ) {
-      model.findByIdAndRemove( id , callback );
+      if ( !id ) {
+        return callback({ code: 400, message: "No ID passed to MongoHelper object!" });
+      }
+
+      model.findByIdAndRemove( id , function( err ) {
+        if ( err ) {
+          return callback({ code: 404, message: err });
+        }
+
+        callback();
+      });
     },
 
     /**
@@ -210,13 +250,13 @@ module.exports = function ( connection ) {
      */
     checkUsername: function( username, callback ) {
       if ( !username ) {
-        return callback ( "Username must be provided!" );
+        return callback ({ code: 400, message: "Username must be provided!" });
       }
 
       model.count( { username: username }, function( error, count ){
         // DB error
         if ( error ) {
-          return callback( error );
+          return callback({ code: 500, message: error });
         }
 
         // Username in use
@@ -226,7 +266,7 @@ module.exports = function ( connection ) {
 
         // Username blacklisted
         if ( badword( username ) ) {
-          return callback( "badword" );
+          return callback({ code: 403, message: "badword" });
         }
 
         // By default, username availiable

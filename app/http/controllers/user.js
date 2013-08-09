@@ -12,9 +12,9 @@ module.exports = function ( UserHandle ) {
     var userInfo = req.body;
 
     UserHandle.createUser( userInfo, function( err, thisUser ) {
-      if ( err || !thisUser ) {
+      if ( err ) {
         metrics.increment( "user.create.error" );
-        res.json( 404, { error: err || "Unknown error!" } );
+        res.json( err.code, { error: err.err } );
         return;
       }
       metrics.increment( "user.create.success" );
@@ -28,17 +28,19 @@ module.exports = function ( UserHandle ) {
     UserHandle.getUser( id, function ( err, user ) {
       if ( err ) {
         metrics.increment( "user.get.error" );
-        res.json( 500, { error: err } );
+        res.json( err.code, { error: err.message } );
         return;
       }
 
+      // If there's no user object, and no error,
+      // something weird is going on
       if ( !user ) {
-        res.json( 404, { error: err || "User not found for ID: " + id } );
-        return;
+        metrics.increment( "user.get.error" );
+        return res.json( 500, "Database helper failure" );
       }
 
       metrics.increment( "user.get.success" );
-      res.json( { user: user } );
+      res.json({ user: user });
     });
   };
 
@@ -47,11 +49,19 @@ module.exports = function ( UserHandle ) {
         id = req.params.id;
 
     UserHandle.updateUser( id, userInfo, function ( err, user ) {
-      if ( err || !user ) {
+      if ( err ) {
         metrics.increment( "user.update.error" );
-        return res.json( 404, { error: err || "User not found for ID: " + id } );
+        return res.json( err.code, { error: err.message } );
       }
 
+      // If there's no user object, and no error,
+      // something weird is going on
+      if ( !user ) {
+        metrics.increment( "user.update.error" );
+        return res.json( 500, "Database helper failure" );
+      }
+
+      metrics.increment( "user.update.success" );
       return res.json( 200, { user: user } );
    });
   };
@@ -61,16 +71,24 @@ module.exports = function ( UserHandle ) {
 
     // Confirm user exists (Sequelize happily deletes non-existent users)
     UserHandle.getUser( id, function( err, user ) {
-      if ( err || !user ) { console.log( "in error! error? ", err );
+      if ( err ) {
         metrics.increment( "user.get.error" );
-        return res.json( 404, { error: err || "User not found for ID: " + id } );
+        return res.json( err.code, { error: err.message } );
       }
+
+      // If there's no user object, and no error,
+      // something weird is going on
+      if ( !user ) {
+        metrics.increment( "user.get.error" );
+        return res.json( 500, "Database helper failure" );
+      }
+      metrics.increment( "user.get.success" );
 
       // Delete user
       UserHandle.deleteUser( id , function ( err ) {
         if ( err ) {
           metrics.increment( "user.delete.error" );
-          res.json( 500, { error: err } );
+          res.json( err.code, { error: err } );
           return;
         }
 
@@ -95,13 +113,22 @@ module.exports = function ( UserHandle ) {
 
   controller.isAdmin = function( req, res ) {
     UserHandle.getUser( req.query.id, function( err, user ) {
-      if ( err || !user ) {
-        metrics.increment( "user.isAdmin.error" );
-        res.json( 404, { error: err || "User not found for ID: " + req.query.id, isAdmin: false } );
+      if ( err ) {
+        metrics.increment( "user.get.error" );
+        res.json( err.code, { error: err.message } );
         return;
       }
+
+      // If there's no user object, and no error,
+      // something weird is going on
+      if ( !user ) {
+        metrics.increment( "user.get.error" );
+        return res.json( 500, "Database helper failure" );
+      }
+      metrics.increment( "user.get.success" );
       metrics.increment( "user.isAdmin.success" );
-      res.json( { isAdmin: user.isAdmin } );
+
+      res.json({ isAdmin: user.isAdmin });
     });
   };
 
@@ -115,12 +142,15 @@ module.exports = function ( UserHandle ) {
 
     UserHandle.checkUsername( name, function ( err, isUserUnavailable ) {
       if ( err ) {
-        // blacklisted
-        if ( err === "badword" )  {
-          return res.json( 403, "username given in '" + name + "' is blacklisted" );
+        // Blacklisted
+        if ( err.code === 403 ) {
+          metrics.increment( "user.checkUsername.error" );
+          return res.json( 403, { error:  "username given in '" + name + "' is blacklisted" });
         }
 
-        return res.json( 500, "Error checking username!" );
+        // Other error
+        metrics.increment( "user.checkUsername.error" );
+        return res.json( err.code, { error: err.message });
       }
 
       if ( isUserUnavailable ) {
