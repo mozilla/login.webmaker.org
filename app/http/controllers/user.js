@@ -11,6 +11,10 @@ module.exports = function ( UserHandle ) {
   controller.create = function ( req, res ) {
     var userInfo = req.body;
 
+    if ( userInfo.servicesAccounts ) {
+      userInfo.servicesAccounts = JSON.stringify( userInfo.servicesAccounts );
+    }
+
     UserHandle.createUser( userInfo, function( err, thisUser ) {
       if ( err || !thisUser ) {
         metrics.increment( "user.create.error" );
@@ -45,6 +49,10 @@ module.exports = function ( UserHandle ) {
   controller.update = function ( req, res ) {
     var userInfo = req.body,
         id = req.params.id;
+
+    if ( userInfo.servicesAccounts ) {
+      userInfo.servicesAccounts = JSON.stringify( userInfo.servicesAccounts );
+    }
 
     UserHandle.updateUser( id, userInfo, function ( err, user ) {
       if ( err || !user ) {
@@ -134,7 +142,7 @@ module.exports = function ( UserHandle ) {
   controller.userForm = function( req, res ) {
     res.render( "ajax/forms/new_user.html", {
       ssoAudience: env.get( "AUDIENCE" )
-    } );
+    });
   };
 
   return controller;
