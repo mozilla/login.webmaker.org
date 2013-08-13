@@ -60,6 +60,10 @@ module.exports = function( sequelize, DataTypes ) {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
+    isCollaborator: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
     isSuspended: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
@@ -88,6 +92,7 @@ module.exports = function( sequelize, DataTypes ) {
           fullName: obj.fullName,
           deletedAt: obj.deletedAt,
           isAdmin: obj.isAdmin,
+          isCollaborator: obj.isCollaborator,
           isSuspended: obj.isSuspended,
           sendNotifications: obj.sendNotifications,
           sendEngagements: obj.sendEngagements,

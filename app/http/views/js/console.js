@@ -9,6 +9,7 @@
         username: $( "#username" ),
         fullname: $( "#fullname" ),
         isAdmin: $( "#isAdmin" ),
+        isCollaborator: $( "#isCollaborator" ),
         isSuspended: $( "#isSuspended" ),
         sendNotifications: $( "#sendNotifications" ),
         sendEngagements: $( "#sendEngagements" ),
@@ -72,6 +73,7 @@
       jQuery.username.prop( "value", "" );
       jQuery.fullname.prop( "value", "" );
       jQuery.isAdmin.prop( "checked", "" );
+      jQuery.isCollaborator.prop( "checked", "" );
       jQuery.isSuspended.prop( "checked", "" );
       jQuery.sendNotifications.prop( "checked", "" );
       jQuery.sendEngagements.prop( "checked", "" );
@@ -108,6 +110,7 @@
       userData.fullName = jQuery.fullname.prop( "value" );
 
       userData.isAdmin = jQuery.isAdmin.prop( "checked" ) === false ? false : true;
+      userData.isCollaborator = jQuery.isCollaborator.prop( "checked" ) === false ? false : true;
       userData.isSuspended = jQuery.isSuspended.prop( "checked" ) === false ? false : true;
       userData.sendNotifications = jQuery.sendNotifications.prop( "checked" ) === false ? false : true;
       userData.sendEngagements = jQuery.sendEngagements.prop( "checked" ) === false ? false : true;
@@ -159,6 +162,7 @@
 
           // Checkboxes
           jQuery.isAdmin.prop( "checked", user.isAdmin === true ? true : false );
+          jQuery.isCollaborator.prop( "checked", user.isCollaborator === true ? true : false );
           jQuery.isSuspended.prop( "checked", user.isSuspended === true ? true : false );
           jQuery.sendNotifications.prop( "checked", user.sendNotifications === true ? true : false );
           jQuery.sendEngagements.prop( "checked", user.sendEngagements === true ? true : false );
