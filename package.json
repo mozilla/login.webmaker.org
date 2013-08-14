@@ -36,6 +36,6 @@
     "sqlite3": "2.1.7"
   },
   "scripts": {
-    "test": "grunt travis --verbose && mocha --timeout 10000 --reporter spec"
+    "test": "grunt travis --verbose && mocha --timeout 60000 --reporter spec"
   }
 }
