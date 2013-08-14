@@ -83,8 +83,8 @@ module.exports = function ( env ) {
         emailer.sendWelcomeEmail({
           to: user.email,
           fullName: user.fullName
-        }, function( emailEerr, msg ) {
-          if ( emailEerr ) {
+        }, function( emailErr, msg ) {
+          if ( emailErr ) {
             // non-fatal error
             console.error( emailErr );
           }
