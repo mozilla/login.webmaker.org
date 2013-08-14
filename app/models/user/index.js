@@ -23,7 +23,8 @@
 module.exports = function ( env ) {
   var mongoose = require( "../../../lib/mongoose" )( env ),
       sqlHandle = require( "./sqlController" )( env ),
-      mongoHandle = require( "./mongoController" )( mongoose.conn );
+      mongoHandle = require( "./mongoController" )( mongoose.conn ),
+      emailer = require( "../../../lib/emailer" );
 
   /**
    * Model Access methods
@@ -74,7 +75,26 @@ module.exports = function ( env ) {
      * callback: function( err, thisUser )
      */
     createUser: function( data, callback ) {
-      sqlHandle.createUser( data, callback );
+      sqlHandle.createUser( data, function( sqlErr, user ) {
+        if ( sqlErr ) {
+          return callback( sqlErr );
+        }
+
+        emailer.sendWelcomeEmail({
+          to: user.email,
+          fullName: user.fullName
+        }, function( emailEerr, msg ) {
+          if ( emailEerr ) {
+            // non-fatal error
+            console.error( emailErr );
+          }
+          if ( msg ) {
+            console.log( "Sent welcome email with id %s", msg.MessageId) ;
+          }
+
+          callback( null, user );
+        });
+      });
     },
 
     /**
