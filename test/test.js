@@ -20,31 +20,22 @@ var assert = require( "assert" ),
  */
 
 function startServer( done ) {
-  var mongoDbCheck = false,
-      sqlDbCheck = false;
+  var sqlDbCheck = false;
 
   // Spin-up the server as a child process
   child = fork( "app.js", null, {} );
 
   // Listen for success, or error with the DB
   child.on( 'message', function( msg ) {
-    if ( msg === 'mongoStarted' ) {
-      mongoDbCheck = true;
-    }
     if ( msg === 'sqlStarted' ) {
       sqlDbCheck = true;
-    }
-    if ( msg === 'mongoNoConnection' ) {
-      console.log( "Mongo database not connected! Tests will fail." );
-      child.kill();
-      process.exit( 1 );
     }
     if ( msg === 'sqlNoConnection' ) {
       console.log( "MySQL database not connected! Tests will fail." );
       child.kill();
       process.exit(1);
     }
-    if ( mongoDbCheck && sqlDbCheck ) {
+    if ( sqlDbCheck ) {
       done();
     }
   });

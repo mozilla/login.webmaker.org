@@ -1,29 +1,5 @@
-/**
- * User Model
- * ---------------
- * This file acts as a controller, co-ordinating between two
- * database backends: MongoDB (through Mongoose) and MySQL
- * (through Sequelize).
- *
- * All non-create calls will run through MySQL first, and if
- * a record cannot be found, data will be checked against the
- * contents of the MongoDB.
- *
- * Anytime a record for a user is accessed in MongoDB, it will
- * be immediately copied into MySQL, which will return the
- * data to the client.
- *
- * TODOs:
- *  1) Add logging to all calls on success/error
- *     - https://bugzilla.mozilla.org/show_bug.cgi?id=882970
- *  2) Healthcheck
- *     - https://bugzilla.mozilla.org/show_bug.cgi?id=867328
- */
-
 module.exports = function ( env ) {
-  var mongoose = require( "../../../lib/mongoose" )( env ),
-      sqlHandle = require( "./sqlController" )( env ),
-      mongoHandle = require( "./mongoController" )( mongoose.conn ),
+  var sqlHandle = require( "./sqlController" )( env ),
       emailer = require( "../../../lib/emailer" );
 
   /**
@@ -47,25 +23,7 @@ module.exports = function ( env ) {
           return callback( null, user.getValues() );
         }
 
-        // No user, check mongo
-        mongoHandle.getUser( id, function( err, user ){
-          if ( err ) {
-            return callback( err, null );
-          }
-
-          // No user at all?
-          if ( !user ) {
-            return callback();
-          }
-
-          sqlHandle.createUser( user, function( err, thisUser ){
-            if ( err ) {
-              return callback( err );
-            }
-
-            return callback( null, thisUser.getValues() );
-          });
-        });
+        return callback();
       });
     },
     /**
@@ -146,9 +104,7 @@ module.exports = function ( env ) {
             return callback( err );
           }
 
-          mongoHandle.deleteUser( user.email, function( err ) {
-            return callback();
-          });
+          callback();
         });
       });
 
@@ -169,18 +125,6 @@ module.exports = function ( env ) {
      * username: username to be checked
      * callback: function( err, unavailable )
      */
-    checkUsername: function( username, callback ) {
-      sqlHandle.checkUsername( username, function( err, unavailable ){
-        if ( err ) {
-          return callback( err );
-        }
-
-        if ( unavailable ) {
-          return callback( null, true );
-        }
-
-        mongoHandle.checkUsername( username, callback );
-      });
-    }
+    checkUsername: sqlHandle.checkUsername
   };
 };
