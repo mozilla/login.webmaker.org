@@ -57,6 +57,14 @@ module.exports = function ( env ) {
      //     return sqlHandle.createUser( data, callback );
      //   }
      //   return callback({ code: 400, err: "This email is already associated with a Webmaker account!" });
+     // this.getUser( data.email, function( err, user ){
+     //   if ( err ) {
+     //     if ( err.code === 404 ) {
+     //       return sqlHandle.createUser( data, callback );
+     //     }
+     //     return callback( err );
+     //   }
+     //   return callback({ code: 400, message: "This email is already associated with a Webmaker account!" });
       });
     },
 
