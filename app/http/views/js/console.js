@@ -13,6 +13,7 @@
         isSuspended: $( "#isSuspended" ),
         sendNotifications: $( "#sendNotifications" ),
         sendEngagements: $( "#sendEngagements" ),
+        sendEventCreationEmails: $( "#sendEventCreationEmails" ),
         newUser: $( "#newUser" ),
         submit: $( "#submit" ),
         clear: $( "#clear" ),
@@ -77,6 +78,7 @@
       jQuery.isSuspended.prop( "checked", "" );
       jQuery.sendNotifications.prop( "checked", "" );
       jQuery.sendEngagements.prop( "checked", "" );
+      jQuery.sendEventCreationEmails.prop( "checked", "" );
       jQuery.newUser.prop( "value", "true" );
       jQuery.error.html( "" );
 
@@ -114,6 +116,7 @@
       userData.isSuspended = jQuery.isSuspended.prop( "checked" ) === false ? false : true;
       userData.sendNotifications = jQuery.sendNotifications.prop( "checked" ) === false ? false : true;
       userData.sendEngagements = jQuery.sendEngagements.prop( "checked" ) === false ? false : true;
+      userData.sendEventCreationEmails = jQuery.sendEventCreationEmails.prop( "checked" ) === false ? false : true;
 
       // New user or old?
       var method = jQuery.newUser.attr( "value" ) === "false" ? "put" : "post",
@@ -166,6 +169,7 @@
           jQuery.isSuspended.prop( "checked", user.isSuspended === true ? true : false );
           jQuery.sendNotifications.prop( "checked", user.sendNotifications === true ? true : false );
           jQuery.sendEngagements.prop( "checked", user.sendEngagements === true ? true : false );
+          jQuery.sendEventCreationEmails.prop( "checked", user.sendEventCreationEmails === true ? true : false );
 
           // Hidden field
           jQuery.newUser.prop( "value", "false" );
