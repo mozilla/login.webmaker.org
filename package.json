@@ -21,7 +21,7 @@
     "sequelize": "1.6.0",
     "winston": "0.7.1",
     "webmaker-loginapi": "https://github.com/mozilla/node-webmaker-loginapi/tarball/v0.1.9",
-    "webmaker-postalservice": "https://github.com/mozilla/node-webmaker-postalservice/tarball/v0.2.2",
+    "webmaker-postalservice": "https://github.com/mozilla/node-webmaker-postalservice/tarball/v0.2.3",
     "i18n-abide": "0.0.10"
   },
   "devDependencies": {
