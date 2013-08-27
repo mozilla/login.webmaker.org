@@ -37,13 +37,13 @@
             <ul class="no-list-styling">
               <li><span class="field-label">{{ gettext('Username') }}</span><span class="wm-username"></span></li>
               <li><span class="field-label">{{ gettext('Email') }}</span><span class="wm-email"></span></li>
-            </ul>
-
-            <p>Send me emails when:</p>
-            <ul class="user-notifications no-list-styling">
-              <li>
-                <input type="checkbox" id="sendEventCreationEmailsCheckbox">
-                <label for="sendEventCreationEmailsCheckbox">I create an event</label>
+              <li><span class="field-label">{{ gettext('Send me emails when') }}:</span>
+                  <ul class="wm-email-pref-list no-list-styling">
+                    <li>
+                      <input type="checkbox" id="sendEventCreationEmailsCheckbox">
+                      <label for="sendEventCreationEmailsCheckbox">{{ gettext('I create an event') }}</label>
+                    </li>
+                  </ul>
               </li>
             </ul>
 

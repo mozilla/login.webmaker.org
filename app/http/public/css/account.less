@@ -78,10 +78,22 @@
 
 .field-label {
   display: inline-block;
-  color: @midgrey;
-  width: 110px;
-  margin-right: 20px;
+  color: lighten(@grey, 30%);
+  width: 30%;
+  padding-right: 5%;
 }
+
+.wm-email-pref-list {
+  vertical-align: top;
+  width: 60%;
+  display: inline-block;
+  position: relative;
+  > li > input[type="checkbox"] {
+    margin: 0 15px 0 0;
+    padding: 0;
+  }
+}
+
 
 .no-list-styling {
   margin: 0;
@@ -94,3 +106,4 @@ iframe {
   width: 100%;
   height: 300px;
 }
+
