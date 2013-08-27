@@ -33,38 +33,35 @@ module.exports = function ( env ) {
      * callback: function( err, thisUser )
      */
     createUser: function( data, callback ) {
-      sqlHandle.createUser( data, function( sqlErr, user ) {
-        if ( sqlErr ) {
-          return callback( sqlErr );
+      this.getUser( data.email, function( getUserError, user ){
+        if ( getUserError ) {
+          // No user? Try to create one
+          if ( getUserError.code === 404 ) {
+            return sqlHandle.createUser( data, function( createUserError, user ) {
+              if ( createUserError ) {
+                return callback( createUserError );
+              }
+
+              emailer.sendWelcomeEmail({
+                to: user.email,
+                fullName: user.fullName
+              }, function( emailErr, msg ) {
+                if ( emailErr ) {
+                  // non-fatal error
+                  console.error( emailErr );
+                }
+                if ( msg ) {
+                  console.log( "Sent welcome email with id %s", msg.MessageId) ;
+                }
+
+                callback( null, user );
+              });
+            }
+          } // End-if ( code === 404 )
+          return callback( getUserError );
         }
-
-        emailer.sendWelcomeEmail({
-          to: user.email,
-          fullName: user.fullName
-        }, function( emailErr, msg ) {
-          if ( emailErr ) {
-            // non-fatal error
-            console.error( emailErr );
-          }
-          if ( msg ) {
-            console.log( "Sent welcome email with id %s", msg.MessageId) ;
-          }
-
-          callback( null, user );
-        });
-     // this.getUser( data.email, function( err, user ){
-     //   if ( err && ( err.code === 404 ) ) {
-     //     return sqlHandle.createUser( data, callback );
-     //   }
-     //   return callback({ code: 400, err: "This email is already associated with a Webmaker account!" });
-     // this.getUser( data.email, function( err, user ){
-     //   if ( err ) {
-     //     if ( err.code === 404 ) {
-     //       return sqlHandle.createUser( data, callback );
-     //     }
-     //     return callback( err );
-     //   }
-     //   return callback({ code: 400, message: "This email is already associated with a Webmaker account!" });
+        // There was a user? Respond to the client
+        return callback({ code: 400, message: "This email is already associated with a Webmaker account!" });
       });
     },
 
