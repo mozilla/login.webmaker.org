@@ -34,10 +34,19 @@
           </div>
           <div class="g-5">
             <h1>{{ gettext('Hi') }} <span class="wm-username"></span>!</h1>
-            <ul class="user-info-list">
+            <ul class="no-list-styling">
               <li><span class="field-label">{{ gettext('Username') }}</span><span class="wm-username"></span></li>
               <li><span class="field-label">{{ gettext('Email') }}</span><span class="wm-email"></span></li>
             </ul>
+
+            <p>Send me emails when:</p>
+            <ul class="user-notifications no-list-styling">
+              <li>
+                <input type="checkbox" id="sendEventCreationEmailsCheckbox">
+                <label for="sendEventCreationEmailsCheckbox">I create an event</label>
+              </li>
+            </ul>
+
             <p><a id="delete-account">{{ gettext('Delete account?') }}</a></p>
           </div>
         </div>
@@ -52,8 +61,6 @@
   </div>
   <div class="ui-wrapper ui-body" id="logout-message">{{ gettext('Your user account was deleted!') }}</div>
   <div class="ui-wrapper ui-body" id="wrong-email">{{ gettext("Looks like that isn't your email") }}</div>
-   </div>
-  </div>
   <script src="/js/ext/require.js" data-main="/js/account"></script>
 
   {% if ga_account %}
