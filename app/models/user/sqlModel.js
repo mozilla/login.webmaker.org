@@ -76,6 +76,10 @@ module.exports = function( sequelize, DataTypes ) {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
+    sendEventCreationEmails: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
+    },
     wasMigrated: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
@@ -96,6 +100,7 @@ module.exports = function( sequelize, DataTypes ) {
           isSuspended: obj.isSuspended,
           sendNotifications: obj.sendNotifications,
           sendEngagements: obj.sendEngagements,
+          sendEventCreationEmails: obj.sendEventCreationEmails,
           // wasMigrated: obj.wasMigrated,
           createdAt: obj.createdAt,
           updatedAt: obj.updatedAt,
