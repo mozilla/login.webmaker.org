@@ -34,11 +34,11 @@ module.exports = function ( env ) {
      */
     createUser: function( data, callback ) {
       this.getUser( data.email, function( getUserError, user ){
-        if ( getUserError ) {
+        if ( getUserError ) { console.log( "GetUserError: ", getUserError );
           // No user? Try to create one
           if ( getUserError.code === 404 ) {
             return sqlHandle.createUser( data, function( createUserError, user ) {
-              if ( createUserError ) {
+              if ( createUserError ) { console.log( "createUserError: ", createUserError );
                 return callback( createUserError );
               }
 
@@ -51,15 +51,15 @@ module.exports = function ( env ) {
                   console.error( emailErr );
                 }
                 if ( msg ) {
-                  console.log( "Sent welcome email with id %s", msg.MessageId) ;
+                  console.log( "Sent welcome email with id %s", msg.MessageId);
                 }
 
                 callback( null, user );
               });
-            }
+            });
           } // End-if ( code === 404 )
           return callback( getUserError );
-        }
+        } console.log( "\n\nUSER: ", user );
         // There was a user? Respond to the client
         return callback({ code: 400, message: "This email is already associated with a Webmaker account!" });
       });

@@ -70,8 +70,8 @@ function apiHelper( verb, uri, httpCode, data, callback, customAssertions ) {
       err = err || "No response body found!";
     }
 
-    assert.ok( !err, err ? "Failed, with error code " + err && err.code +", reporting: " + err && err.message : "" );
-    assert.equal( res.statusCode, httpCode, "Expected HTTP code '" + httpCode + "' but received '" + res.statusCode + "'" );
+    assert.ok( !err, err );
+    assert.equal( res.statusCode, httpCode, "Expected HTTP code '" + httpCode + "' but received '" + res.statusCode + "'" + "\nBody: " + JSON.stringify( res.body ) );
     customAssertions( err, res, body, callback );
   };
 
@@ -167,7 +167,6 @@ function unique() {
  */
 
 describe( 'POST /user (create)', function() {
-
   var api = hostAuth + '/user';
 
   before( function( done ) {
@@ -290,266 +289,266 @@ describe( 'POST /user (create)', function() {
   });
 });
 
-describe( 'PUT /user/:id (update)', function() {
-  var api = hostAuth + '/user';
+// describe( 'PUT /user/:id (update)', function() {
+//   var api = hostAuth + '/user';
 
-  before( function( done ) {
-    startServer( done );
-  });
+//   before( function( done ) {
+//     startServer( done );
+//   });
 
-  after( function( done ) {
-    stopServer( done );
-  });
+//   after( function( done ) {
+//     stopServer( done );
+//   });
 
-  it( "should update a user when new, valid, username is passed", function ( done ) {
-    var user = unique();
+//   it( "should update a user when new, valid, username is passed", function ( done ) {
+//     var user = unique();
 
-    // Create a user, then update it with a unique username
-    apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
-      user.username = unique().username;
+//     // Create a user, then update it with a unique username
+//     apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
+//       user.username = unique().username;
 
-      apiHelper( 'put', hostAuth + "/user/" + user.email, 200, user, done );
-    });
-  });
+//       apiHelper( 'put', hostAuth + "/user/" + user.email, 200, user, done );
+//     });
+//   });
 
-  it( "should update a user when new, valid, email is passed", function ( done ) {
-    var user = unique();
+//   it( "should update a user when new, valid, email is passed", function ( done ) {
+//     var user = unique();
 
-    // Create a user, then update it with a unique email
-    apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
-      var newEmail = unique().email;
+//     // Create a user, then update it with a unique email
+//     apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
+//       var newEmail = unique().email;
 
-      // Update user
-      apiHelper( 'put', hostAuth + "/user/" + user.email, 200, { email: newEmail }, done );
-    });
-  });
+//       // Update user
+//       apiHelper( 'put', hostAuth + "/user/" + user.email, 200, { email: newEmail }, done );
+//     });
+//   });
 
-  it( 'should error when updating a user that does not exist', function ( done ) {
-    apiHelper( 'put', hostAuth + "/user/" + unique().email, 404, {}, done );
-  });
+//   it( 'should error when updating a user that does not exist', function ( done ) {
+//     apiHelper( 'put', hostAuth + "/user/" + unique().email, 404, {}, done );
+//   });
 
-  it( 'should error when updating a user with an invalid username', function ( done ) {
-    var user = unique();
+//   it( 'should error when updating a user with an invalid username', function ( done ) {
+//     var user = unique();
 
-    // Create user
-    apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
-      user.username = "damn";
+//     // Create user
+//     apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
+//       user.username = "damn";
 
-      // Update user
-      apiHelper( 'put', hostAuth + "/user/" + user.email, 400, user, done );
-    });
-  });
+//       // Update user
+//       apiHelper( 'put', hostAuth + "/user/" + user.email, 400, user, done );
+//     });
+//   });
 
-  it( 'should error when updating a user with an invalid email', function ( done ) {
-    var user = unique();
+//   it( 'should error when updating a user with an invalid email', function ( done ) {
+//     var user = unique();
 
-    // Create user
-    apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
-      var invalidEmail = "invalid";
+//     // Create user
+//     apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
+//       var invalidEmail = "invalid";
 
-      // Update user
-      apiHelper( 'put', hostAuth + "/user/" + user.email, 400, { email: invalidEmail }, done );
-    });
-  });
-});
+//       // Update user
+//       apiHelper( 'put', hostAuth + "/user/" + user.email, 400, { email: invalidEmail }, done );
+//     });
+//   });
+// });
 
-describe( 'DELETE /user/:id', function() {
-  var api = hostAuth + '/user';
+// describe( 'DELETE /user/:id', function() {
+//   var api = hostAuth + '/user';
 
-  before( function( done ) {
-    startServer( done );
-  });
+//   before( function( done ) {
+//     startServer( done );
+//   });
 
-  after( function( done ) {
-    stopServer( done );
-  });
+//   after( function( done ) {
+//     stopServer( done );
+//   });
 
-  it( 'should successfully delete an account when attempting the action on an existing user', function ( done ) {
-    var user = unique();
+//   it( 'should successfully delete an account when attempting the action on an existing user', function ( done ) {
+//     var user = unique();
 
-    // Create a user, then attempt to delete it
-    apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
-      // Remove user from auto-delete after test suite
-      userTracer.unwatchUser( body.user.id );
+//     // Create a user, then attempt to delete it
+//     apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
+//       // Remove user from auto-delete after test suite
+//       userTracer.unwatchUser( body.user.id );
 
-      apiHelper( 'delete', hostAuth + "/user/" + user.email, 200, user, done );
-    });
-  });
+//       apiHelper( 'delete', hostAuth + "/user/" + user.email, 200, user, done );
+//     });
+//   });
 
-  it( 'should error on attempting to delete a non-existant account', function ( done ) {
-    apiHelper( 'delete', hostAuth + "/user/" + unique().email, 404, {}, done );
-  });
-});
+//   it( 'should error on attempting to delete a non-existant account', function ( done ) {
+//     apiHelper( 'delete', hostAuth + "/user/" + unique().email, 404, {}, done );
+//   });
+// });
 
-describe( 'GET /user/:id', function() {
-  var api = hostAuth + '/user',
-      getAssertions;
+// describe( 'GET /user/:id', function() {
+//   var api = hostAuth + '/user',
+//       getAssertions;
 
-  getAssertions = function getAssertions( err, res, body, callback ) {
-    var user = body.user;
+//   getAssertions = function getAssertions( err, res, body, callback ) {
+//     var user = body.user;
 
-    assert.ok( user.hasOwnProperty( "id" ) );
-    assert.notDeepEqual( user.id, "undefined" );
-    assert.notDeepEqual( user.id, "null" );
-    assert.ok( user.hasOwnProperty( "email" ) );
-    assert.notDeepEqual( user.email, "undefined" );
-    assert.notDeepEqual( user.email, "null" );
-    assert.ok( user.hasOwnProperty( "username" ) );
-    assert.notDeepEqual( user.username, "undefined" );
-    assert.notDeepEqual( user.username, "null" );
-    assert.ok( user.hasOwnProperty( "fullName" ) );
-    assert.notDeepEqual( user.fullName, "undefined" );
-    assert.notDeepEqual( user.fullName, "null" );
-    assert.ok( user.hasOwnProperty( "deletedAt" ) );
-    assert.notDeepEqual( user.deletedAt, "undefined" );
-    assert.notDeepEqual( user.deletedAt, "null" );
-    assert.ok( user.hasOwnProperty( "isAdmin" ) );
-    assert.notDeepEqual( user.isAdmin, "undefined" );
-    assert.notDeepEqual( user.isAdmin, "null" );
-    assert.ok( user.hasOwnProperty( "sendNotifications" ) );
-    assert.notDeepEqual( user.sendNotifications, "undefined" );
-    assert.notDeepEqual( user.sendNotifications, "null" );
-    assert.ok( user.hasOwnProperty( "sendEngagements" ) );
-    assert.notDeepEqual( user.sendEngagements, "undefined" );
-    assert.notDeepEqual( user.sendEngagements, "null" );
-    assert.ok( user.hasOwnProperty( "createdAt" ) );
-    assert.notDeepEqual( user.createdAt, "undefined" );
-    assert.notDeepEqual( user.createdAt, "null" );
-    assert.ok( user.hasOwnProperty( "updatedAt" ) );
-    assert.notDeepEqual( user.updatedAt, "undefined" );
-    assert.notDeepEqual( user.updatedAt, "null" );
-    assert.ok( user.hasOwnProperty( "displayName" ) );
-    assert.notDeepEqual( user.displayName, "undefined" );
-    assert.notDeepEqual( user.displayName, "null" );
-    assert.ok( user.hasOwnProperty( "emailHash" ) );
-    assert.notDeepEqual( user.emailHash, "undefined" );
-    assert.notDeepEqual( user.emailHash, "null" );
+//     assert.ok( user.hasOwnProperty( "id" ) );
+//     assert.notDeepEqual( user.id, "undefined" );
+//     assert.notDeepEqual( user.id, "null" );
+//     assert.ok( user.hasOwnProperty( "email" ) );
+//     assert.notDeepEqual( user.email, "undefined" );
+//     assert.notDeepEqual( user.email, "null" );
+//     assert.ok( user.hasOwnProperty( "username" ) );
+//     assert.notDeepEqual( user.username, "undefined" );
+//     assert.notDeepEqual( user.username, "null" );
+//     assert.ok( user.hasOwnProperty( "fullName" ) );
+//     assert.notDeepEqual( user.fullName, "undefined" );
+//     assert.notDeepEqual( user.fullName, "null" );
+//     assert.ok( user.hasOwnProperty( "deletedAt" ) );
+//     assert.notDeepEqual( user.deletedAt, "undefined" );
+//     assert.notDeepEqual( user.deletedAt, "null" );
+//     assert.ok( user.hasOwnProperty( "isAdmin" ) );
+//     assert.notDeepEqual( user.isAdmin, "undefined" );
+//     assert.notDeepEqual( user.isAdmin, "null" );
+//     assert.ok( user.hasOwnProperty( "sendNotifications" ) );
+//     assert.notDeepEqual( user.sendNotifications, "undefined" );
+//     assert.notDeepEqual( user.sendNotifications, "null" );
+//     assert.ok( user.hasOwnProperty( "sendEngagements" ) );
+//     assert.notDeepEqual( user.sendEngagements, "undefined" );
+//     assert.notDeepEqual( user.sendEngagements, "null" );
+//     assert.ok( user.hasOwnProperty( "createdAt" ) );
+//     assert.notDeepEqual( user.createdAt, "undefined" );
+//     assert.notDeepEqual( user.createdAt, "null" );
+//     assert.ok( user.hasOwnProperty( "updatedAt" ) );
+//     assert.notDeepEqual( user.updatedAt, "undefined" );
+//     assert.notDeepEqual( user.updatedAt, "null" );
+//     assert.ok( user.hasOwnProperty( "displayName" ) );
+//     assert.notDeepEqual( user.displayName, "undefined" );
+//     assert.notDeepEqual( user.displayName, "null" );
+//     assert.ok( user.hasOwnProperty( "emailHash" ) );
+//     assert.notDeepEqual( user.emailHash, "undefined" );
+//     assert.notDeepEqual( user.emailHash, "null" );
 
-    callback( err, res, body );
-  };
+//     callback( err, res, body );
+//   };
 
-  before( function( done ) {
-    startServer( done );
-  });
+//   before( function( done ) {
+//     startServer( done );
+//   });
 
-  after( function( done ) {
-    stopServer( done );
-  });
+//   after( function( done ) {
+//     stopServer( done );
+//   });
 
-  it( 'should successfully return an account when attempting the retrieve an existing user by email', function ( done ) {
-    var user = unique();
+//   it( 'should successfully return an account when attempting the retrieve an existing user by email', function ( done ) {
+//     var user = unique();
 
-    // Create a user, then attempt to retrieve it
-    apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
-      apiHelper( 'get', hostAuth + "/user/" + user.email, 200, {}, done, getAssertions );
-    });
-  });
+//     // Create a user, then attempt to retrieve it
+//     apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
+//       apiHelper( 'get', hostAuth + "/user/" + user.email, 200, {}, done, getAssertions );
+//     });
+//   });
 
-  it( 'should successfully return an account when attempting the retrieve an existing user by username', function ( done ) {
-    var user = unique();
+//   it( 'should successfully return an account when attempting the retrieve an existing user by username', function ( done ) {
+//     var user = unique();
 
-    // Create a user, then attempt to retrieve it
-    apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
-      apiHelper( 'get', hostAuth + "/user/" + user.username, 200, {}, done, getAssertions );
-    });
-  });
+//     // Create a user, then attempt to retrieve it
+//     apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
+//       apiHelper( 'get', hostAuth + "/user/" + user.username, 200, {}, done, getAssertions );
+//     });
+//   });
 
-  it( 'should successfully return an account when attempting the retrieve an existing user by id', function ( done ) {
-    var user = unique();
+//   it( 'should successfully return an account when attempting the retrieve an existing user by id', function ( done ) {
+//     var user = unique();
 
-    // Create a user, then attempt to retrieve it
-    apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
-      apiHelper( 'get', hostAuth + "/user/" + body.user.id, 200, {}, done, getAssertions );
-    });
-  });
+//     // Create a user, then attempt to retrieve it
+//     apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
+//       apiHelper( 'get', hostAuth + "/user/" + body.user.id, 200, {}, done, getAssertions );
+//     });
+//   });
 
-  it( 'should error on attempting to retrieve a non-existant account', function ( done ) {
-    apiHelper( 'get', hostAuth + "/user/" + unique().email, 404, {}, done );
-  });
-});
+//   it( 'should error on attempting to retrieve a non-existant account', function ( done ) {
+//     apiHelper( 'get', hostAuth + "/user/" + unique().email, 404, {}, done );
+//   });
+// });
 
-describe( 'GET /isAdmin/:id', function() {
-  var api = hostAuth + '/isAdmin?id=';
+// describe( 'GET /isAdmin/:id', function() {
+//   var api = hostAuth + '/isAdmin?id=';
 
-  before( function( done ) {
-    startServer( done );
-  });
+//   before( function( done ) {
+//     startServer( done );
+//   });
 
-  after( function( done ) {
-    stopServer( done );
-  });
+//   after( function( done ) {
+//     stopServer( done );
+//   });
 
-  it( 'should successfully return when attempting to check an existing user', function ( done ) {
-    var user = unique();
+//   it( 'should successfully return when attempting to check an existing user', function ( done ) {
+//     var user = unique();
 
-    user.isAdmin = true;
+//     user.isAdmin = true;
 
-    // Create a user, then attempt to check it
-    apiHelper( 'post',  hostAuth + '/user', 200, user, done, function ( err, res, body, done ) {
-      apiHelper( 'get', api + user.email, 200, {}, function( err, res, body ) {
-        assert.equal( body.isAdmin, true );
-        done();
-      });
-    });
-  });
+//     // Create a user, then attempt to check it
+//     apiHelper( 'post',  hostAuth + '/user', 200, user, done, function ( err, res, body, done ) {
+//       apiHelper( 'get', api + user.email, 200, {}, function( err, res, body ) {
+//         assert.equal( body.isAdmin, true );
+//         done();
+//       });
+//     });
+//   });
 
-  it( 'should error on attempting to check a non-existant account', function ( done ) {
-    apiHelper( 'get', api + unique().email, 404, {}, done );
-  });
-});
+//   it( 'should error on attempting to check a non-existant account', function ( done ) {
+//     apiHelper( 'get', api + unique().email, 404, {}, done );
+//   });
+// });
 
-describe( 'GET /user/username/:userid', function() {
-  var api = hostAuth + '/user';
+// describe( 'GET /user/username/:userid', function() {
+//   var api = hostAuth + '/user';
 
-  before( function( done ) {
-    startServer( done );
-  });
+//   before( function( done ) {
+//     startServer( done );
+//   });
 
-  after( function( done ) {
-    stopServer( done );
-  });
+//   after( function( done ) {
+//     stopServer( done );
+//   });
 
-  it( 'should error if no userid is passed', function( done ) {
-    apiHelper( 'get', api + "/username/", 404, done );
-  });
+//   it( 'should error if no userid is passed', function( done ) {
+//     apiHelper( 'get', api + "/username/", 404, done );
+//   });
 
-  it( 'should return 200 if username in use', function( done ) {
-    var user = unique();
+//   it( 'should return 200 if username in use', function( done ) {
+//     var user = unique();
 
-    // Create a user, then attempt to retrieve it
-    apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
-      apiHelper( 'get', api + "/username/" + body.user.username, 200, done );
-    });
-  });
+//     // Create a user, then attempt to retrieve it
+//     apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
+//       apiHelper( 'get', api + "/username/" + body.user.username, 200, done );
+//     });
+//   });
 
-  it( 'should return 403 if username is a badword', function( done ) {
-    apiHelper( 'get', api + "/username/" + "damn", 403, {}, done );
-  });
+//   it( 'should return 403 if username is a badword', function( done ) {
+//     apiHelper( 'get', api + "/username/" + "damn", 403, {}, done );
+//   });
 
-  it( 'should return 404 if username is available', function( done ) {
-    apiHelper( 'get', api + "/username/" + unique().username.toLowerCase(), 404, {}, done );
-  });
-});
+//   it( 'should return 404 if username is available', function( done ) {
+//     apiHelper( 'get', api + "/username/" + unique().username.toLowerCase(), 404, {}, done );
+//   });
+// });
 
-describe( 'basicauth', function() {
-  // Rather complicated way of stripping correct auth and replacing with bad values
-  var invalidAuthAPI = hostAuth.replace( new RegExp( env.get("ALLOWED_USERS").split(",")[0] ), "wrong:string" ) + "/isAdmin?id=";
+// describe( 'basicauth', function() {
+//   // Rather complicated way of stripping correct auth and replacing with bad values
+//   var invalidAuthAPI = hostAuth.replace( new RegExp( env.get("ALLOWED_USERS").split(",")[0] ), "wrong:string" ) + "/isAdmin?id=";
 
-  before( function( done ) {
-    startServer( done );
-  });
+//   before( function( done ) {
+//     startServer( done );
+//   });
 
-  after( function( done ) {
-    stopServer( done );
-  });
+//   after( function( done ) {
+//     stopServer( done );
+//   });
 
-  it( 'should error when auth is incorrect', function( done ) {
-    var user = unique();
+//   it( 'should error when auth is incorrect', function( done ) {
+//     var user = unique();
 
-    // Create a user, then attempt to check it
-    apiHelper( 'post',  hostAuth + '/user', 200, user, done, function ( err, res, body, done ) {
-      apiHelper( 'get', invalidAuthAPI + user.email, 401, {}, done);
-    });
-  });
-});
+//     // Create a user, then attempt to check it
+//     apiHelper( 'post',  hostAuth + '/user', 200, user, done, function ( err, res, body, done ) {
+//       apiHelper( 'get', invalidAuthAPI + user.email, 401, {}, done);
+//     });
+//   });
+// });
 

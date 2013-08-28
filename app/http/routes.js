@@ -124,4 +124,9 @@ module.exports = function( http, userHandle ){
 
   // Devops
   http.get( "/healthcheck", routes.site.healthcheck );
+
+  // DELETE ME
+  http.get( "/test/:blaz", function( req, res, next ) {
+    res.json({ message: "It worked."});
+  });
 };

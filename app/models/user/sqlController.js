@@ -198,7 +198,7 @@ module.exports = function( env ) {
         } else {
           userData = data;
 
-          // Copies user input for username verbatim before lowercasing
+          // Stores user input for username verbatim before lowercasing
           userData.fullName = userData.username;
           userData.username = userData.username.toLowerCase();
         }

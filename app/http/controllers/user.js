@@ -36,7 +36,7 @@ module.exports = function ( UserHandle ) {
       // something weird is going on
       if ( !user ) {
         metrics.increment( "user.get.error" );
-        return res.json( 500, "Database helper failure" );
+        return res.json( 500, { error: "Database helper failure" } );
       }
 
       metrics.increment( "user.get.success" );
@@ -58,7 +58,7 @@ module.exports = function ( UserHandle ) {
       // something weird is going on
       if ( !user ) {
         metrics.increment( "user.update.error" );
-        return res.json( 500, "Database helper failure" );
+        return res.json( 500, { error: "Database helper failure" } );
       }
 
       metrics.increment( "user.update.success" );
@@ -80,7 +80,7 @@ module.exports = function ( UserHandle ) {
       // something weird is going on
       if ( !user ) {
         metrics.increment( "user.get.error" );
-        return res.json( 500, "Database helper failure" );
+        return res.json( 500, { error: "Database helper failure" } );
       }
       metrics.increment( "user.get.success" );
 
@@ -88,7 +88,7 @@ module.exports = function ( UserHandle ) {
       UserHandle.deleteUser( id , function ( err ) {
         if ( err ) {
           metrics.increment( "user.delete.error" );
-          res.json( err.code, { error: err } );
+          res.json( err.code, { error: err.message } );
           return;
         }
 
@@ -123,7 +123,7 @@ module.exports = function ( UserHandle ) {
       // something weird is going on
       if ( !user ) {
         metrics.increment( "user.get.error" );
-        return res.json( 500, "Database helper failure" );
+        return res.json( 500, { error: "Database helper failure" } );
       }
       metrics.increment( "user.get.success" );
       metrics.increment( "user.isAdmin.success" );
@@ -137,7 +137,7 @@ module.exports = function ( UserHandle ) {
         badword = require( "badword" );
 
     if ( !name ) {
-      return res.json( 400, ":name parameter required!" );
+      return res.json( 400, { error: ":name parameter required!" } );
     }
 
     UserHandle.checkUsername( name, function ( err, isUserUnavailable ) {
@@ -145,7 +145,7 @@ module.exports = function ( UserHandle ) {
         // Blacklisted
         if ( err.code === 403 ) {
           metrics.increment( "user.checkUsername.error" );
-          return res.json( 403, { error:  "username given in '" + name + "' is blacklisted" });
+          return res.json( 403, { error: "username given in '" + name + "' is blacklisted" });
         }
 
         // Other error
@@ -154,10 +154,10 @@ module.exports = function ( UserHandle ) {
       }
 
       if ( isUserUnavailable ) {
-        return res.json( 200, "username given in '" + name + "' is valid and being in use" );
+        return res.json( 200, { error: "username given in '" + name + "' is valid and being in use" } );
       }
 
-      res.json( 404, "username given in '" + name + "' is available" );
+      res.json( 404, { error: "username given in '" + name + "' is available" } );
     });
   };
 
