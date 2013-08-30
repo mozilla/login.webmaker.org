@@ -55,7 +55,7 @@
         $( "#wrong-email" ).fadeIn();
         setTimeout(function() {
           $( "#wrong-email" ).fadeOut();
-          }, 3000);
+        }, 3000);
       }
     });
 
@@ -70,9 +70,11 @@
         },
         success: function( data, textStatus ) {
           console.log( data, textStatus );
+          $( ".email-prefs.prefs-saved" ).fadeIn().delay( 1000 ).fadeOut();
         },
         error: function( jqXHR, textStatus, errorThrown ) {
           console.log( textStatus, errorThrown );
+          $( ".email-prefs.prefs-error" ).fadeIn().delay( 1000 ).fadeOut();
         }
       });
     });
