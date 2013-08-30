@@ -85,6 +85,8 @@ module.exports = function( sequelize, DataTypes ) {
       defaultValue: false
     }
   }, {
+    charset: 'utf8',
+    collate: 'utf8_general_ci',
     instanceMethods: {
       getValues: function() {
         var obj = this.values;
