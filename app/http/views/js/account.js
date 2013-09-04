@@ -22,9 +22,12 @@
 
     navigator.idSSO.app.onlogin = function( email, username, data ) {
       personaEmail = email;
-      $( "#soundcloud" ).val( data.servicesAccounts.soundcloud );
-      $( "#youtube" ).val( data.servicesAccounts.youtube );
-      $( "#flickr" ).val( data.servicesAccounts.flickr );
+
+      if ( data.servicesAccounts ) {
+        $( "#soundcloud" ).val( data.servicesAccounts.soundcloud );
+        $( "#youtube" ).val( data.servicesAccounts.youtube );
+        $( "#flickr" ).val( data.servicesAccounts.flickr );
+      }
       $( "#logout-message" ).hide();
       $( ".wm-user-panel" ).fadeIn();
       $( ".wm-email" ).text( email );
