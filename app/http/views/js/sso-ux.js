@@ -29,7 +29,7 @@
         userElement.html( "<span id='identity'></span>" );
       }
     },
-    newMaker: function( loggedInUser, formAnchor, callback ) {
+    showNewMakerForm: function( loggedInUser, formAnchor, callback ) {
       /**
        * load in HTML include containing the HTML form
        * display form
@@ -47,60 +47,66 @@
       }
 
       $formContainer = $( ".webmaker-create-user", formAnchor );
-      if ( !$formContainer.length ) {
-        $.get( "{{ hostname }}/ajax/forms/new_user.html", function( html ) {
-          $formContainer = $( html ).appendTo( $( "#webmaker-nav" ) );
-          $formContainer.slideDown();
-          $formFrag = $( "#sso_create", formAnchor );
-          $mailSignUp = $( "#bsd" );
-          $formFrag.submit(function( data ) {
-            if( $mailSignUp.is( ":checked" ) ) {
-              $.ajax({
-                type: "POST",
-                url: "https://sendto.mozilla.org/page/s/webmaker",
-                data: {
-                  email: $( "#username" ).val(),
-                  "custom-1216": 1
-                },
-                success: function( resp ) {
-                  return true;
-                },
-                error: function( resp ) {
-                  return false;
-                }
-              });
-            }
+      $formContainer.text("");
 
+      // Get the new user form from webmaker.org so that a persona-authenticated
+      // user can sign up for a webmaker account before being let into the site.
+      $.get( "{{ hostname }}/ajax/forms/new_user.html", function( html ) {
+        $formContainer = $( html ).appendTo( $( "#webmaker-nav" ) );
+        $formContainer.slideDown();
+        $formFrag = $( "#sso_create", formAnchor );
+        $mailSignUp = $( "#bsd" );
+
+        // form submission requires some validation before being allowed
+        $formFrag.submit(function( data ) {
+          if( $mailSignUp.is( ":checked" ) ) {
             $.ajax({
               type: "POST",
-              url: "{{ hostname }}/user",
-              headers: {
-                "X-CSRF-Token": csrfMeta.content
-              },
-              dataType: "json",
+              url: "https://sendto.mozilla.org/page/s/webmaker",
               data: {
-                "email": loggedInUser,
-                "username": $( "#username" ).val()
+                email: $( "#username" ).val(),
+                "custom-1216": 1
               },
-              success: function(resp) {
-                ui.existingMaker({
-                  name: resp.user.username,
-                  hash: resp.user.emailHash
-                });
-                $formContainer.slideUp();
-                callback( null, loggedInUser, resp.user.username );
+              success: function( resp ) {
+                return true;
               },
               error: function( resp ) {
-                callback( JSON.parse( resp.responseText ).error, $( "#username" ).val() );
                 return false;
               }
             });
-            return false;
+          }
+
+          // All the data is good - inform the login service (Through
+          // the /user route that loginapi sets up) to creat this user,
+          // and update the on-page UI after creation with this user's
+          // information.
+          $.ajax({
+            type: "POST",
+            url: "{{ hostname }}/user",
+            headers: {
+              "X-CSRF-Token": csrfMeta.content
+            },
+            dataType: "json",
+            data: {
+              "email": loggedInUser,
+              "username": $( "#username" ).val()
+            },
+            success: function(resp) {
+              ui.existingMaker({
+                name: resp.user.username,
+                hash: resp.user.emailHash
+              });
+              $formContainer.slideUp();
+              callback( null, loggedInUser, resp.user.username );
+            },
+            error: function( resp ) {
+              callback( JSON.parse( resp.responseText ).error, $( "#username" ).val() );
+              return false;
+            }
           });
+          return false;
         });
-      } else {
-        $formContainer.slideDown();
-      }
+      });
     },
     existingMaker: function( userData ) {
       /**
@@ -174,7 +180,7 @@
         error: function( xhr, status, err ) {
           var error = JSON.parse( xhr.responseText );
 
-          function newMaker ( err, loggedInUser, displayName ) {
+          function onNewMakerSubmitted ( err, loggedInUser, displayName ) {
             // hook-out to the owning page, so that it can perform a
             // webmaker-loginAPI lookup, allowing it to bind the user's
             // email and webmaker ID in its req.session.[...]
@@ -183,7 +189,7 @@
               // Username existed
               if ( err.code === 11000 ) {
                 $( ".row.error-message" ).html( "Another user has already claimed <strong>" + loggedInUser + "</strong>!" );
-                ui.newMaker( error.email, $( "#webmaker-nav" ), newMaker );
+                ui.showNewMakerForm( error.email, $( "#webmaker-nav" ), onNewMakerSubmitted );
                 return;
               }
               return navigator.idSSO.logout();
@@ -211,7 +217,7 @@
           }
 
           if( xhr.status === 404 && error.status === "failure" ) {
-            ui.newMaker( error.email, $( "#webmaker-nav" ), newMaker );
+            ui.showNewMakerForm( error.email, $( "#webmaker-nav" ), onNewMakerSubmitted );
           } else {
             errMsg = err;
             navigator.idSSO.logout();
