@@ -49,11 +49,15 @@
       $formContainer = $( ".webmaker-create-user", formAnchor );
       $formContainer.text("");
 
+      // Get the new user form from webmaker.org so that a persona-authenticated
+      // user can sign up for a webmaker account before being let into the site.
       $.get( "{{ hostname }}/ajax/forms/new_user.html", function( html ) {
         $formContainer = $( html ).appendTo( $( "#webmaker-nav" ) );
         $formContainer.slideDown();
         $formFrag = $( "#sso_create", formAnchor );
         $mailSignUp = $( "#bsd" );
+
+        // form submission requires some validation before being allowed
         $formFrag.submit(function( data ) {
           if( $mailSignUp.is( ":checked" ) ) {
             $.ajax({
@@ -72,6 +76,10 @@
             });
           }
 
+          // All the data is good - inform the login service (Through
+          // the /user route that loginapi sets up) to creat this user,
+          // and update the on-page UI after creation with this user's
+          // information.
           $.ajax({
             type: "POST",
             url: "{{ hostname }}/user",
