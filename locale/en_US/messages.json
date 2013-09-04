@@ -1,15 +1,16 @@
   {
-    "Hi": "Hi",
-    "Username": "Username",
-    "Email": "Email",
-    "Delete account?": "Delete account?",
     "Are you sure you want to leave?": "Are you sure you want to leave?",
-    "Enter your email to confirm:": "Enter your email to confirm:",
+    "Delete account?": "Delete account?",
     "Delete me forever": "Delete me forever",
-    "Your user account was deleted!": "Your user account was deleted!",
+    "Email": "Email",
+    "Enter your email to confirm:": "Enter your email to confirm:",
+    "Hi": "Hi",
+    "I create an event": "I create an event",
     "Looks like that isnt your email": "Looks like that isn't your email",
     "Send me emails when": "Send me emails when",
-    "I create an event": "I create an event",
+    "Service Accounts": "Service Accounts",
+    "Update your account": "Update your account",
+    "Your user account was deleted!": "Your user account was deleted!",
     "Your preferences failed to save": "Your preferences failed to save",
     "Your preferences have been saved": "Your preferences have been saved"
   }

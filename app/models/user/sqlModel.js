@@ -47,6 +47,10 @@ module.exports = function( sequelize, DataTypes ) {
       allowNull: false,
       unique: true
     },
+    servicesAccounts: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
     fullName: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -91,6 +95,12 @@ module.exports = function( sequelize, DataTypes ) {
       getValues: function() {
         var obj = this.values;
 
+        if ( obj.servicesAccounts ) {
+          obj.servicesAccounts = JSON.parse( obj.servicesAccounts );
+        } else {
+          obj.servicesAccounts = "";
+        }
+
         return {
           id: obj.id,
           email: obj.email,
@@ -103,6 +113,7 @@ module.exports = function( sequelize, DataTypes ) {
           sendNotifications: obj.sendNotifications,
           sendEngagements: obj.sendEngagements,
           sendEventCreationEmails: obj.sendEventCreationEmails,
+          servicesAccounts: obj.servicesAccounts,
           // wasMigrated: obj.wasMigrated,
           createdAt: obj.createdAt,
           updatedAt: obj.updatedAt,

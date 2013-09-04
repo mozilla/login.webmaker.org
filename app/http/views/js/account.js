@@ -22,6 +22,12 @@
 
     navigator.idSSO.app.onlogin = function( email, username, data ) {
       personaEmail = email;
+
+      if ( data.servicesAccounts ) {
+        $( "#soundcloud" ).val( data.servicesAccounts.soundcloud );
+        $( "#youtube" ).val( data.servicesAccounts.youtube );
+        $( "#flickr" ).val( data.servicesAccounts.flickr );
+      }
       $( "#logout-message" ).hide();
       $( ".wm-user-panel" ).fadeIn();
       $( ".wm-email" ).text( email );
@@ -67,6 +73,32 @@
         url: "/user/" + personaEmail,
         data: {
           sendEventCreationEmails: checked
+        },
+        success: function( data, textStatus ) {
+          console.log( data, textStatus );
+          $( ".email-prefs.prefs-saved" ).fadeIn().delay( 1000 ).fadeOut();
+        },
+        error: function( jqXHR, textStatus, errorThrown ) {
+          console.log( textStatus, errorThrown );
+          $( ".email-prefs.prefs-error" ).fadeIn().delay( 1000 ).fadeOut();
+        }
+      });
+    });
+    $( "#servicesSubmit" ).click(function() {
+      var soundcloud = $( "#soundcloud" ).val(),
+          youtube = $( "#youtube" ).val(),
+          flickr = $( "#flickr" ).val(),
+          options = {};
+
+      options.youtube = youtube;
+      options.soundcloud = soundcloud;
+      options.flickr = flickr;
+
+      $.ajax({
+        url: "/user/" + personaEmail,
+        type: "PUT",
+        data: {
+          servicesAccounts: options
         },
         success: function( data, textStatus ) {
           console.log( data, textStatus );
