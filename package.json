@@ -16,7 +16,7 @@
     "MD5": "1.0.3",
     "mysql": "2.0.0-alpha8",
     "newrelic": "0.9.20",
-    "nunjucks": "0.1.9",
+    "nunjucks": "0.1.10",
     "node-statsd": "0.0.7",
     "sequelize": "1.6.0",
     "winston": "0.7.1",
