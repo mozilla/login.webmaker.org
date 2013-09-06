@@ -204,9 +204,8 @@
             if ( err ) {
               errMsg = err;
               // Username existed
-              if ( err.code === 11000 ) {
+              if ( err.code === "ER_DUP_ENTRY" ) {
                 $( ".row.error-message" ).html( "Another user has already claimed <strong>" + loggedInUser + "</strong>!" );
-                ui.showNewMakerForm( error.email, $( "#webmaker-nav" ), onNewMakerSubmitted );
                 return;
               }
               return navigator.idSSO.logout();
