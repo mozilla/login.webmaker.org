@@ -127,17 +127,34 @@
 
   // Set up the 'my makes' functionality.
   var makes = $( "#webmaker-nav .my-projects-container" ),
+      makesIFrame = $( "iframe",makes )[0],
       makeButton = $( "#webmaker-nav .makes button" ).click(function() {
-        makes.toggleClass( "open" );
+        var rclass = "open";
+        if ( !makes.hasClass( rclass ) ) {
+          userBar.updateMakes( function() {
+            makes.addClass( rclass );
+          })
+        } else {
+          makes.removeClass( rclass );
+        }
       });
 
   // Window level control over updating the iframe when a consumer
   // app knows that the publications have changed and need to be
   // refreshed:
   window.userBar = window.userBar || {
-    updateMakes: function() {
-      var iframe = $( "iframe",makes )[0];
-      iframe.src = iframe.src;
+    updateMakes: function( onUpdate ) {
+      if( makesIFrame.onload )
+        return;
+      if ( onUpdate ) {
+        makesIFrame.onload = function( evt ) {
+          onUpdate(evt);
+          delete makesIFrame.onload;
+        };
+      } else {
+        delete makesIFrame.onload;
+      }
+      makesIFrame.src = makesIFrame.src;
     }
   };
 
