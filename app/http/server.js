@@ -50,7 +50,8 @@ http.configure(function(){
   }));
 
   http.use( express.cookieParser() );
-  http.use( express.bodyParser() );
+  http.use( express.json() );
+  http.use( express.urlencoded() );
   http.use( express.methodOverride() );
   http.use( express.cookieSession({
     key: "login.sid",
