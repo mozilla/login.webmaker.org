@@ -100,7 +100,14 @@
               callback( null, loggedInUser, resp.user.username );
             },
             error: function( resp ) {
-              callback( JSON.parse( resp.responseText ).error, $( "#username" ).val() );
+              var error = JSON.parse( resp.responseText ).error;
+
+              // SUPERHACKEY!
+              // TODO: Update error handling in sso-ux || https://bugzilla.mozilla.org/show_bug.cgi?id=916149
+              // An error object, containing an array `username`, indicates
+              // the name is taken.
+              // Otherwise, `error` contains a string with error details
+              callback( error.username && error.username[0] || error, $( "#username" ).val() );
               return false;
             }
           });
@@ -207,8 +214,10 @@
               if ( err.code === "ER_DUP_ENTRY" ) {
                 $( ".row.error-message" ).html( "Another user has already claimed <strong>" + loggedInUser + "</strong>!" );
                 return;
+              } else {
+                $( ".row.error-message" ).html( err );
+                return;
               }
-              return navigator.idSSO.logout();
             }
             $.ajax({
               type: "POST",
