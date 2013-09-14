@@ -156,10 +156,10 @@
       if ( onUpdate ) {
         makesIFrame.onload = function( evt ) {
           onUpdate(evt);
-          delete makesIFrame.onload;
+          makesIFrame.onload = false;
         };
       } else {
-        delete makesIFrame.onload;
+        makesIFrame.onload = false
       }
       makesIFrame.src = makesIFrame.src;
     }
