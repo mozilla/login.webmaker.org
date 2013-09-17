@@ -466,6 +466,10 @@ describe( 'GET /user/:id', function() {
   it( 'should error on attempting to retrieve a non-existant account', function ( done ) {
     apiHelper( 'get', hostAuth + "/user/" + unique().email, 404, {}, done );
   });
+
+  it( 'should deal with bogus usernames that look like routes', function( done ) {
+    apiHelper( 'get', hostAuth + "/user//../../../../../../../../../../../etc/passwd", 403, {}, done );
+  });
 });
 
 describe( 'GET /isAdmin/:id', function() {
@@ -510,7 +514,7 @@ describe( 'GET /user/username/:userid', function() {
   });
 
   it( 'should error if no userid is passed', function( done ) {
-    apiHelper( 'get', api + "/username/", 404, done );
+    apiHelper( 'get', api + "/username/", 400, done );
   });
 
   it( 'should return 200 if username in use', function( done ) {
@@ -528,6 +532,10 @@ describe( 'GET /user/username/:userid', function() {
 
   it( 'should return 404 if username is available', function( done ) {
     apiHelper( 'get', api + "/username/" + unique().username.toLowerCase(), 404, {}, done );
+  });
+
+  it( 'should deal with bogus usernames that look like routes', function( done ) {
+    apiHelper( 'get', api + "/username//../../../../../../../../../../../etc/passwd", 403, {}, done );
   });
 });
 
