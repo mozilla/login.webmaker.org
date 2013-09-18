@@ -36,8 +36,6 @@ http.configure(function(){
     http.enable( "trust proxy" );
   }
 
-  http.use( express.static( path.join( __dirname, "public" ) ) );
-
   // Setup locales with i18n
   http.use( i18n.abide({
     supported_languages: [
@@ -93,6 +91,8 @@ http.configure( "production", function(){
 });
 
 route( http, userHandle );
+
+http.use( express.static( path.join( __dirname, "public" ) ) );
 
 http.listen( env.get( "PORT" ), function() {
   logger.info( "HTTP server listening on port " + env.get( "PORT" ) + "." );
