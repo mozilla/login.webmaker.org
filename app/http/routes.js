@@ -78,14 +78,14 @@ module.exports = function( http, userHandle ){
   // Persona authentication (non-admin users)
   var checkPersona = function( req, res, next ) {
     if ( req.session.email ) {
-      req.params.id = req.session.email;
+      req.params[0] = req.session.email;
       next();
     } else {
       res.send( "You are not signed in :(" );
     }
-  },
+  };
 
-  allowCSRFHeaders = function( req, res, next ) {
+  var allowCSRFHeaders = function( req, res, next ) {
     res.header( "Access-Control-Allow-Headers", "X-CSRF-Token" );
     res.send( 200 );
   };
@@ -110,18 +110,20 @@ module.exports = function( http, userHandle ){
   http.get( "/js/ui.js", routes.site.js( "ui" ) );
   http.get( "/ajax/forms/new_user.html", routes.user.userForm );
 
-  // LoginAPI
-  http.get( "/user/:id", combinedAuth, routes.user.get );
-  http.get( "/users", checkPersonaAdmin, routes.user.all );
-  http.put( "/user/:id", combinedAuth, routes.user.update );
-  http.del( "/user/:id", combinedAuth, routes.user.del );
+  // LoginAPI - note, order matters here, since we're taking everything after the /
+  http.get( "/user/username/*", combinedAuth, routes.user.checkUsername );
+  http.get( "/user/*", combinedAuth, routes.user.get );
+  http.put( "/user/*", combinedAuth, routes.user.update );
+  http.del( "/user/*", combinedAuth, routes.user.del );
   http.post( "/user", routes.user.create );
-  http.get( "/user/username/:name", combinedAuth, routes.user.checkUsername );
+
+  http.get( "/users", checkPersonaAdmin, routes.user.all );
+
   http.get( "/isAdmin", combinedAuth, routes.user.isAdmin );
 
   // Allow CSRF Headers
   http.options( "/user", allowCSRFHeaders );
-  http.options( "/user/:id", allowCSRFHeaders );
+  http.options( "/user/*", allowCSRFHeaders );
 
   // Devops
   http.get( "/healthcheck", routes.site.healthcheck );
