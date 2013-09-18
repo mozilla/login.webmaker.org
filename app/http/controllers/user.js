@@ -23,7 +23,7 @@ module.exports = function ( UserHandle ) {
   };
 
   controller.get = function ( req, res ) {
-    var id = req.params[ 0 ];
+    var id = req.params.id;
 
     UserHandle.getUser( id, function ( err, user ) {
       if ( err ) {
@@ -44,7 +44,7 @@ module.exports = function ( UserHandle ) {
 
   controller.update = function ( req, res ) {
     var userInfo = req.body,
-        id = req.params[ 0 ];
+        id = req.params.id;
 
     UserHandle.updateUser( id, userInfo, function ( err, user ) {
       if ( err || !user ) {
@@ -57,7 +57,7 @@ module.exports = function ( UserHandle ) {
   };
 
   controller.del = function ( req, res ) {
-    var id = req.params[ 0 ];
+    var id = req.params.id;
 
     // Confirm user exists (Sequelize happily deletes non-existent users)
     UserHandle.getUser( id, function( err, user ) {
@@ -106,7 +106,7 @@ module.exports = function ( UserHandle ) {
   };
 
   controller.checkUsername = function ( req, res ) {
-    var name = req.params[ 0 ],
+    var name = req.param( "name" ),
         badword = require( "badword" );
 
     if ( !name ) {
