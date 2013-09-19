@@ -261,15 +261,6 @@ module.exports = function( env ) {
           user.destroy().complete( callback );
         });
     },
-
-    /**
-     * getAllUsers( callback )
-     * -
-     * callback: function( err, users )
-     */
-    getAllUsers: function ( callback ) {
-      model.findAll().complete( callback );
-    },
     health: health
   };
 };

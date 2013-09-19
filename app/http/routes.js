@@ -119,8 +119,6 @@ module.exports = function( http, userHandle ){
   http.del( "/user/*", combinedAuth, routes.user.del );
   http.post( "/user", routes.user.create );
 
-  http.get( "/users", checkPersonaAdmin, routes.user.all );
-
   // Allow CSRF Headers
   http.options( "/user", allowCSRFHeaders );
   http.options( "/user/*", allowCSRFHeaders );

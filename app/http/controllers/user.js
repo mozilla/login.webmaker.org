@@ -75,7 +75,6 @@ module.exports = function ( UserHandle ) {
           metrics.increment( "user.update.error" );
           return res.json( 404, { error: err || "User not found for ID: " + id } );
         }
-
         return res.json( 200, { user: user } );
      });
     },
@@ -101,19 +100,6 @@ module.exports = function ( UserHandle ) {
           metrics.increment( "user.delete.success" );
           res.json( 200 );
         });
-      });
-    },
-
-    all: function( req, res ) {
-      UserHandle.getAllUsers( function ( err, users ) {
-        if ( err || !users.length ) {
-          metrics.increment( "user.all.error" );
-          res.json( 404, { error: err || "Users could not be found!" } );
-          return;
-        }
-
-        metrics.increment( "user.all.success" );
-        res.json( { "users": users } );
       });
     },
 
