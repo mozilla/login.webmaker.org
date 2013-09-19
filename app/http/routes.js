@@ -107,6 +107,7 @@ module.exports = function( http, userHandle ){
   http.get( "/js/sso-ux.js", routes.site.js( "sso-ux") );
   http.get("/js/console.js", routes.site.js( "console" ) );
   http.get( "/js/account.js", routes.site.js( "account" ) );
+  http.get( "/js/ui.js", routes.site.js( "ui" ) );
   http.get( "/ajax/forms/new_user.html", routes.user.userForm );
 
   // LoginAPI

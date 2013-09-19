@@ -1,15 +1,16 @@
  requirejs.config({
     baseUrl: "/js",
     paths: {
-      "jquery": "ext/jquery-1.9.1.min",
-      "persona-sso": "{{ audience }}/sso/include"
+      "jquery": "../bower/jquery/jquery.min",
+      "persona-sso": "{{ audience }}/sso/include",
+      "text": "../bower/text/text"
     },
     shim: {
       "persona-sso": [],
       "sso-ux": [ "jquery", "persona-sso" ]
     }
   });
-  require([ "jquery", "persona-sso", "sso-ux" ], function ($) {
+  require([ "jquery", "ui", "persona-sso", "sso-ux" ], function ($, UI) {
     var personaEmail;
 
     // CRSF Protection
@@ -57,6 +58,13 @@
           $( "#wrong-email" ).fadeOut();
         }, 3000);
       }
+    });
+
+    // URL redirector for language picker
+    UI.select('#lang-picker', function(val) {
+      var href = document.location.pathname,
+        url = href.substr(href.lastIndexOf('/') + 0);
+      window.location = "/"+val+url;
     });
 
     $( "#sendEventCreationEmailsCheckbox" ).change(function(e) {

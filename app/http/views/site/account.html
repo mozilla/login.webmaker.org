@@ -5,6 +5,7 @@
   <meta name="X-CSRF-Token" content="{{ csrf }}">
   <meta name="persona-email" content="{{ email }}">
   <title>Webmaker</title>
+  <link rel="stylesheet" href="/bower/font-awesome/css/font-awesome.min.css">
   <link rel="stylesheet" href="/css/account.css">
   <link rel="stylesheet" href="/css/nav.css">
 </head>
@@ -44,6 +45,13 @@
                       <label for="sendEventCreationEmailsCheckbox">{{ gettext('I create an event') }}</label>
                     </li>
                   </ul>
+              </li>
+              <li><span class="field-label">Language</span><span class="wm-lang"></span>
+                <select id="lang-picker">
+                {% for language in supportedLanguages %}
+                  <option {% if lang == language %} selected="selected" {% endif %} value="{{language}}">{{ languageNameFor(language) }}</option>
+                {% endfor %}
+                </select>
               </li>
               <li>
                 <span class="field-label"></span>

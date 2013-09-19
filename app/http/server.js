@@ -11,7 +11,7 @@ var application = require( "./controllers/application" ),
     env = require( "../../config/environment" );
     express     = require( "express" ),
     helmet      = require( "helmet" ),
-    i18n        = require( "i18n-abide" ),
+    i18n        = require( "webmaker-i18n" ),
     lessMiddleWare = require( "less-middleware" ),
     logger      = require( "../../lib/logger" ),
     nunjucks    = require( "nunjucks" ),
@@ -37,17 +37,21 @@ http.configure(function(){
   }
 
   http.use( express.static( path.join( __dirname, "public" ) ) );
+  http.use( "/bower", express.static( path.join(__dirname, "../../bower_components" )));
+
+  // List of supported languages - Please add them here in an alphabetical order
+  var supportedLanguages = [ "en-US" ];
 
   // Setup locales with i18n
-  http.use( i18n.abide({
-    supported_languages: [
-      "en-US"
-    ],
-    default_lang: "en_US",
-    translation_type: "key-value-json",
-    translation_directory: "locale",
-    locale_on_url: true
+  http.use( i18n.middleware({
+    supported_languages: supportedLanguages,
+    default_lang: "en-US",
+    translation_directory: path.resolve( __dirname, "../../locale" )
   }));
+
+  http.locals({
+    supportedLanguages: supportedLanguages
+  });
 
   http.use( express.cookieParser() );
   http.use( express.json() );
