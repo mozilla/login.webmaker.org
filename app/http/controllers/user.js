@@ -80,19 +80,6 @@ module.exports = function ( UserHandle ) {
     });
   };
 
-  controller.all = function( req, res ) {
-    UserHandle.getAllUsers( function ( err, users ) {
-      if ( err || !users.length ) {
-        metrics.increment( "user.all.error" );
-        res.json( 404, { error: err || "Users could not be found!" } );
-        return;
-      }
-
-      metrics.increment( "user.all.success" );
-      res.json( { "users": users } );
-    });
-  };
-
   controller.isAdmin = function( req, res ) {
     UserHandle.getUser( req.query.id, function( err, user ) {
       if ( err || !user ) {

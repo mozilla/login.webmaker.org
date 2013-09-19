@@ -111,7 +111,6 @@ module.exports = function( http, userHandle ){
 
   // LoginAPI
   http.get( "/user/:id", combinedAuth, routes.user.get );
-  http.get( "/users", checkPersonaAdmin, routes.user.all );
   http.put( "/user/:id", combinedAuth, routes.user.update );
   http.del( "/user/:id", combinedAuth, routes.user.del );
   http.post( "/user", routes.user.create );
