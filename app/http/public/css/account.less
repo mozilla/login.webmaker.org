@@ -121,3 +121,138 @@ iframe {
   height: 300px;
 }
 
+
+li.lang-picker:first-child {
+  border-right: none;
+}
+
+.ui-append.ui-select {
+  background-color: white;
+}
+
+#lang-picker {
+  margin: -7px 15px 0 -18px;
+  border-color: transparent;
+  &:hover {
+    border-color: #CCC;
+  }
+  ul {
+    background: white;
+    display: inline-block;
+    li {
+      display: block;
+    }
+  }
+
+  .ui-select-menu {
+    width: auto;
+    border-color: #CCC;
+    ul {
+      width: auto;
+    }
+  }
+
+  .ui-selected::before {
+    margin-right: 5px;
+  }
+  .ui-smedium {
+    width: auto;
+  }
+  > .icon {
+    background: none;
+    color: #555;
+    padding: 0 10px 0 0;
+    &:hover {
+      background: none;
+      color: #555;
+    }
+  }
+}
+
+
+/*********************************************************
+* Filter
+*/
+
+.gallery-header {
+  .header {
+    float: left;
+    padding-bottom: 10px;
+    font-family: 'Open Sans Light', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    margin-right: @gutter * @unit;
+
+    h1, p {
+      display: inline;
+      margin-right: 10px;
+      font-weight: normal;
+      letter-spacing: -0.25px
+    }
+
+    h1 {
+      font-size: 2.4em;
+      line-height: 16px;
+      color: @green;
+    }
+
+    p {
+      font-size: 1.4em;
+      color: @grey;
+
+      a {
+        color: @blue;
+        text-decoration: none;
+        &:hover {
+          text-decoration: underline;
+          color: lighten(@blue, 10%);
+        }
+      }
+    }
+  }
+}
+
+#tools h1 {
+  line-height: 1.4em;
+}
+
+.filter {
+  position: relative;
+  background: @green;
+  float: right;
+  z-index: 3;
+  padding: 0.5em 1em 1em;
+  .border-box;
+
+  label {
+    color: #FFF;
+    line-height: 1.6;
+  }
+
+  #search-filter {
+    border-color: darken(@green, 5%);
+    &:hover {
+      border-color: darken(@green, 15%);
+    }
+    .icon {
+      background: darken(@green, 10%);
+    }
+    .ui-select-menu {
+      border-color: @green;
+    }
+  }
+
+  &:before { // Arrow
+    content: "";
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid @green;
+    margin-left: -10px;
+  }
+}
+

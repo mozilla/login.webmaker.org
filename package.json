@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "badword": "0.0.1",
+    "bower": "1.2.6",
     "express": "3.2.5",
     "habitat": "0.4.2",
     "helmet": "0.0.11",
@@ -20,9 +21,9 @@
     "node-statsd": "0.0.7",
     "sequelize": "1.6.0",
     "winston": "0.7.1",
+    "webmaker-i18n": "https://github.com/mozilla/node-webmaker-i18n/archive/v0.1.2.tar.gz",
     "webmaker-loginapi": "https://github.com/mozilla/node-webmaker-loginapi/tarball/v0.1.11",
-    "webmaker-postalservice": "https://github.com/mozilla/node-webmaker-postalservice/tarball/v0.2.4",
-    "i18n-abide": "0.0.10"
+    "webmaker-postalservice": "https://github.com/mozilla/node-webmaker-postalservice/tarball/v0.2.4"
   },
   "devDependencies": {
     "grunt": "0.4.1",
@@ -35,6 +36,7 @@
     "sqlite3": "2.1.7"
   },
   "scripts": {
-    "test": "grunt travis --verbose && mocha --timeout 60000 --reporter spec"
+    "test": "grunt travis --verbose && mocha --timeout 60000 --reporter spec",
+    "postinstall": "bower install"
   }
 }
