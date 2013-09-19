@@ -244,15 +244,6 @@ module.exports = function( env ) {
     },
 
     /**
-     * getAllUsers( callback )
-     * -
-     * callback: function( err, users )
-     */
-    getAllUsers: function ( callback ) {
-      model.findAll().complete( callback );
-    },
-
-    /**
      * checkUsername( username, callback )
      * -
      * username: username to be checked
