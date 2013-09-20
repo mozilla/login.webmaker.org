@@ -4,7 +4,7 @@
 
   // Cache jQuery references
   var jQuery = {
-        _id: $( "#_id" ),
+        id: $( "#id" ),
         email: $( "#email" ),
         username: $( "#username" ),
         fullname: $( "#fullname" ),
@@ -19,7 +19,8 @@
         clear: $( "#clear" ),
         error: $( "#error" ),
         searchInput: $( "#user-search" ),
-        search: $( "#search" )
+        search: $( "#search" ),
+        del: $( "#delete" )
       };
 
   /**
@@ -69,7 +70,7 @@
    **/
   var domHelper = {
     clearForm: function() {
-      jQuery._id.prop( "value", "" );
+      jQuery.id.prop( "value", "" );
       jQuery.email.prop( "value", "" );
       jQuery.username.prop( "value", "" );
       jQuery.fullname.prop( "value", "" );
@@ -85,9 +86,9 @@
       // Reset validation
       valid = false;
     },
-    deleteUser: function ( id ) {
+    deleteUser: function ( id, username ) {
       // Ask for confirmation
-      var goForIt = confirm( "Really delete " + id + "?" );
+      var goForIt = confirm( "Really delete " + username + "?" );
 
       if ( goForIt ) {
         ajaxHelper({
@@ -158,7 +159,7 @@
           var user = data.user;
 
           // Text boxes
-          jQuery._id.prop( "value", user._id );
+          jQuery.id.prop( "value", user.id );
           jQuery.email.prop( "value", user.email );
           jQuery.username.prop( "value", user.username );
           jQuery.fullname.prop( "value", user.fullName );
@@ -183,6 +184,11 @@
    **/
   jQuery.submit.on( "click", function() {
     domHelper.saveUser();
+  });
+  jQuery.del.on( "click", function() {
+    if ( jQuery.id.val() ) {
+      domHelper.deleteUser( jQuery.id.val(), jQuery.username.val() );
+    }
   });
   jQuery.clear.on( "click", function() {
     domHelper.clearForm();
