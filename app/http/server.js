@@ -46,7 +46,7 @@ http.configure(function(){
   // Add language codes here
   var supportedLanguages = [
     "en-US"
-  ]
+  ];
 
   http.locals({
     supportedLanguages: supportedLanguages
