@@ -36,17 +36,17 @@ http.configure(function(){
     http.enable( "trust proxy" );
   }
 
+  // List of supported languages - Please add them here in an alphabetical order
+  var supportedLanguages = [
+    "en-US"
+  ];
+
   // Setup locales with i18n
   http.use( i18n.middleware({
     supported_languages: supportedLanguages,
     default_lang: "en-US",
     translation_directory: path.resolve( __dirname, "../../locale" )
   }));
-
-  // Add language codes here
-  var supportedLanguages = [
-    "en-US"
-  ];
 
   http.locals({
     supportedLanguages: supportedLanguages

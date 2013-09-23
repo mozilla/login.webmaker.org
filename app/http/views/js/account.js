@@ -10,8 +10,9 @@
       "sso-ux": [ "jquery", "persona-sso" ]
     }
   });
-  require([ "jquery", "ui", "persona-sso", "sso-ux" ], function ($, UI) {
-    var personaEmail;
+  require([ "jquery", "/bower/webmaker-ui/ui.js", "persona-sso", "sso-ux" ], function ($, UI) {
+    var personaEmail,
+      langSelector = document.querySelector('#lang-picker');
 
     // CRSF Protection
     var csrf_token = $( "meta[name='X-CSRF-Token']" ).attr( "content" );
@@ -59,26 +60,8 @@
         }, 3000);
       }
     });
-
     // URL redirector for language picker
-    UI.select('#lang-picker', function(val) {
-      var href = document.location.pathname,
-        lang = $('html').attr('lang');
-      if(val === lang){
-        window.location = href;
-      }
-      else if(href.indexOf(lang) >= 0){
-        href = href.replace(lang, val);
-        window.location = href;
-      }
-      else if(href.indexOf('/') >= 0){
-        window.location = val+href;
-      }
-      else if(href.indexOf('/') < 0){
-        href = href.substr(href.indexOf('/') + 0)
-        window.location = '/'+val+href;
-      }
-    });
+    UI.langPicker(langSelector);
 
     $( "#sendEventCreationEmailsCheckbox" ).change(function(e) {
       var checked = $( this ).prop( "checked" ) ? 1 : 0;
