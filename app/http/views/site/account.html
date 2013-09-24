@@ -13,13 +13,13 @@
   <div id="webmaker-nav">
   <!-- the webmaker bar -->
   <nav class="webmaker-nav-container">
-    <a id="logo" href="https://webmaker.org"><img src="/img/webmaker-logo.png" alt="Mozilla Webmaker" /></a>
+    <a id="logo" href="https://webmaker.org/{{lang}}"><img src="/img/webmaker-logo.png" alt="Mozilla Webmaker" /></a>
     <ul class="webmaker-nav user-info">
       <li class="user">
         {{ gettext('Hi') }} <span id="identity" class="user-name-container"></span>
       </li>
       <li>
-        <iframe src="{{ audience }}/sso/include.html" class="include-frame"></iframe>
+        <iframe src="{{ audience }}/{{lang}}/sso/include.html" class="include-frame"></iframe>
       </li>
     </ul>
   </nav>
@@ -46,7 +46,7 @@
                     </li>
                   </ul>
               </li>
-              <li><span class="field-label">Language</span><span class="wm-lang"></span>
+              <li><span class="field-label">{{ gettext("Language") }}</span><span class="wm-lang"></span>
                 <select id="lang-picker">
                 {% for language in supportedLanguages %}
                   <option {% if lang == language %} selected="selected" {% endif %} value="{{language}}">{{ languageNameFor(language) }}</option>
