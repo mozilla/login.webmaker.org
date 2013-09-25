@@ -1,0 +1,16 @@
+{
+    "Username": "ชื่อผู้ใช้",
+    "I create an event": "ฉันสร้างงาน",
+    "Looks like that isnt your email": "ดูเหมือนว่านี่ไม่ใช่อีเมลของคุณ",
+    "Send me emails when": "ส่งอีเมลหาฉันเมื่อ",
+    "Your user account was deleted!": "บัญชีของคุณถูกลบแล้ว!",
+    "Delete account?": "ลบบัญชี?",
+    "Are you sure you want to leave?": "คุณแน่ใจหรือว่าต้องการออก?",
+    "Hi": "สวัสดี",
+    "Delete me forever": "ลบฉันออกตลอดไป",
+    "Enter your email to confirm:": "ยืนยันอีเมลของคุณ:",
+    "Email": "อีเมล",
+    "Your preferences have been saved": "การตั้งค่าของคุณได้รับการบันทึก",
+    "Your preferences failed to save": "การตั้งค่าของคุณล้มเหลวในการบันทึก",
+    "Language": "ภาษา"
+}
