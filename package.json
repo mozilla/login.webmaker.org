@@ -33,7 +33,7 @@
     "request": "2.20.0"
   },
   "optionalDependencies": {
-    "sqlite3": "2.1.7"
+    "sqlite3": "2.1.17"
   },
   "scripts": {
     "test": "grunt travis --verbose && mocha --timeout 60000 --reporter spec",
