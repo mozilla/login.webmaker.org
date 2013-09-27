@@ -15,7 +15,7 @@
     "Language": "Language",
     "Claim your webmaker space": "Claim your webmaker space",
     "Send me email updates": "Send me email updates about Mozilla Webmaker and other projects",
-    "I agree to your terms": "I agree to your <a href='{{ AUDIENCE }}/{{lang}}/terms'>terms</a> and <a href='{{ AUDIENCE }}/{{lang}}/privacy'>conditions</a>",
+    "I agree to your terms": "I agree to your <a href='{{ AUDIENCE }}/{{localeInfo.lang}}/terms'>terms</a> and <a href='{{ AUDIENCE }}/{{localeInfo.lang}}/privacy'>conditions</a>",
     "Display username": "Display username",
     "Create my account": "Create my account"
   }
