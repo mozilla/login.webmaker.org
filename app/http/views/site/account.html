@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ lang }}" dir="{{ lang_dir }}">
+<html lang="{{ localeInfo.lang }}" dir="{{ localeInfo.direction }}">
 <head>
   <meta charset="utf-8">
   <meta name="X-CSRF-Token" content="{{ csrf }}">
@@ -13,13 +13,13 @@
   <div id="webmaker-nav">
   <!-- the webmaker bar -->
   <nav class="webmaker-nav-container">
-    <a id="logo" href="https://webmaker.org/{{lang}}"><img src="/img/webmaker-logo.png" alt="Mozilla Webmaker" /></a>
+    <a id="logo" href="https://webmaker.org/{{localeInfo.lang}}"><img src="/img/webmaker-logo.png" alt="Mozilla Webmaker" /></a>
     <ul class="webmaker-nav user-info">
       <li class="user">
         {{ gettext('Hi') }} <span id="identity" class="user-name-container"></span>
       </li>
       <li>
-        <iframe src="{{ audience }}/{{lang}}/sso/include.html" class="include-frame"></iframe>
+        <iframe src="{{ audience }}/{{localeInfo.lang}}/sso/include.html" class="include-frame"></iframe>
       </li>
     </ul>
   </nav>
@@ -49,7 +49,7 @@
               <li><span class="field-label">{{ gettext("Language") }}</span><span class="wm-lang"></span>
                 <select id="lang-picker">
                 {% for language in listDropdownLang %}
-                  <option {% if languageNameFor(lang) == languageNameFor(language) %} selected="selected" {% endif %} value="{{language}}">{{ languageNameFor(language) }}</option>
+                  <option {% if languageNameFor(localeInfo.lang) == languageNameFor(language) %} selected="selected" {% endif %} value="{{language}}">{{ languageNameFor(language) }}</option>
                 {% endfor %}
                 </select>
               </li>
