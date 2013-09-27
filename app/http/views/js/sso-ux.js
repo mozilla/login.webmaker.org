@@ -48,10 +48,11 @@
 
       $formContainer = $( ".webmaker-create-user", formAnchor );
       $formContainer.text("");
+      var lang = $('html').attr('lang') || "en-US";
 
       // Get the new user form from webmaker.org so that a persona-authenticated
       // user can sign up for a webmaker account before being let into the site.
-      $.get( "{{ hostname }}/ajax/forms/new_user.html", function( html ) {
+      $.get( "{{ hostname }}/" + lang + "/ajax/forms/new_user.html", function( html ) {
         $formContainer = $( html ).appendTo( $( "#webmaker-nav" ) );
         $formContainer.slideDown();
         $formFrag = $( "#sso_create", formAnchor );

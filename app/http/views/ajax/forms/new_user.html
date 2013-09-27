@@ -1,20 +1,19 @@
 <div class="webmaker-create-user">
   <form id="sso_create" action="{{ process.env.AUDIENCE }}/user" method="POST">
-    <legend>Claim your webmaker space</legend>
+    <legend>{{ gettext("Claim your webmaker space") }}</legend>
     <div class="display-username-container row">
-      <label for="username" class="visually-hidden">Display username</label>
+      <label for="username" class="visually-hidden">{{ gettext("Display username") }}</label>
       <input class="display-username-input" type="text" name="username" id="username" required> .makes.org
     </div>
     <div class="row">
       <input type="checkbox" name="bsd" id="bsd" class="inline">
-      <label for="bsd" class="inline">Send me email updates about Mozilla Webmaker and other projects</label>
+      <label for="bsd" class="inline">{{ gettext("Send me email updates") }}</label>
     </div>
     <div class="row">
       <input type="checkbox" name="terms" id="terms" class="inline" required>
-      <label for="terms" class="inline">I agree to your <a href="{{ process.env.AUDIENCE }}/terms">terms</a>
-       and <a href="{{ process.env.AUDIENCE }}/privacy">conditions</a></label>
+      <label for="terms" class="inline">{{ gettext("I agree to your terms") | instantiate }}</label>
     </div>
     <div class="row error-message"></div>
-    <input class="create-user-submit" type="submit" value="Create my account">
+    <input class="create-user-submit" type="submit" value="{{ gettext("Create my account") }}">
   </form>
 </div>

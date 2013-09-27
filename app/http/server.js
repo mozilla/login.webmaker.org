@@ -23,6 +23,11 @@ var application = require( "./controllers/application" ),
 var http = express(),
     nunjucksEnv = new nunjucks.Environment( new nunjucks.FileSystemLoader( path.join( __dirname, "views" ) ) );
 
+nunjucksEnv.addFilter("instantiate", function(input) {
+    var tmpl = new nunjucks.Template(input);
+    return tmpl.render(this.getVariables());
+});
+
 // Express Configuration
 http.configure(function(){
 
@@ -55,6 +60,7 @@ http.configure(function(){
   }));
 
   http.locals({
+    AUDIENCE: env.get("AUDIENCE"),
     supportedLanguages: supportedLanguages,
     listDropdownLang: listDropdownLang
   });
