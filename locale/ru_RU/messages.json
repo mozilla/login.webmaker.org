@@ -4,7 +4,7 @@
     "Looks like that isnt your email": "Похоже, это не Ваш имейл",
     "Send me emails when": "Посылать мне имейл когда",
     "Language": "Язык",
-    "I agree to your terms": "Я согласен с Вашими <a href='{{ AUDIENCE }}/{{localeInfo.lang}}/terms'>сроками</a> и <a href='{{ AUDIENCE }}/{{localeInfo.lang}}/privacy'>условиями</a>",
+    "I agree to your terms": "Я согласен с вашими <a href='{{ AUDIENCE }}/{{localeInfo.lang}}/terms'>сроками</a> и <a href='{{ AUDIENCE }}/{{localeInfo.lang}}/privacy'>условиями</a>",
     "Your user account was deleted!": "Ваша учётная запись пользователя была удалена!",
     "Email": "Имейл",
     "Delete account?": "Удалить учётную запись?",
