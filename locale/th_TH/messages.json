@@ -4,7 +4,7 @@
     "Looks like that isnt your email": "ดูเหมือนว่านี่ไม่ใช่อีเมลของคุณ",
     "Send me emails when": "ส่งอีเมลหาฉันเมื่อ",
     "Language": "ภาษา",
-    "I agree to your terms": "ฉันยอมรับ<a href='{{ AUDIENCE }}/{{localeInfo.lang}}/terms'>ข้อตกลง</a>และ<a href='{{ AUDIENCE }}/{{localeInfo.lang}}/privacy'>เงื่อนไข</a>ของคุณ",
+    "I agree to your terms": "ฉันยอมรับใน<a href='{{ AUDIENCE }}/{{localeInfo.lang}}/terms'>ข้อตกลง</a> และ <a href='{{ AUDIENCE }}/{{localeInfo.lang}}/privacy'>เงื่อนไข</a>ขอบคุณ",
     "Your user account was deleted!": "บัญชีของคุณถูกลบแล้ว!",
     "Email": "อีเมล",
     "Delete account?": "ลบบัญชี?",
