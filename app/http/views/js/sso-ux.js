@@ -21,7 +21,7 @@
       var placeHolder = $( "#identity" ),
           userElement = $( "div.user-name" );
       if ( userData ) {
-        placeHolder.html( '<a href="{{ hostname }}/account">' + userData.name + "</a>" );
+        placeHolder.html( '<a href="{{ hostname }}/{{localeInfo.lang}}/account">' + userData.name + "</a>" );
         placeHolder.before( "<img src='https://secure.gravatar.com/avatar/" +
                             userData.hash + "?s=26&d=https%3A%2F%2Fstuff.webmaker.org%2Favatars%2Fwebmaker-avatar-44x44.png' alt='" +
                             userData.hash + "'>" );
