@@ -110,8 +110,11 @@ module.exports = function( http, userHandle ){
   http.get( "/js/ui.js", routes.site.js( "ui" ) );
   http.get( "/ajax/forms/new_user.html", routes.user.userForm );
 
-  // LoginAPI - note, order matters here, since we're taking everything after the /
+  http.get( "/user/id/*", combinedAuth, routes.user.getById );
+  http.get( "/user/username/*", combinedAuth, routes.user.getByUsername );
+  http.get( "/user/email/*", combinedAuth, routes.user.getByEmail );
   http.get( "/user/*", combinedAuth, routes.user.get );
+
   http.put( "/user/*", combinedAuth, routes.user.update );
   http.del( "/user/*", combinedAuth, routes.user.del );
   http.post( "/user", routes.user.create );
