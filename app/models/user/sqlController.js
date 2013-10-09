@@ -1,5 +1,4 @@
 var Sequelize = require( "sequelize" ),
-    badword = require( "badword" ),
     health,
     forkErrorHandling,
     forkSuccessHandling,
@@ -250,42 +249,6 @@ module.exports = function( env ) {
      */
     getAllUsers: function ( callback ) {
       model.findAll().complete( callback );
-    },
-
-    /**
-     * checkUsername( username, callback )
-     * -
-     * username: username to be checked
-     * callback: function( err, unavailable )
-     */
-    checkUsername: function( username, callback ) {
-      if ( !username ) {
-        return callback ( "Username must be provided!" );
-      }
-
-      model.count({
-        where: {
-          username: username
-        }
-      }).complete(function( error, count ) {
-        // DB error
-        if ( error ) {
-          return callback( error );
-        }
-
-        // Username in use
-        if ( count > 0 ) {
-          return callback( null, true );
-        }
-
-        // Username blacklisted
-        if ( badword( username ) ) {
-          return callback( "badword" );
-        }
-
-        // By default, username not taken
-        callback( null, false );
-      });
     },
     health: health
   };

@@ -111,7 +111,6 @@ module.exports = function( http, userHandle ){
   http.get( "/ajax/forms/new_user.html", routes.user.userForm );
 
   // LoginAPI - note, order matters here, since we're taking everything after the /
-  http.get( "/user/username/*", combinedAuth, routes.user.checkUsername );
   http.get( "/user/*", combinedAuth, routes.user.get );
   http.put( "/user/*", combinedAuth, routes.user.update );
   http.del( "/user/*", combinedAuth, routes.user.del );

@@ -117,14 +117,6 @@ module.exports = function ( env ) {
      */
     getAllUsers: function ( callback ) {
       sqlHandle.getAllUsers( callback );
-    },
-
-    /**
-     * checkUsername( username, callback )
-     * -
-     * username: username to be checked
-     * callback: function( err, unavailable )
-     */
-    checkUsername: sqlHandle.checkUsername
+    }
   };
 };

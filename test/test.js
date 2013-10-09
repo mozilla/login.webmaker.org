@@ -502,43 +502,6 @@ describe( 'GET /isAdmin/:id', function() {
   });
 });
 
-describe( 'GET /user/username/:userid', function() {
-  var api = hostAuth + '/user';
-
-  before( function( done ) {
-    startServer( done );
-  });
-
-  after( function( done ) {
-    stopServer( done );
-  });
-
-  it( 'should error if no userid is passed', function( done ) {
-    apiHelper( 'get', api + "/username/", 400, done );
-  });
-
-  it( 'should return 200 if username in use', function( done ) {
-    var user = unique();
-
-    // Create a user, then attempt to retrieve it
-    apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
-      apiHelper( 'get', api + "/username/" + body.user.username, 200, done );
-    });
-  });
-
-  it( 'should return 403 if username is a badword', function( done ) {
-    apiHelper( 'get', api + "/username/" + "damn", 403, {}, done );
-  });
-
-  it( 'should return 404 if username is available', function( done ) {
-    apiHelper( 'get', api + "/username/" + unique().username.toLowerCase(), 404, {}, done );
-  });
-
-  it( 'should deal with bogus usernames that look like routes', function( done ) {
-    apiHelper( 'get', api + "/username//../../../../../../../../../../../etc/passwd", 404, {}, done );
-  });
-});
-
 describe( 'basicauth', function() {
   // Rather complicated way of stripping correct auth and replacing with bad values
   var invalidAuthAPI = hostAuth.replace( new RegExp( env.get("ALLOWED_USERS").split(",")[0] ), "wrong:string" ) + "/isAdmin?id=";

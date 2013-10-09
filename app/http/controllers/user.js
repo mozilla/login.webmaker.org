@@ -105,32 +105,6 @@ module.exports = function ( UserHandle ) {
     });
   };
 
-  controller.checkUsername = function ( req, res ) {
-    var name = req.params[ 0 ],
-        badword = require( "badword" );
-
-    if ( !name ) {
-      return res.json( 400, ":name parameter required!" );
-    }
-
-    UserHandle.checkUsername( name, function ( err, isUserUnavailable ) {
-      if ( err ) {
-        // blacklisted
-        if ( err === "badword" )  {
-          return res.json( 403, "username given in '" + name + "' is blacklisted" );
-        }
-
-        return res.json( 500, "Error checking username!" );
-      }
-
-      if ( isUserUnavailable ) {
-        return res.json( 200, "username given in '" + name + "' is valid and being in use" );
-      }
-
-      res.json( 404, "username given in '" + name + "' is available" );
-    });
-  };
-
   controller.userForm = function( req, res ) {
     res.render( "ajax/forms/new_user.html", {
       ssoAudience: env.get( "AUDIENCE" )
