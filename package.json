@@ -1,7 +1,7 @@
 {
   "author": "Simon C. Wex <swex@mozilla.com>",
   "name": "login.webmaker.org",
-  "version": "0.0.67",
+  "version": "0.0.68",
   "homepage": "https://github.com/mozilla/login.webmaker.org",
   "repository": {
     "type": "git",
