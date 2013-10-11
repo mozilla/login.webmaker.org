@@ -80,7 +80,6 @@ parseQuery = function parseQuery( id ) {
     id = id.toLowerCase();
   }
   query[ field ] = id;
-
   return query;
 };
 
@@ -130,13 +129,45 @@ module.exports = function( env ) {
    */
   return {
     /**
+     * *** DEPRECATED - will be removed ***
+     *
      * getUser( id, callback )
      * -
-     * id: username, email or _id
+     * id: _id
      * callback: function( err, user )
      */
     getUser: function( id, callback ) {
       model.find({ where: parseQuery( id ) }).complete( callback );
+    },
+
+    /**
+     * getUserById( id, callback )
+     * -
+     * id: _id
+     * callback: function( err, user )
+     */
+    getUserById: function( id, callback ) {
+      model.find({ where: { id: id } }).complete( callback );
+    },
+
+    /**
+     * getUserByUsername( username, callback )
+     * -
+     * username: username
+     * callback: function( err, user )
+     */
+    getUserByUsername: function( username, callback ) {
+      model.find({ where: { username: username } }).complete( callback );
+    },
+
+    /**
+     * getUserByEmail( email, callback )
+     * -
+     * email: email
+     * callback: function( err, user )
+     */
+    getUserByEmail: function( email, callback ) {
+      model.find({ where: { email: email } }).complete( callback );
     },
     /**
      * createUser( data, callback )

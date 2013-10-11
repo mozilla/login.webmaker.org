@@ -2,30 +2,72 @@ module.exports = function ( env ) {
   var sqlHandle = require( "./sqlController" )( env ),
       emailer = require( "../../../lib/emailer" );
 
+  function userCallback( err, user, callback ) {
+    if ( err ) {
+      return callback( err, null );
+    }
+
+    if ( user ) {
+      return callback( null, user.getValues() );
+    }
+
+    return callback();
+  }
+
   /**
    * Model Access methods
    */
   return {
     /**
+     * ***DEPRECATED***
+     *
      * getUser( id, callback )
      * -
      * id: username, email or sql id
      * callback: function( err, user )
      */
     getUser: function( id, callback ) {
-      // First, check the MySQL db
-      sqlHandle.getUser( id, function( err, user ){
-        if ( err ) {
-          return callback( err, null );
-        }
-
-        if ( user ) {
-          return callback( null, user.getValues() );
-        }
-
-        return callback();
+      sqlHandle.getUser( id, function( err, user ) {
+        userCallback( err, user, callback );
       });
     },
+    /**
+     * getUserById( id, callback )
+     * -
+     * id: sql id
+     * callback: function( err, user )
+     */
+
+    getUserById: function( id, callback ) {
+      sqlHandle.getUserById( id, function( err, user ) {
+        userCallback( err, user, callback );
+      });
+    },
+
+    /**
+     * getUserByUsername( username, callback )
+     * -
+     * username: username
+     * callback: function( err, user )
+     */
+    getUserByUsername: function( username, callback ) {
+      sqlHandle.getUserByUsername( username, function( err, user ) {
+        userCallback( err, user, callback );
+      });
+    },
+
+    /**
+     * getUserByEmail( email, callback )
+     * -
+     * email: email
+     * callback: function( err, user )
+     */
+    getUserByEmail: function( email, callback ) {
+      sqlHandle.getUserByEmail( email, function( err, user ) {
+        userCallback( err, user, callback );
+      });
+    },
+
     /**
      * createUser( data, callback )
      * -
