@@ -49,9 +49,11 @@
         $( ".row.error-message" ).html( "" );
       }
 
-      $formContainer = $( ".webmaker-create-user", formAnchor );
-      $formContainer.text("");
       var lang = $('html').attr('lang') || "en-US";
+
+      // Remove any new-user panels that may have been introduced by
+      // repeated sign in/out actions by a new user.
+      $( ".webmaker-create-user" ).remove();
 
       // Get the new user form from webmaker.org so that a persona-authenticated
       // user can sign up for a webmaker account before being let into the site.
