@@ -1,0 +1,21 @@
+{
+    "Username": "ชื่อผู้ใช้",
+    "I create an event": "ฉันสร้างงาน",
+    "Looks like that isnt your email": "ดูเหมือนว่านี่ไม่ใช่อีเมลของคุณ",
+    "Send me emails when": "ส่งอีเมลหาฉันเมื่อ",
+    "Language": "ภาษา",
+    "I agree to your terms": "ฉันยอมรับใน<a href='{{ AUDIENCE }}/{{localeInfo.lang}}/terms'>ข้อตกลง</a> และ <a href='{{ AUDIENCE }}/{{localeInfo.lang}}/privacy'>เงื่อนไข</a>ขอบคุณ",
+    "Your user account was deleted!": "บัญชีของคุณถูกลบแล้ว!",
+    "Email": "อีเมล",
+    "Delete account?": "ลบบัญชี?",
+    "Are you sure you want to leave?": "คุณแน่ใจหรือว่าต้องการออก?",
+    "Hi": "สวัสดี",
+    "Delete me forever": "ลบฉันออกตลอดไป",
+    "Create my account": "สร้างบัญชีของฉัน",
+    "Enter your email to confirm:": "ยืนยันอีเมลของคุณ:",
+    "Display username": "แสดง username",
+    "Your preferences failed to save": "การตั้งค่าของคุณล้มเหลวในการบันทึก",
+    "Claim your webmaker space": "ยืนยันพื้นที่ webmaker ของคุณ",
+    "Your preferences have been saved": "การตั้งค่าของคุณได้รับการบันทึก",
+    "Send me email updates": "ส่งอีเมล์การอัพเดทเกี่ยวกับ Mozilla Webmaker และโปรเจคอื่นๆ ให้ฉัน"
+}
