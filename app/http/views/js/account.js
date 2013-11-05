@@ -60,6 +60,12 @@
         }, 3000);
       }
     });
+
+    // The button to close the confirm-delete box
+    $( "#boxclose" ).click(function() {
+      $( "#confirm-delete" ).fadeOut();
+    });
+
     // URL redirector for language picker
     UI.langPicker(langSelector);
 
