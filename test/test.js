@@ -490,9 +490,11 @@ describe( 'GET /isAdmin/:id', function() {
 
     // Create a user, then attempt to check it
     apiHelper( 'post',  hostAuth + '/user', 200, user, done, function ( err, res, body, done ) {
-      apiHelper( 'get', api + user.email, 200, {}, function( err, res, body ) {
-        assert.equal( body.isAdmin, true );
-        done();
+      apiHelper( 'put', hostAuth + '/user/' + user.email, 200, user, done, function() {
+        apiHelper( 'get', api + user.email, 200, {}, function( err, res, body ) {
+          assert.equal( body.isAdmin, true );
+          done();
+        });
       });
     });
   });
