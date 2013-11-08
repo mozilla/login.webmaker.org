@@ -177,8 +177,7 @@ module.exports = function( env ) {
      */
     createUser: function( data, callback ) {
       var user,
-          err,
-          userData = {};
+          err;
 
       if ( !data ) {
         return callback( "No data passed!" );
@@ -188,25 +187,15 @@ module.exports = function( env ) {
         return callback( "No username passed!" );
       }
 
-      // Parse information
-      if ( data._id ){
-        // MongoDB compatibility hack (deleting _id wasn't working :/)
-        userData.email = data.email;
-        userData.username = data.username;
-        userData.fullName = data.fullName;
-        userData.sendEngagements = data.sendEngagements;
-        userData.sendNotifications = data.sendNotifications;
-        userData.isAdmin = data.isAdmin;
-        userData.isSuspended = data.isSuspended;
-        userData.wasMigrated = true;
-      } else {
-        userData = data;
-
-        // Copies user input for username verbatim before lowercasing
-        userData.fullName = userData.username;
-        userData.username = userData.username.toLowerCase();
+      if ( !data.email ) {
+        return callback( "No email passed!" );
       }
-      user = model.build( userData );
+
+      user = model.build({
+        email: data.email,
+        fullName: data.username,
+        username: data.username.toLowerCase()
+      });
 
       // Validate
       err = user.validate();
