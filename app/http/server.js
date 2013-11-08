@@ -41,15 +41,9 @@ http.configure(function(){
     http.enable( "trust proxy" );
   }
 
-  // List of supported languages - Add them in the .env file
-  var listDropdownLang = env.get( "SUPPORTED_LANGS" ),
-      // We create another array based on listDropdownLang to use it in the i18n.middleware
-      // supported_language which will be modified from the i18n mapping function
-      supportedLanguages = listDropdownLang.slice(0);
-
   // Setup locales with i18n
   http.use( i18n.middleware({
-    supported_languages: supportedLanguages,
+    supported_languages: env.get( "SUPPORTED_LANGS" ),
     default_lang: "en-US",
     mappings: env.get( "LANG_MAPPINGS" ),
     translation_directory: path.resolve( __dirname, "../../locale" )
@@ -57,8 +51,8 @@ http.configure(function(){
 
   http.locals({
     AUDIENCE: env.get("AUDIENCE"),
-    supportedLanguages: supportedLanguages,
-    listDropdownLang: listDropdownLang
+    supportedLanguages: i18n.getLanguages(),
+    listDropdownLang: env.get( "SUPPORTED_LANGS" )
   });
 
   http.use( express.cookieParser() );
