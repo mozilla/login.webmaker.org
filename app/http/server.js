@@ -13,7 +13,6 @@ var application = require( "./controllers/application" ),
     helmet      = require( "helmet" ),
     i18n        = require( "webmaker-i18n" ),
     lessMiddleWare = require( "less-middleware" ),
-    logger      = require( "../../lib/logger" ),
     nunjucks    = require( "nunjucks" ),
     path        = require( "path" ),
     route       = require( "./routes" ),
@@ -21,7 +20,9 @@ var application = require( "./controllers/application" ),
     util        = require( "util" );
 
 var http = express(),
-    nunjucksEnv = new nunjucks.Environment( new nunjucks.FileSystemLoader( path.join( __dirname, "views" ) ) );
+    nunjucksEnv = new nunjucks.Environment( new nunjucks.FileSystemLoader( path.join( __dirname, "views" ) ) ),
+    messina,
+    logger;
 
 nunjucksEnv.addFilter("instantiate", function(input) {
     var tmpl = new nunjucks.Template(input);
@@ -35,7 +36,16 @@ http.configure(function(){
 
   http.disable( "x-powered-by" );
   http.use( application.allowCorsRequests );
-  http.use( express.logger() );
+
+  if ( !!env.get( "ENABLE_GELF_LOGS" ) ) {
+    messina = require( "messina" );
+    logger = messina( "login.webmaker.org-" + env.get( "NODE_ENV" ) || "development" );
+    logger.init();
+    http.use( logger.middleware() );
+  } else {
+    http.use( express.middleware() );
+  }
+
   if ( !!env.get( "FORCE_SSL" ) ) {
     http.use( helmet.hsts() );
     http.enable( "trust proxy" );
@@ -104,5 +114,5 @@ http.use( express.static( path.join( __dirname, "public" ) ) );
 http.use( "/bower", express.static( path.join(__dirname, "../../bower_components" )));
 
 http.listen( env.get( "PORT" ), function() {
-  logger.info( "HTTP server listening on port " + env.get( "PORT" ) + "." );
+  console.log( "HTTP server listening on port " + env.get( "PORT" ) + "." );
 });
