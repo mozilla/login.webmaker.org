@@ -270,6 +270,22 @@ module.exports = function( env ) {
     getAllUsers: function ( callback ) {
       model.findAll().complete( callback );
     },
+
+    /**
+     * getAllWithIds( ids, callback )
+     * -
+     * ids: Array of Webmaker IDs
+     * callback: function( err, users )
+     */
+    getAllWithIds: function( ids, callback ) {
+      model.findAll({
+        where: { "id": ids },
+        // This is broken for boolean values
+        // filed this here: https://github.com/sequelize/sequelize/issues/1048
+        // solution for now will be to map the results into the desired objects
+        attributes: ["id", "username"]
+      }).complete( callback );
+    },
     health: health
   };
 };
