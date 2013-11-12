@@ -153,6 +153,7 @@ module.exports = function( http, userHandle ){
   http.del( "/user/*", adminOnlyAuth, routes.user.del );
   http.post( "/user", routes.user.create );
 
+  http.get( "/usernames", authMiddleware, routes.user.hydrate );
   // Allow CSRF Headers
   http.options( "/user", allowCSRFHeaders );
   http.options( "/user/*", allowCSRFHeaders );
