@@ -95,7 +95,7 @@
             dataType: "json",
             data: {
               "email": loggedInUser,
-              "username": $( "#username" ).val()
+              "username": $formContainer.find( "#username" ).val()
             },
             success: function(resp) {
               ui.existingMaker({
