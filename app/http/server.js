@@ -43,7 +43,7 @@ http.configure(function(){
     logger.init();
     http.use( logger.middleware() );
   } else {
-    http.use( express.middleware() );
+    http.use( express.logger() );
   }
 
   if ( !!env.get( "FORCE_SSL" ) ) {
