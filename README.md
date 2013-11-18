@@ -5,15 +5,14 @@ This is our SSO server and identity provider for webmaker.org and all our additi
 
 ## Getting the Server Up and Running Locally
 
-The app is written using <a href="http://nodejs.org/">nodejs</a>, requires npm for package management and (to make running multiple servers at once easier) ruby (we run the app locally using <a href="http://ddollar.github.io/foreman/">foreman</a>).
+The app is written using <a href="http://nodejs.org/">nodejs</a> and uses <a href="https://npmjs.org/doc/">npm</a> for package management.
 
 Once you have those you can get things up and running by:
 
 1. Install npm modules - `npm install`
 2. Install and start up a <a href="http://dev.mysql.com/doc/refman/5.7/en/tutorial.html">local MySQL instance</a>, or ignore this step if you choose to use sqlite.
 3. Create and configure a `.env` file - copy the `env.sample` file we've provided.
-4. Install <a href="http://ddollar.github.io/foreman/">foreman</a> (if you don't have it) - `gem install foreman`
-5. Run foreman - `foreman start -f Procfile`
+4. Run the app.js file from the root of the server with `node app` or `node app.js`
 
 ### Tests
 
