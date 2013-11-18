@@ -90,7 +90,7 @@
             type: "POST",
             url: "{{ hostname }}/user",
             headers: {
-              "X-CSRF-Token": csrfMeta.content
+              "X-CSRF-Token": csrfMeta.content  // express.js uses a non-standard name for csrf-token
             },
             dataType: "json",
             data: {
@@ -191,7 +191,7 @@
   var emailMeta = document.querySelector( "meta[name='persona-email']" ),
       cookieEmail = emailMeta.content ? emailMeta.content : "",
       loggedIn = !!cookieEmail,
-      csrfMeta = document.querySelector( "meta[name='X-CSRF-Token']" ),
+      csrfMeta = document.querySelector( "meta[name='csrf-token']" ),
       errMsg;
 
   // Start listening for Persona events
@@ -202,7 +202,7 @@
         type: "POST",
         url: "/persona/verify",
         headers: {
-          "X-CSRF-Token": csrfMeta.content
+          "X-CSRF-Token": csrfMeta.content // express.js uses a non-standard name for csrf-token
         },
         data: { assertion: assertion },
         success: function( res, status, xhr ) {
@@ -278,7 +278,7 @@
         type: "POST",
         url: "/persona/logout",
         headers: {
-          "X-CSRF-Token": csrfMeta.content
+          "X-CSRF-Token": csrfMeta.content // express.js uses a non-standard name for csrf-token
         },
         async: true
       });

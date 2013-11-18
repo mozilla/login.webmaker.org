@@ -15,10 +15,10 @@
       langSelector = document.querySelector('#lang-picker');
 
     // CRSF Protection
-    var csrf_token = $( "meta[name='X-CSRF-Token']" ).attr( "content" );
+    var csrf_token = $( "meta[name='csrf-token']" ).attr( "content" );
     $.ajaxSetup({
       beforeSend: function( request ) {
-       request.setRequestHeader( "X-CSRF-Token", csrf_token );
+       request.setRequestHeader( "X-CSRF-Token", csrf_token ); // express.js uses a non-standard name for csrf-token
       }
     });
 
