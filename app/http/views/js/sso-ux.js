@@ -194,6 +194,14 @@
       csrfMeta = document.querySelector( "meta[name='csrf-token']" ),
       errMsg;
 
+
+  // MONKEY PATCH FOR PRODUCTION TRANSITION FROM X-CSRF-TOKEN TO CSRF-TOKEN -- SEE BUG https://bugzilla.mozilla.org/show_bug.cgi?id=941205
+  if (!csrfMeta) {
+    csrfMeta = document.querySelector( "meta[name='X-CSRF-Token']" );
+  }
+  // MONKEY PATCH FOR PRODUCTION TRANSITION FROM X-CSRF-TOKEN TO CSRF-TOKEN -- SEE BUG https://bugzilla.mozilla.org/show_bug.cgi?id=941205
+
+
   // Start listening for Persona events
   navigator.idSSO.watch({
     // Note: 'loggedInUser:cookieEmail' yet, see https://bugzilla.mozilla.org/show_bug.cgi?id=872710
