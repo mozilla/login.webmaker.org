@@ -159,6 +159,16 @@ module.exports = function ( env ) {
      */
     getAllUsers: function ( callback ) {
       sqlHandle.getAllUsers( callback );
+    },
+
+    /**
+     * getAllWithIds( ids, callback )
+     * -
+     * ids: Array of Webmaker IDs
+     * callback: function( err, users )
+     */
+    getAllWithIds: function ( ids, callback ) {
+      sqlHandle.getAllWithIds( ids, callback );
     }
   };
 };

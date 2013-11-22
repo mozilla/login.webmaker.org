@@ -117,6 +117,27 @@ module.exports = function ( UserHandle ) {
       });
     },
 
+    hydrate: function( req, res ) {
+      if ( !req.body || !req.body.ids ) {
+        return res.json( 400, { error: "Invalid request body" } );
+      }
+      if ( !Array.isArray( req.body.ids ) ) {
+        return res.json( 400, { error: "Request body must be a JavaScript Array of Webmaker IDs" } );
+      }
+
+      UserHandle.getAllWithIds( req.body.ids, function( err, users ) {
+        if ( err || !users ) {
+          return res.json( 500, { error: "There was an error hydrating the data" });
+        }
+        res.json( 200, users.map(function( user ) {
+          return {
+            id: user.id,
+            username: user.username
+          };
+        }));
+      });
+    },
+
     isAdmin: function( req, res ) {
       UserHandle.getUser( req.query.id, function( err, user ) {
         if ( err || !user ) {

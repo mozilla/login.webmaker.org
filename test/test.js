@@ -1,4 +1,5 @@
 var assert = require( "assert" ),
+    async = require( "async" ),
     fork = require( "child_process" ).fork,
     request = require( "request" ),
     now = Date.now(),
@@ -526,3 +527,61 @@ describe( 'basicauth', function() {
   });
 });
 
+describe( 'GET /usernames', function() {
+
+  var createUsersArray = [];
+
+  function createUniqueUser( callback ) {
+    apiHelper( 'post',  hostAuth + '/user', 200, unique(), function ( err, res, body ) {
+      if ( err ) {
+        return callback( err );
+      }
+      return callback( null, body.user );
+    });
+  }
+
+  function randomizeUsernameRequest( userArray ) {
+    return {
+      ids: userArray.filter(function(elem) {
+        return !!Math.round(Math.random());
+      }).map(function( elem ) {
+        return elem.id;
+      })
+    };
+  }
+
+  function findById( source, id ) {
+    return source.filter(function( obj ) {
+        return +obj.id === +id;
+    })[ 0 ];
+  }
+
+  before( function( done ) {
+    startServer( done );
+  });
+
+  after( function( done ) {
+    stopServer( done );
+  });
+
+  it("Should succeed in hydrating an array of ids to their usernames", function( done ) {
+    // queue up user creation functions for async
+    for ( var i = 0; i < 10; i++ ) {
+      createUsersArray.push( createUniqueUser );
+    }
+
+    async.parallel( createUsersArray, function( err, users ) {
+      var request = randomizeUsernameRequest(users);
+      apiHelper( 'get', hostAuth + '/usernames', 200, request, function( err, res, body ) {
+        assert.equal( body.length, request.ids.length );
+        body.forEach(function( pair ) {
+          assert( pair.id && pair.username );
+          var user = findById( users, pair.id );
+          assert( user );
+          assert.equal( user.username, pair.username );
+        });
+        done();
+      });
+    });
+  });
+});
