@@ -472,41 +472,9 @@ describe( 'GET /user/:id', function() {
   });
 });
 
-describe( 'GET /isAdmin/:id', function() {
-  var api = hostAuth + '/isAdmin?id=';
-
-  before( function( done ) {
-    startServer( done );
-  });
-
-  after( function( done ) {
-    stopServer( done );
-  });
-
-  it( 'should successfully return when attempting to check an existing user', function ( done ) {
-    var user = unique();
-
-    user.isAdmin = true;
-
-    // Create a user, then attempt to check it
-    apiHelper( 'post',  hostAuth + '/user', 200, user, done, function ( err, res, body, done ) {
-      apiHelper( 'put', hostAuth + '/user/' + user.email, 200, user, done, function() {
-        apiHelper( 'get', api + user.email, 200, {}, function( err, res, body ) {
-          assert.equal( body.isAdmin, true );
-          done();
-        });
-      });
-    });
-  });
-
-  it( 'should error on attempting to check a non-existant account', function ( done ) {
-    apiHelper( 'get', api + unique().email, 404, {}, done );
-  });
-});
-
 describe( 'basicauth', function() {
   // Rather complicated way of stripping correct auth and replacing with bad values
-  var invalidAuthAPI = hostAuth.replace( new RegExp( env.get("ALLOWED_USERS").split(",")[0] ), "wrong:string" ) + "/isAdmin?id=";
+  var invalidAuthAPI = hostAuth.replace( new RegExp( env.get("ALLOWED_USERS").split(",")[0] ), "wrong:string" ) + "/user/email/";
 
   before( function( done ) {
     startServer( done );
