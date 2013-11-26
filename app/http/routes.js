@@ -121,8 +121,6 @@ module.exports = function( http, userHandle ){
 
   http.get( "/users", checkPersonaAdmin, routes.user.all );
 
-  http.get( "/isAdmin", combinedAuth, routes.user.isAdmin );
-
   // Allow CSRF Headers
   http.options( "/user", allowCSRFHeaders );
   http.options( "/user/*", allowCSRFHeaders );

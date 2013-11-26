@@ -117,18 +117,6 @@ module.exports = function ( UserHandle ) {
       });
     },
 
-    isAdmin: function( req, res ) {
-      UserHandle.getUser( req.query.id, function( err, user ) {
-        if ( err || !user ) {
-          metrics.increment( "user.isAdmin.error" );
-          res.json( 404, { error: err || "User not found for ID: " + req.query.id, isAdmin: false } );
-          return;
-        }
-        metrics.increment( "user.isAdmin.success" );
-        res.json( { isAdmin: user.isAdmin } );
-      });
-    },
-
     userForm: function( req, res ) {
       res.render( "ajax/forms/new_user.html", {
         ssoAudience: env.get( "AUDIENCE" )
