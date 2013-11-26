@@ -1,161 +1,62 @@
-login.webmaker.org
+login.webmaker.org (core)
 ==================
 
-This is our SSO server and identity provider for webmaker.org and all our additional Webmaker websites; sign in once, sign in everywhere!
+This is our Single-Sign-On (SSO) server and identity provider for webmaker.org and all our additional Webmaker websites; sign in once, sign in everywhere!
 
-## Getting the Server Up and Running Locally
+**NOTE: This README assumes that you have all the required external dependencies installed and have a working dev environment. New to Webmaker? Make sure to read our <a href="https://wiki.mozilla.org/Webmaker/Code">developer guide</a> for everything you need in order to get started!**
 
-The app is written using <a href="http://nodejs.org/">nodejs</a> and uses <a href="https://npmjs.org/doc/">npm</a> for package management.
+## 1. Prerequisites
 
-Once you have those you can get things up and running by:
+Running this server requires running the other core nodes (<a href="https://github.com/mozilla/MakeAPI">*MakeAPI*</a> and <a href="https://github.com/mozilla/webmaker.org">*Webmaker.org*</a>) in order to function properly. For more information on Webmaker's external dependencies, see our <a href="https://wiki.mozilla.org/Webmaker/Code">developer guide</a>.
 
-1. Install npm modules - `npm install`
-2. Install and start up a <a href="http://dev.mysql.com/doc/refman/5.7/en/tutorial.html">local MySQL instance</a>, or ignore this step if you choose to use sqlite.
-3. Create and configure a `.env` file - copy the `env.sample` file we've provided.
-4. Run the app.js file from the root of the server with `node app` or `node app.js`
+## 2. Installing & running the server
 
-### Tests
+Installation:
 
-We use <a href="http://gruntjs.com/">Grunt</a> to lint our CSS and JS and these tests are run on each pull request sent into the mozilla repo using <a href="https://travis-ci.org/mozilla/login.webmaker.org">travis-ci</a>.
+1. Clone the repo with `git clone https://github.com/mozilla/login.webmaker.org.git`
+2. In the root folder of the login server, copy `env.sample` into a new file named `.env`
+3. Run `npm install`
 
-If you want to check your code passes before sending in a pull request (and ensure no breaking builds) then:
+**NOTE**: The `.env` file contains settings for various aspects of the Login server's operation. In the majority of development use-cases, the default settings will be enough.
 
-* ensure that grunt is installed globally on your system - `npm install -g grunt`
-* run `grunt --travis test`
+Running the server:
 
-## Bugs
+1. For browser work, ensure that the core service <a href="https://github.com/mozilla/webmaker.org/blob/master/README.md">*Webmaker.org*</a> is installed and running.
+2. Run `node app` or `node app.js` from the root folder of the login server
 
-Bugs can be found in Bugzilla - this is what <a href="https://bugzilla.mozilla.org/buglist.cgi?quicksearch=c%3Dlogin&list_id=6396195">bugs we have now</a>, if you notice anything else please <a href="https://bugzilla.mozilla.org/enter_bug.cgi?product=Webmaker&component=Login">file a new bug</a> for us.
+## 3. Testing
+### How to test
+We use a combination of technologies to "lint" and test our CSS and Javascript code. These tests **must** pass in order for a pull request to be merged into the Mozilla repository. To run them locally,
 
-## Integration
+1.  Navigate to the root folder of the login server
+2.  Run `npm test`
 
-If you wish to use the webmaker user bar in your webmaker.org app, you will need to implement the following steps.
+### TravisCI
+When a pull request is made to the Mozilla repository, it is automatically scheduled for testing on the [Travis-CI continuous-integration platform](https://travis-ci.org/). This verifies that the code passes linting requirements as well as all of its unit tests. You can see the status of these tests on the Github page for the pull request, and on the <a href="https://travis-ci.org/mozilla/login.webmaker.org/pull_requests">login.webmaker.org travisCI page</a>.
 
-### 1. Add the webmaker-loginapi module
+### Updating tests
+Most developers won't need to update the tests, but changes to the Login API require that the tests be revised. Keeping these tests accurate is essential for easy maintenence of this code base, and pull requests that change the API will be rejected without proper unit tests.
 
-Your app will need to be able to speak to persona (for server-side validation and logout). You will need the `webmaker-loginapi` https://github.com/mozilla/node-webmaker-loginapi module installed to accomplish this.
+If you think you have modified the Login API and need help understanding the unit tests, hop on the #webmaker IRC channel and we'll be happy to help!
 
-Also note that the login API requires that  the `username:password` combination that you use to create your loginapi instance with needs to be known by the login server you are accessing. As such, you will have to make sure that it is one of the possible `username:password` combinations specified in the login server's environment variable `ALLOWED_USERS`.
+## 4. Resources
 
-Also, it is recommended to not hardcode the loginapi's endpoint with user credentials in your app, but to use an environment variable that you refer to in the code: `var loginapi = require("webmaker-loginapi")( expressInstance, optionsObject );`.
+### RESTful API & User Model
+Full documentation of the Login server's RESTful API and the data model for Webmaker users can be found [here](https://github.com/mozilla/login.webmaker.org/wiki/LoginAPI-&-User-Model).
 
-### 2. Set up your environment variables
+### Environment Variables
+Full documentation of the Login server's `.env` file can be found [here](https://github.com/mozilla/login.webmaker.org/wiki/ENV-File-Reference).
 
-Ensure that you're using the correct values in your local .env file, make sure that the URL of your app is included in the ALLOWED_DOMAINS for this app. (For production and staging, these values have already been fixed to the webmaker.org production and staging domains).
+##  5. Filing and working with bugs
 
-For example, if we're integrating SSO into two apps running at http://localhost:8888 and http://localhost:7777, with the Login server running at http://localhost:3000, you would need to include the following in the .env of login.webmaker.org:
+Our bug tracker is located at <a href="bugzilla.mozilla.org">bugzilla.mozilla.org</a>. New bugs can be filed <a href="https://bugzilla.mozilla.org/enter_bug.cgi?product=Webmaker&component=Login">here</a>.
 
-`ALLOWED_DOMAINS="http://localhost:3000 http://localhost:8888 http://localhost:7777"`
+**(recommended) Read our <a href="https://wiki.mozilla.org/Webmaker/Code#2._Find_or_File_a_Webmaker_Bug">Developer Guide section on working with Bugzilla</a> for more information on how to file bugs properly.**
 
-For testing purposes, your app's Persona `AUDIENCE` variable can be set to the following:
+##  6. Integration
+Adding SSO to a new Webmaker app? See our integration guide [here](https://github.com/mozilla/login.webmaker.org/wiki/Integration-guide-for-new-apps), and make sure to ask questions on the #webmaker IRC channel!
 
-`AUDIENCE="http://webmaker.mofostaging.net"`
+##  7. Metrics and logging
+The Login server uses a number of technologies, like [STATSD](https://github.com/etsy/statsd/) and [New Relic](http://newrelic.com/), to collect and analyze useful performance data. For local development, this shouldn't be a concern.
 
-and your app's `LOGIN` variable can be set to the following:
-
-`LOGIN="http://login.mofostaging.net"`
-
-
-### 3. Include this app's CSS file in your master template
-
-```html
-<link rel="stylesheet" href="{{ login }}/css/nav.css" />
-```
-
-For staging/dev work, you can use `http://login.mofostaging.net` instead of the `login` variable.
-
-### 4. Add the following snippet to your HTML page, below <body> but before any other content in the required HTML for the Webmaker navigation bar
-
-```html
-<div id="webmaker-nav">
-  <!-- the webmaker bar -->
-  <nav class="webmaker-nav-container">
-    <a id="logo" href="https://webmaker.org"><img src="{{ login }}/img/webmaker-logo.png" alt="Mozilla Webmaker" /></a>
-    <ul class="webmaker-nav user-info">
-      <li class="user">
-        Hi <span id="identity" class="user-name-container"></span>
-      </li>
-      <li class="makes"><button>My makes</button></li>
-      <li>
-        <iframe src="{{ audience }}/sso/include.html" class="include-frame"></iframe>
-      </li>
-    </ul>
-  </nav>
-  <div class="my-projects-container">
-    <iframe src="{{ audience }}/myprojects?app={{ appname }}&email={{ email }}"></iframe>
-  </div>
-</div>
-```
-
-### 5. Link to our external JS file
-
-For the best performance put this at the bottom of your HTML file, just before the closing ```</body>```
-
-```html
-<script src="{{ audience }}/sso/include.js"></script>
-```
-
-For staging tests, this can also just be `http://webmaker.mofostaging.net`.
-
-### 6. If you need your own login / logout event handling
-
-You can specify custom event handlers to be triggered after the user bar logs someone in or out (in order to effect UI changes for your app, for instance). This requires setting up a `navigator.idSSO.app` object in the following manner:
-
-```html
-<script>
-  navigator.idSSO.app = {
-    onlogin: function(loggedInUser, displayName) {
-      // your code here
-    },
-    onlogout: function() {
-      // your code here
-    }
-  };
-</script>
-```
-Note that you do not need to provide both event handlers; if you only need one, the other can be left out without leading to any errors.
-
-### 7. Include our sso-ux script
-
-This include must be included after the Persona `include.js`, or —if custom event handlers are used— after the custom event handling script block.
-
-```html
-<script src="http://login.mofostaging.net/js/sso-ux.js"></script>
-```
-
-### 8 Set up the persona handler
-
-The persona block that you will need to add to your app.js consists of the following code:
-
-```javascript
-persona(app, {
-  audience: env.get( "AUDIENCE" )
-});
-```
-
-Make sure you also follow the instructions on setting up express-persona mentiond in step 1.
-
-This will let you use `req.session.email` in the rest of your code.
-
-
-### 9 put the session email into your master template, when known
-
-Add the following snippet to you HTML `<head>` section, and render it based on the person-created `req.session.email` value:
-
-```html
-  <meta name="persona-email" content="{value from req.session.email}">
-```
-
-If `req.session.email` is known during page serving, the user may already be logged in and this value should be the user's Persona email address. If it is not set, this value should be an empty string.
-
-### 10 Include the `webmaker-loginapi` node module in your app
-
-Add `webmaker-loginapi` to your package.json, and follow its instructions in the README at https://github.com/mozilla/node-webmaker-loginapi. The module will give your app a new route, `/user/:userid`, which can be used to get a user's Webmaker username.
-
-Calling the route with a Persona email as userid will either set a session value `req.session.username` to the user's Webmaker username, if they have one, or will not add the `username` property on `req.session`, signalling that the user is either unknown entirely, or does not have a username associated with his or her Persona login. For more detailed information, see the node-webmaker-loginapi repository.
-
-## New Relic
-
-To enable New Relic, set the `NEW_RELIC_ENABLED` environment variable and add a config file, or set the relevant environment variables.
-
-For more information on configuring New Relic, see: https://github.com/newrelic/node-newrelic/#configuring-the-agent
+For more information on configuring the Login server's New Relic module, see: https://github.com/newrelic/node-newrelic/#configuring-the-agent
