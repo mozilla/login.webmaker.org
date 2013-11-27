@@ -63,27 +63,6 @@ dbErrorHandling = function dbErrorHandling( err, callback ) {
   callback();
 };
 
-/**
- * parseQuery( id )
- * -
- * id: username, email or _id
- */
-parseQuery = function parseQuery( id ) {
-  var query = {},
-      field = "email";
-
-  // Parse out field type
-  if ( typeof( id ) === "number" || id.match( /^\d+$/g ) ) {
-    field = "id";
-  } else if ( id.match( /^[^@]+$/g ) ) {
-    field = "username";
-    id = id.toLowerCase();
-  }
-  query[ field ] = id;
-  return query;
-};
-
-
 // Exports
 module.exports = function( env ) {
   /**
@@ -128,17 +107,6 @@ module.exports = function( env ) {
    * Model Access methods
    */
   return {
-    /**
-     * *** DEPRECATED - will be removed ***
-     *
-     * getUser( id, callback )
-     * -
-     * id: _id
-     * callback: function( err, user )
-     */
-    getUser: function( id, callback ) {
-      model.find({ where: parseQuery( id ) }).complete( callback );
-    },
 
     /**
      * getUserById( id, callback )
@@ -208,14 +176,14 @@ module.exports = function( env ) {
     },
 
     /**
-     * updateUser( id, data, callback )
+     * updateUser( email, data, callback )
      * -
-     * id: username, email or _id
+     * email: email address
      * data: JSON object containing user fields
      * callback: function( err, user )
      */
-    updateUser: function ( id, data, callback ) {
-      this.getUser( id, function( err, user ) {
+    updateUser: function ( email, data, callback ) {
+      this.getUserByEmail( email, function( err, user ) {
         var error;
 
         if ( err ) {
@@ -241,21 +209,21 @@ module.exports = function( env ) {
     },
 
     /**
-     * deleteUser( data, callback )
+     * deleteUser( email, callback )
      * -
-     * id: _id
+     * email: email address
      * callback: function( err, thisUser )
      */
-    deleteUser: function ( id, callback ) {
+    deleteUser: function ( email, callback ) {
       model.find({
-          where: parseQuery( id )
+          where: { email: email }
         }).complete(function( err, user ){
           if ( err ) {
             return callback( err );
           }
 
           if ( !user ) {
-            return callback( "User not found for ID " + id );
+            return callback( "User not found for email " + email );
           }
 
           user.destroy().complete( callback );
