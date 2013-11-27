@@ -149,16 +149,6 @@ module.exports = function ( env ) {
           callback();
         });
       });
-
-    },
-
-    /**
-     * getAllUsers( callback )
-     * -
-     * callback: function( err, users )
-     */
-    getAllUsers: function ( callback ) {
-      sqlHandle.getAllUsers( callback );
     }
   };
 };
