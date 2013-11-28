@@ -113,6 +113,17 @@ module.exports = function( http, userHandle ){
     res.send( 200 );
   };
 
+  var filterAccountUpdates = function( req, res, next ) {
+    var filtered = {},
+        input = req.body;
+
+    // Only allow attributes that users should be able to set on their own account
+    filtered.sendEventCreationEmails = input.sendEventCreationEmails;
+
+    req.body = filtered;
+    next();
+  };
+
   /**
    * Routes declaration
    */
@@ -125,6 +136,7 @@ module.exports = function( http, userHandle ){
   // Account
   http.get( "/account", csrf, routes.site.account );
   http.post( "/account/delete", csrf, checkPersona, routes.user.del );
+  http.put( "/account/update", csrf, checkPersona, filterAccountUpdates, routes.user.update );
 
   // Resources
   http.get( "/js/sso-ux.js", routes.site.js( "sso-ux") );
