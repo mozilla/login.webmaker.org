@@ -19,19 +19,6 @@ module.exports = function ( env ) {
    */
   return {
     /**
-     * ***DEPRECATED***
-     *
-     * getUser( id, callback )
-     * -
-     * id: username, email or sql id
-     * callback: function( err, user )
-     */
-    getUser: function( id, callback ) {
-      sqlHandle.getUser( id, function( err, user ) {
-        userCallback( err, user, callback );
-      });
-    },
-    /**
      * getUserById( id, callback )
      * -
      * id: sql id
@@ -98,14 +85,14 @@ module.exports = function ( env ) {
     },
 
     /**
-     * updateUser( id, data, callback )
+     * updateUser( email, data, callback )
      * -
-     * id: username, email or _id
+     * email: email address
      * data: JSON object containing user fields
      * callback: function( err, user )
      */
-    updateUser: function ( id, data, callback ) {
-      this.getUser( id, function( err, user ) {
+    updateUser: function ( email, data, callback ) {
+      this.getUserByEmail( email, function( err, user ) {
         var error;
 
         if ( err ) {
@@ -116,20 +103,20 @@ module.exports = function ( env ) {
           return callback( "User not found!" );
         }
 
-        sqlHandle.updateUser( user.id, data, callback );
+        sqlHandle.updateUser( email, data, callback );
       });
     },
 
     /**
-     * deleteUser( data, callback )
+     * deleteUser( email, callback )
      * -
-     * id: _id
+     * email: email address
      * callback: function( err, thisUser )
      */
-    deleteUser: function ( id, callback ) {
+    deleteUser: function ( email, callback ) {
       // Check user exists (sequelize happily deletes
       // non existant-users)
-      this.getUser( id, function( err, user ) {
+      this.getUserByEmail( email, function( err, user ) {
         var error;
 
         if ( err ) {
@@ -141,7 +128,7 @@ module.exports = function ( env ) {
         }
 
         // Delete user
-        sqlHandle.deleteUser( id, function( err ) {
+        sqlHandle.deleteUser( email, function( err ) {
           if ( err ) {
             return callback( err );
           }

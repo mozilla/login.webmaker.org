@@ -38,13 +38,6 @@ module.exports = function ( UserHandle ) {
       });
     },
 
-    get: function ( req, res ) {
-      var id = req.params[ 0 ];
-      UserHandle.getUser( id, function( err, user ) {
-        userCallback( err, user, id, res );
-      });
-    },
-
     getById: function ( req, res ) {
       var id = req.params[ 0 ];
       UserHandle.getUserById( id, function( err, user ) {
@@ -68,29 +61,29 @@ module.exports = function ( UserHandle ) {
 
     update: function ( req, res ) {
       var userInfo = req.body,
-          id = req.params[ 0 ];
+          email = req.params[ 0 ];
 
-      UserHandle.updateUser( id, userInfo, function ( err, user ) {
+      UserHandle.updateUser( email, userInfo, function ( err, user ) {
         if ( err || !user ) {
           metrics.increment( "user.update.error" );
-          return res.json( 404, { error: err || "User not found for ID: " + id } );
+          return res.json( 404, { error: err || "User not found for email: " + email } );
         }
         return res.json( 200, { user: user } );
-     });
+      });
     },
 
     del: function ( req, res ) {
-      var id = req.params[ 0 ];
+      var email = req.params[ 0 ];
 
       // Confirm user exists (Sequelize happily deletes non-existent users)
-      UserHandle.getUser( id, function( err, user ) {
+      UserHandle.getUserByEmail( email, function( err, user ) {
         if ( err || !user ) {
           metrics.increment( "user.get.error" );
-          return res.json( 404, { error: err || "User not found for ID: " + id } );
+          return res.json( 404, { error: err || "User not found for email: " + email } );
         }
 
         // Delete user
-        UserHandle.deleteUser( id , function ( err ) {
+        UserHandle.deleteUser( email, function ( err ) {
           if ( err ) {
             metrics.increment( "user.delete.error" );
             res.json( 500, { error: err } );

@@ -32,7 +32,7 @@ module.exports = function( http, userHandle ){
 
     // SSO Auth
     if ( persona ) {
-      userHandle.getUser( persona, function( err, user ) {
+      userHandle.getUserByEmail( persona, function( err, user ) {
         if ( err || !user ) {
           return res.json( 403, "Internal error!" );
         }
@@ -82,7 +82,7 @@ module.exports = function( http, userHandle ){
   var checkPersonaAdmin = function( req, res, next ) {
     var persona = req.session.email;
     if ( persona ) {
-      userHandle.getUser( persona, function( err, user ) {
+      userHandle.getUserByEmail( persona, function( err, user ) {
         if ( err || !user ) {
           return res.json( 403, "Internal error!" );
         }
@@ -148,7 +148,6 @@ module.exports = function( http, userHandle ){
   http.get( "/user/id/*", combinedAuth, routes.user.getById );
   http.get( "/user/username/*", combinedAuth, routes.user.getByUsername );
   http.get( "/user/email/*", combinedAuth, routes.user.getByEmail );
-  http.get( "/user/*", combinedAuth, routes.user.get );
 
   http.put( "/user/*", adminOnlyAuth, routes.user.update );
   http.del( "/user/*", adminOnlyAuth, routes.user.del );
