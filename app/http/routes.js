@@ -8,7 +8,17 @@ module.exports = function( http, userHandle ){
         site: require( "./controllers/site" ),
         user: require( "./controllers/user" )( userHandle )
       },
-      userList = env.get( "ALLOWED_USERS" );
+      userList = env.get( "ALLOWED_USERS" ),
+      authMiddleware = basicAuth( function( user, pass ) {
+        for ( var username in userList ) {
+          if ( userList.hasOwnProperty( username ) ) {
+            if ( user === username && pass === userList[ username ] ) {
+              return true;
+            }
+          }
+        }
+        return false;
+      });
 
   userList = qs.parse( userList, ",", ":" );
 
@@ -18,17 +28,7 @@ module.exports = function( http, userHandle ){
 
   // basicAuth + Persona authentication
   var combinedAuth = function( req, res, next ) {
-    var persona = req.session.email,
-        authMiddleware = basicAuth( function( user, pass ) {
-          for ( var username in userList ) {
-            if ( userList.hasOwnProperty( username ) ) {
-              if ( user === username && pass === userList[ username ] ) {
-                return true;
-              }
-            }
-          }
-          return false;
-        });
+    var persona = req.session.email;
 
     // SSO Auth
     if ( persona ) {
@@ -40,6 +40,29 @@ module.exports = function( http, userHandle ){
         // Allow a call from the browser if the user is initiating it themself
         if ( user.email === persona ){
           return next();
+        }
+
+        // Allow a call from the browser if the user is an admin
+        if ( user.isAdmin ) {
+          return next();
+        }
+
+        return res.json( 403, "Error, admin privileges required!" );
+      });
+    } else {
+      // BasicAuth
+      authMiddleware( req, res, next );
+    }
+  };
+
+  var adminOnlyAuth = function( req, res, next ) {
+    var persona = req.session.email;
+
+    // SSO Auth
+    if ( persona ) {
+      userHandle.getUser( persona, function( err, user ) {
+        if ( err || !user ) {
+          return res.json( 403, "Internal error!" );
         }
 
         // Allow a call from the browser if the user is an admin
@@ -115,8 +138,8 @@ module.exports = function( http, userHandle ){
   http.get( "/user/email/*", combinedAuth, routes.user.getByEmail );
   http.get( "/user/*", combinedAuth, routes.user.get );
 
-  http.put( "/user/*", combinedAuth, routes.user.update );
-  http.del( "/user/*", combinedAuth, routes.user.del );
+  http.put( "/user/*", adminOnlyAuth, routes.user.update );
+  http.del( "/user/*", adminOnlyAuth, routes.user.del );
   http.post( "/user", routes.user.create );
 
   // Allow CSRF Headers
