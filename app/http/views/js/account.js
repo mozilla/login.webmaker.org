@@ -74,7 +74,7 @@
 
       $.ajax({
         type: "PUT",
-        url: "/user/" + personaEmail,
+        url: "/account/update",
         data: {
           sendEventCreationEmails: checked
         },
