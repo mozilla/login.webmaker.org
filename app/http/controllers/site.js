@@ -17,7 +17,7 @@ exports.account = function( req, res ){
   res.render( "site/account.html", {
     email: req.session.email || "",
     audience: env.get( "AUDIENCE" ),
-    csrf: req.session._csrf,
+    csrf: req.csrfToken(),
     ga_account: env.get( "GA_ACCOUNT" ),
     ga_domain: env.get( "GA_DOMAIN" )
   });
@@ -28,7 +28,7 @@ exports.account = function( req, res ){
  */
 exports.signin = function( req, res ){
   res.render( "site/login.html", {
-    csrf: req.session._csrf,
+    csrf: req.csrfToken(),
     login: req.session.email || "",
     sso_include: env.get( "SSO_INCLUDE_URL" ),
     loginServer: env.get( "HOSTNAME" ),
@@ -40,7 +40,7 @@ exports.signin = function( req, res ){
  */
 exports.console = function( req, res ){
   res.render( "site/console.html", {
-    csrf: req.session._csrf,
+    csrf: req.csrfToken(),
     login: req.session.email || "",
     sso_include: env.get( "SSO_INCLUDE_URL" ),
     loginServer: env.get( "HOSTNAME" ),
