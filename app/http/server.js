@@ -62,7 +62,7 @@ http.configure(function(){
   http.locals({
     AUDIENCE: env.get("AUDIENCE"),
     supportedLanguages: i18n.getLanguages(),
-    listDropdownLang: env.get( "SUPPORTED_LANGS" )
+    listDropdownLang: i18n.getSupportLanguages()
   });
 
   http.use( express.cookieParser() );
