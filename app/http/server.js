@@ -46,6 +46,8 @@ http.configure(function(){
     http.use( express.logger() );
   }
 
+  http.use( helmet.xframe() );
+
   if ( !!env.get( "FORCE_SSL" ) ) {
     http.use( helmet.hsts() );
     http.enable( "trust proxy" );
