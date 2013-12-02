@@ -46,6 +46,9 @@ http.configure(function(){
     http.use( express.logger() );
   }
 
+
+  http.use( helmet.iexss() );
+  http.use( helmet.contentTypeOptions() );
   http.use( helmet.xframe() );
 
   if ( !!env.get( "FORCE_SSL" ) ) {
