@@ -27,7 +27,7 @@ module.exports = function( http, userHandle ){
    */
 
   // basicAuth + Persona authentication
-  var combinedAuth = function( req, res, next ) {
+  var standardAuth = function( req, res, next ) {
     var persona = req.session.email;
 
     // SSO Auth
@@ -78,26 +78,6 @@ module.exports = function( http, userHandle ){
     }
   };
 
-  // Persona authentication (admin users)
-  var checkPersonaAdmin = function( req, res, next ) {
-    var persona = req.session.email;
-    if ( persona ) {
-      userHandle.getUserByEmail( persona, function( err, user ) {
-        if ( err || !user ) {
-          return res.json( 403, "Internal error!" );
-        }
-
-        if ( user.isAdmin ) {
-          return next();
-        }
-
-        return res.json( 403, "Error, admin privileges required!" );
-      });
-    } else {
-      return res.json( 403, "Persona account required!" );
-    }
-  };
-
   // Persona authentication (non-admin users)
   var checkPersona = function( req, res, next ) {
     if ( req.session.email ) {
@@ -130,7 +110,7 @@ module.exports = function( http, userHandle ){
 
   // Static pages
   http.get( "/",  routes.site.index );
-  http.get( "/console", csrf, checkPersonaAdmin, routes.site.console );
+  http.get( "/console", csrf, adminOnlyAuth, routes.site.console );
   http.get( "/console/signin", csrf, routes.site.signin );
 
   // Account
@@ -145,9 +125,9 @@ module.exports = function( http, userHandle ){
   http.get( "/js/ui.js", routes.site.js( "ui" ) );
   http.get( "/ajax/forms/new_user.html", routes.user.userForm );
 
-  http.get( "/user/id/*", combinedAuth, routes.user.getById );
-  http.get( "/user/username/*", combinedAuth, routes.user.getByUsername );
-  http.get( "/user/email/*", combinedAuth, routes.user.getByEmail );
+  http.get( "/user/id/*", standardAuth, routes.user.getById );
+  http.get( "/user/username/*", standardAuth, routes.user.getByUsername );
+  http.get( "/user/email/*", standardAuth, routes.user.getByEmail );
 
   http.put( "/user/*", adminOnlyAuth, routes.user.update );
   http.del( "/user/*", adminOnlyAuth, routes.user.del );
