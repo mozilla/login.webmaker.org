@@ -1,4 +1,5 @@
 var assert = require( "assert" ),
+    async = require( "async" ),
     fork = require( "child_process" ).fork,
     request = require( "request" ),
     now = Date.now(),
@@ -520,3 +521,59 @@ describe( 'basicauth', function() {
   });
 });
 
+describe( 'GET /usernames', function() {
+
+  var createUsersArray = [];
+
+  function createUniqueUser( callback ) {
+    apiHelper( 'post',  hostAuth + '/user', 200, unique(), function ( err, res, body ) {
+      if ( err ) {
+        return callback( err );
+      }
+      return callback( null, body.user );
+    });
+  }
+
+  function randomizeUsernameRequest( userArray ) {
+    return userArray.filter(function(elem) {
+      return !!Math.round(Math.random());
+    }).map(function( elem ) {
+      return elem.email;
+    });
+  }
+
+  function findByEmail( source, email ) {
+    return source.filter(function( obj ) {
+        return obj.email === email;
+    })[ 0 ];
+  }
+
+  before( function( done ) {
+    startServer( done );
+  });
+
+  after( function( done ) {
+    stopServer( done );
+  });
+
+  it("Should succeed in hydrating an array of emails to their usernames", function( done ) {
+    // queue up user creation functions for async
+    for ( var i = 0; i < 10; i++ ) {
+      createUsersArray.push( createUniqueUser );
+    }
+
+    async.parallel( createUsersArray, function( err, users ) {
+      var requestArray = randomizeUsernameRequest( users );
+      apiHelper( 'get', hostAuth + '/usernames', 200, requestArray, function( err, res, body ) {
+        var keys = Object.keys( body );
+        assert.equal( keys.length, requestArray.length );
+        keys.forEach(function( email ) {
+          var user = findByEmail( users, email );
+          assert( user );
+          assert.equal( user.username, body[ email ].username );
+        });
+        done();
+      });
+    });
+  });
+});

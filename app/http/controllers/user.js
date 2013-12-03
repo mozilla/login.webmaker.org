@@ -96,6 +96,34 @@ module.exports = function ( UserHandle ) {
       });
     },
 
+    hydrate: function( req, res ) {
+      if ( !req.body || !Array.isArray( req.body ) ) {
+        return res.json( 400, { error: "Invalid request body" } );
+      }
+
+      // remove duplicate emails
+      var emails = req.body.filter(function( elem, pos, self ) {
+        return self.indexOf( elem ) === pos;
+      });
+
+      UserHandle.getAllWithEmails( emails, function( err, users ) {
+        if ( err || !users ) {
+          return res.json( 500, { error: "There was an error hydrating the data" });
+        }
+
+        var responseObject = {};
+
+        users.forEach(function( user ) {
+          responseObject[user.email] = {
+            username: user.username,
+            emailHash: user.getValues().emailHash
+          };
+        });
+
+        res.json( 200, responseObject );
+      });
+    },
+
     userForm: function( req, res ) {
       res.render( "ajax/forms/new_user.html", {
         ssoAudience: env.get( "AUDIENCE" )
@@ -103,4 +131,3 @@ module.exports = function ( UserHandle ) {
     }
   };
 }; // END Exports function
-

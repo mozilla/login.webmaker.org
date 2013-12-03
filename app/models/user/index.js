@@ -136,6 +136,16 @@ module.exports = function ( env ) {
           callback();
         });
       });
+    },
+
+    /**
+     * getAllWithEmails( emails, callback )
+     * -
+     * emails: Array of Emails
+     * callback: function( err, users )
+     */
+    getAllWithEmails: function ( ids, callback ) {
+      sqlHandle.getAllWithEmails( ids, callback );
     }
   };
 };

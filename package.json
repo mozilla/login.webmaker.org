@@ -8,6 +8,7 @@
     "url": "git@github.com:mozilla/login.webmaker.org.git"
   },
   "dependencies": {
+    "async": "0.2.9",
     "badword": "0.0.1",
     "bower": "1.2.6",
     "express": "3.4.5",

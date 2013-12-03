@@ -229,6 +229,18 @@ module.exports = function( env ) {
           user.destroy().complete( callback );
         });
     },
+
+    /**
+     * getAllWithEmails( emails, callback )
+     * -
+     * emails: Array of Emails
+     * callback: function( err, users )
+     */
+    getAllWithEmails: function( emails, callback ) {
+      model.findAll({
+        where: { "email": emails }
+      }).complete( callback );
+    },
     health: health
   };
 };
