@@ -20,3 +20,6 @@ npm-debug.log
 
 .env
 bower_components
+locale/
+!locale/en_US/*
+!locale/localeinfo.json
