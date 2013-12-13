@@ -1,7 +1,7 @@
 {
   "author": "Simon C. Wex <swex@mozilla.com>",
   "name": "login.webmaker.org",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "homepage": "https://github.com/mozilla/login.webmaker.org",
   "repository": {
     "type": "git",
@@ -41,6 +41,6 @@
   "scripts": {
     "test": "grunt travis --verbose && mocha --timeout 60000 --reporter spec",
     "postinstall": "bower install",
-    "download-locales":  "webmaker-download-locales login"
+    "download-locales": "webmaker-download-locales login"
   }
 }
