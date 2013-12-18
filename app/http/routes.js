@@ -60,7 +60,7 @@ module.exports = function( http, userHandle ){
 
     // SSO Auth
     if ( persona ) {
-      userHandle.getUser( persona, function( err, user ) {
+      userHandle.getUserByEmail( persona, function( err, user ) {
         if ( err || !user ) {
           return res.json( 403, "Internal error!" );
         }
