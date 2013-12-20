@@ -37,18 +37,31 @@
       <div class="span6 offset2">
         <fieldset>
           <div class="control-group">
-            <label class="control-label" for="user-search">
+            <label class="control-label" for="find-user-input">
               <strong>Find user:</strong>
             </label>
             <div class="controls">
-              <input id="user-search" name="user-search" title="" placeholder="username/email/id" class="input-xlarge" type="text">
-              <p class="help-block">You can search by username, email or user ID number</p>
+              <input id="find-user-input" name="find-user-input" title="" placeholder="Webmaker username" class="input-xlarge" type="text">
             </div>
           </div>
           <div class="control-group">
-            <label class="control-label" for="search"></label>
+            <label class="control-label" for="user-find"></label>
             <div class="controls">
-              <button id="search" type="button" name="search" class="btn btn-success">Search</button>
+              <button id="find-by-user" type="button" name="user-find" class="btn btn-success">Find By User</button>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="email-find">
+              <strong>Find user By email:</strong>
+            </label>
+            <div class="controls">
+              <input id="find-email-input" name="email-find" title="" placeholder="email address" class="input-xlarge" type="text">
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="email-find"></label>
+            <div class="controls">
+              <button id="find-by-email" type="button" name="email-find" class="btn btn-success">Find By Email</button>
             </div>
           </div>
         </fieldset>
