@@ -18,8 +18,10 @@
         submit: $( "#submit" ),
         clear: $( "#clear" ),
         error: $( "#error" ),
-        searchInput: $( "#user-search" ),
-        search: $( "#search" ),
+        findByUserInput: $( "#find-user-input" ),
+        findUserBtn: $( "#find-by-user" ),
+        findByEmailInput: $( "#find-email-input" ),
+        findEmailBtn: $( "#find-by-email" ),
         del: $( "#delete" )
       };
 
@@ -86,13 +88,13 @@
       // Reset validation
       valid = false;
     },
-    deleteUser: function ( id, username ) {
+    deleteUser: function ( email ) {
       // Ask for confirmation
-      var goForIt = confirm( "Really delete " + username + "?" );
+      var goForIt = confirm( "Really delete " + email + "?" );
 
       if ( goForIt ) {
         ajaxHelper({
-          uri: loginUri + "/user/" + id,
+          uri: loginUri + "/user/" + email,
           method: "delete",
           error: function( xhr, status, error ) {
             var resp = JSON.parse( xhr.responseText );
@@ -142,13 +144,13 @@
         }
       });
     },
-    editUser: function( username ) {
+    editUser: function( query, findType ) {
       //clear everything
       domHelper.clearForm();
 
       // Collect user data
       ajaxHelper({
-        uri: loginUri + "/user/" + username,
+        uri: loginUri + "/user/" + findType + "/" + query,
         method: "get",
         error: function( xhr, status, error ) {
           var resp = JSON.parse( xhr.responseText );
@@ -187,20 +189,30 @@
   });
   jQuery.del.on( "click", function() {
     if ( jQuery.id.val() ) {
-      domHelper.deleteUser( jQuery.id.val(), jQuery.username.val() );
+      domHelper.deleteUser( jQuery.email.val() );
     }
   });
   jQuery.clear.on( "click", function() {
     domHelper.clearForm();
   });
-  jQuery.search.on( "click", function() {
-    domHelper.editUser( jQuery.searchInput.val() );
+  jQuery.findUserBtn.on( "click", function() {
+    domHelper.editUser( jQuery.findByUserInput.val(), "username" );
   });
-  jQuery.searchInput.on( "keypress", function( e ) {
+  jQuery.findByUserInput.on( "keypress", function( e ) {
     if ( e.which === 13 ) {
       e.preventDefault();
       e.stopPropagation();
-      domHelper.editUser( jQuery.searchInput.val() );
+      domHelper.editUser( jQuery.findByUserInput.val(), "username" );
+    }
+  });
+  jQuery.findEmailBtn.on( "click", function() {
+    domHelper.editUser( jQuery.findByEmailInput.val(), "email" );
+  });
+  jQuery.findByEmailInput.on( "keypress", function( e ) {
+    if ( e.which === 13 ) {
+      e.preventDefault();
+      e.stopPropagation();
+      domHelper.editUser( jQuery.findByEmailInput.val(), "email" );
     }
   });
 })();
