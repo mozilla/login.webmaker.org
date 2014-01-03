@@ -138,48 +138,6 @@
     }
   };
 
-  // Set up the 'my makes' functionality.
-  var makes = $( "#webmaker-nav .my-projects-container" ),
-      makesIFrame = $( "iframe",makes )[0],
-      rclass = "open",
-      hideMyMakes = function() {
-        makes.removeClass( rclass );
-        document.removeEventListener("click", hideMyMakes);
-      },
-      showMyMakes = function() {
-        makes.addClass( rclass );
-        document.addEventListener("click", hideMyMakes);
-      },
-      toggleMyMakes = function() {
-        if ( !makes.hasClass( rclass ) ) {
-          userBar.updateMakes( function() {
-            showMyMakes();
-          });
-        } else {
-          hideMyMakes();
-        }
-      },
-      makeButton = $( "#webmaker-nav .my-makes-toggle" ).click(toggleMyMakes);
-
-  // Window level control over updating the iframe when a consumer
-  // app knows that the publications have changed and need to be
-  // refreshed:
-  window.userBar = window.userBar || {
-    updateMakes: function( onUpdate ) {
-      if( makesIFrame.onload )
-        return;
-      if ( onUpdate ) {
-        makesIFrame.onload = function( evt ) {
-          onUpdate(evt);
-          makesIFrame.onload = false;
-        };
-      } else {
-        makesIFrame.onload = false
-      }
-      makesIFrame.src = makesIFrame.src;
-    }
-  };
-
   // User-defined login/logout handling
   var noop = function(){};
   navigator.idSSO.app = navigator.idSSO.app || {};
@@ -275,7 +233,6 @@
     },
     onlogout: function() {
       ui.loggedOut();
-      makes.removeClass( "open" );
       $('body').removeClass( "loggedin" );
       $( "#webmaker-nav iframe.include-frame" ).removeClass( "loggedin" );
       // make sure the page does whatever it needs to,
