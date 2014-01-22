@@ -162,7 +162,8 @@ module.exports = function( env ) {
       user = model.build({
         email: data.email,
         fullName: data.username,
-        username: data.username.toLowerCase()
+        username: data.username.toLowerCase(),
+        lastLoggedIn: new Date()
       });
 
       // Validate
