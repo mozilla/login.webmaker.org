@@ -56,6 +56,9 @@ module.exports = function( sequelize, DataTypes ) {
       type: DataTypes.DATE,
       allowNull: true
     },
+    lastLoggedIn: {
+      type: "TIMESTAMP NULL DEFAULT NULL"
+    },
     isAdmin: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
