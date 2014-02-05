@@ -27,6 +27,7 @@
       $( "#logout-message" ).hide();
       $( ".wm-user-panel" ).fadeIn();
       $( ".wm-email" ).text( email );
+      $( ".wm-page").html( '<a href="//' + username + "{{ profile }}" +'">' + username + "{{ profile }}" + '</a>');
       $( ".wm-username" ).text( username );
       $( "#user-avatar" ).css( "background-image", "url(https://secure.gravatar.com/avatar/" + data.emailHash + "?s=200&d=https%3A%2F%2Fstuff.webmaker.org%2Favatars%2Fwebmaker-avatar-200x200.png)" );
 
