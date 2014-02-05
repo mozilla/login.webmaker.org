@@ -66,6 +66,7 @@ http.configure(function(){
 
   http.locals({
     AUDIENCE: env.get("AUDIENCE"),
+    profile: env.get("PROFILE"),
     supportedLanguages: i18n.getLanguages(),
     listDropdownLang: i18n.getSupportLanguages()
   });
