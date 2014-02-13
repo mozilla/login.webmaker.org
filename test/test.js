@@ -13,8 +13,8 @@ var assert = require( "assert" ),
     illegalChars.push(" ");
 
     // Parse URLS
-    hostAuth = 'http://' + env.get( "ALLOWED_USERS" ).split( "," )[0] + "@" + env.get( "HOSTNAME" ).split( "//" )[1];
-    hostNoAuth = env.get( "HOSTNAME" );
+    hostAuth = 'http://' + env.get( "ALLOWED_USERS" ).split( "," )[0] + "@" + env.get( "APP_HOSTNAME" ).split( "//" )[1];
+    hostNoAuth = env.get( "APP_HOSTNAME" );
 
 /**
  * Server functions
