@@ -159,6 +159,10 @@ module.exports = function( http, userHandle ){
     middleware.sendBSDSub,
     routes.user2.outputUser
   );
+  http.post(
+    "/api/user/exists",
+    routes.user2.exists( userHandle )
+  );
 
   // Devops
   http.get( "/healthcheck", routes.site.healthcheck );
