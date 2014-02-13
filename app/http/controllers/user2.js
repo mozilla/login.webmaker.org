@@ -6,7 +6,7 @@ module.exports.authenticateUser = function(User) {
   return function(req, res, next) {
     User.getUserByEmail(res.locals.email, function(err, user) {
       if (err) {
-        return res.json({
+        return res.json(500, {
           "error": "Login database error",
           "login_error": err.toString()
         });
@@ -27,7 +27,7 @@ module.exports.authenticateUser = function(User) {
 module.exports.createUser = function(User) {
   return function(req, res, next) {
     if (req.body.user && !req.body.user.username) {
-      return res.json({
+      return res.json(422, {
         "error": "Missing username"
       });
     }
@@ -39,14 +39,14 @@ module.exports.createUser = function(User) {
 
     User.createUser(userInfo, function(err, user) {
       if (err) {
-        return res.json({
+        return res.json(500, {
           "error": "Login database error",
           "login_error": err.toString()
         });
       }
 
       if (!user) {
-        return res.json({
+        return res.json(500, {
           "error": "Login database error",
           "login_error": "Failed to create user"
         });
@@ -61,14 +61,14 @@ module.exports.createUser = function(User) {
 module.exports.exists = function(User) {
   return function(req, res, next) {
     if (!req.body.username) {
-      return res.json({
+      return res.json(422, {
         "error": "Missing username"
       });
     }
 
     User.getUserByUsername(req.body.username, function(err, user) {
       if (err) {
-        return res.json({
+        return res.json(500, {
           "error": "Login database error",
           "login_error": err.toString()
         });
@@ -84,7 +84,7 @@ module.exports.exists = function(User) {
 
 module.exports.outputUser = function(req, res, next) {
   res.json({
-    email: res.locals.email,
-    user: res.locals.user
+    "email": res.locals.email,
+    "user": res.locals.user
   });
 };
