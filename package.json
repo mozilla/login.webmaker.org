@@ -10,10 +10,12 @@
   "dependencies": {
     "async": "0.2.9",
     "badword": "0.0.1",
+    "browserid-verify": "0.1.2",
     "bower": "1.2.6",
     "express": "3.4.5",
     "habitat": "0.4.2",
     "helmet": "0.1.2",
+    "hyperquest": "0.2.0",
     "less-middleware": "0.1.12",
     "MD5": "1.0.3",
     "messina": "0.1.1",
