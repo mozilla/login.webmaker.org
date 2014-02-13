@@ -58,6 +58,30 @@ module.exports.createUser = function(User) {
   };
 };
 
+module.exports.exists = function(User) {
+  return function(req, res, next) {
+    if (!req.body.username) {
+      return res.json({
+        "error": "Missing username"
+      });
+    }
+
+    User.getUserByUsername(req.body.username, function(err, user) {
+      if (err) {
+        return res.json({
+          "error": "Login database error",
+          "login_error": err.toString()
+        });
+      }
+
+      res.json({
+        "username": req.body.username,
+        "exists": !!user
+      });
+    });
+  };
+};
+
 module.exports.outputUser = function(req, res, next) {
   res.json({
     email: res.locals.email,
