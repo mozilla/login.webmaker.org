@@ -21,6 +21,13 @@ isUsername = function( str ) {
 };
 
 /**
+ * Avatar generator
+ */
+ generateGravatar = function(email) {
+    return 'https://secure.gravatar.com/avatar/' + md5(email) + '?s=26&d=https%3A%2F%2Fstuff.webmaker.org%2Favatars%2Fwebmaker-avatar-44x44.png';
+ };
+
+/**
  * Exports
  */
 module.exports = function( sequelize, DataTypes ) {
@@ -91,6 +98,7 @@ module.exports = function( sequelize, DataTypes ) {
     charset: 'utf8',
     collate: 'utf8_general_ci',
     instanceMethods: {
+
       getValues: function() {
         var obj = this.values;
 
@@ -109,8 +117,9 @@ module.exports = function( sequelize, DataTypes ) {
           // wasMigrated: obj.wasMigrated,
           createdAt: obj.createdAt,
           updatedAt: obj.updatedAt,
-          displayName: obj.fullName,
-          emailHash: md5( obj.email )
+          displayName: obj.fullName, // We should deprecate this
+          emailHash: md5( obj.email ), // We should deprecate this
+          avatarUrl: generateGravatar(obj.email)
         };
       }
     }
