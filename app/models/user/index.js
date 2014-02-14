@@ -79,7 +79,7 @@ module.exports = function ( env ) {
             console.log( "Sent welcome email with id %s", msg.MessageId) ;
           }
 
-          callback( null, user );
+          callback( null, user.getValues() );
         });
       });
     },
