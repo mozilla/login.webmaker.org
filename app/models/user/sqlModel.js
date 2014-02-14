@@ -1,4 +1,5 @@
 var badword = require( "badword" ),
+    defaultGravatar = encodeURIComponent("https://stuff.webmaker.org/avatars/webmaker-avatar-44x44.png"),
     md5 = require( "MD5" ),
     isNotBlacklisted,
     isUsername,
@@ -86,34 +87,30 @@ module.exports = function( sequelize, DataTypes ) {
     wasMigrated: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
+    },
+    avatar: {
+      type: DataTypes.STRING,
+      get: function() {
+        return "https://secure.gravatar.com/avatar/" +
+                md5(this.getDataValue("email")) +
+                "?s=26&d=" + defaultGravatar;
+      }
+    },
+    emailHash: {
+      type: DataTypes.STRING,
+      get: function() {
+        return md5(this.getDataValue("email"));
+      }
+    },
+    displayName: {
+      type: DataTypes.STRING,
+      get: function() {
+        return this.getDataValue("fullName")
+      }
     }
   }, {
     charset: 'utf8',
-    collate: 'utf8_general_ci',
-    instanceMethods: {
-      getValues: function() {
-        var obj = this.values;
-
-        return {
-          id: obj.id,
-          email: obj.email,
-          username: obj.username,
-          fullName: obj.fullName,
-          deletedAt: obj.deletedAt,
-          isAdmin: obj.isAdmin,
-          isCollaborator: obj.isCollaborator,
-          isSuspended: obj.isSuspended,
-          sendNotifications: obj.sendNotifications,
-          sendEngagements: obj.sendEngagements,
-          sendEventCreationEmails: obj.sendEventCreationEmails,
-          // wasMigrated: obj.wasMigrated,
-          createdAt: obj.createdAt,
-          updatedAt: obj.updatedAt,
-          displayName: obj.fullName,
-          emailHash: md5( obj.email )
-        };
-      }
-    }
+    collate: 'utf8_general_ci'
   });
 };
 

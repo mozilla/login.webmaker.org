@@ -129,7 +129,7 @@ module.exports = function ( UserHandle ) {
         users.forEach(function( user ) {
           responseObject[user.email] = {
             username: user.username,
-            emailHash: user.getValues().emailHash
+            emailHash: user.emailHash
           };
         });
 
