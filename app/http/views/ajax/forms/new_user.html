@@ -11,7 +11,7 @@
     </div>
     <div class="row">
       <input type="checkbox" name="terms" id="terms" class="inline" required>
-      <label for="terms" class="inline">{{ gettext("I agree to your terms") | instantiate }}</label>
+      <label for="terms" class="inline">{{ gettext("I agree to your terms") | instantiate | safe }}</label>
     </div>
     <div class="row error-message"></div>
     <input class="create-user-submit" type="submit" value="{{ gettext("Create my account") }}">

@@ -20,7 +20,9 @@ var application = require( "./controllers/application" ),
     util        = require( "util" );
 
 var http = express(),
-    nunjucksEnv = new nunjucks.Environment( new nunjucks.FileSystemLoader( path.join( __dirname, "views" ) ) ),
+    nunjucksEnv = new nunjucks.Environment( new nunjucks.FileSystemLoader( path.join( __dirname, "views" ) ), {
+      autoescape: true
+    }),
     messina,
     logger;
 
