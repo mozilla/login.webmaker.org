@@ -1,4 +1,5 @@
 var badword = require( "badword" ),
+    defaultGravatar = encodeURIComponent("https://stuff.webmaker.org/avatars/webmaker-avatar-44x44.png"),
     md5 = require( "MD5" ),
     isNotBlacklisted,
     isUsername,
@@ -86,6 +87,14 @@ module.exports = function( sequelize, DataTypes ) {
     wasMigrated: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
+    },
+    avatar: {
+      type: DataTypes.STRING,
+      get: function() {
+        return "https://secure.gravatar.com/avatar/" +
+                md5(this.getDataValue("email")) +
+                "?s=26&d=" + defaultGravatar;
+      }
     }
   }, {
     charset: 'utf8',

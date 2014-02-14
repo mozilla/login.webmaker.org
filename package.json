@@ -19,11 +19,11 @@
     "less-middleware": "0.1.12",
     "MD5": "1.0.3",
     "messina": "0.1.1",
-    "mysql": "2.0.0-alpha8",
+    "mysql": "2.0.1",
     "newrelic": "1.2.0",
     "nunjucks": "0.1.10",
     "node-statsd": "0.0.7",
-    "sequelize": "1.6.0",
+    "sequelize": "1.7.0-rc6",
     "webmaker-download-locales": "0.1.0",
     "webmaker-locale-mapping": "latest",
     "webmaker-i18n": "https://github.com/mozilla/node-webmaker-i18n/archive/v0.3.8.tar.gz",
@@ -38,7 +38,7 @@
     "request": "2.20.0"
   },
   "optionalDependencies": {
-    "sqlite3": "2.1.17"
+    "sqlite3": "2.2.0"
   },
   "scripts": {
     "test": "grunt travis --verbose && mocha --timeout 60000 --reporter spec",
