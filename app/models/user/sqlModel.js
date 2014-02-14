@@ -105,7 +105,7 @@ module.exports = function( sequelize, DataTypes ) {
     displayName: {
       type: DataTypes.STRING,
       get: function() {
-        return this.getDataValue("fullName")
+        return this.getDataValue("fullName");
       }
     }
   }, {
