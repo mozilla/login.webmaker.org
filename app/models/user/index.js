@@ -2,18 +2,6 @@ module.exports = function ( env ) {
   var sqlHandle = require( "./sqlController" )( env ),
       emailer = require( "../../../lib/emailer" );
 
-  function userCallback( err, user, callback ) {
-    if ( err ) {
-      return callback( err, null );
-    }
-
-    if ( user ) {
-      return callback( null, user.getValues() );
-    }
-
-    return callback();
-  }
-
   /**
    * Model Access methods
    */
@@ -26,9 +14,7 @@ module.exports = function ( env ) {
      */
 
     getUserById: function( id, callback ) {
-      sqlHandle.getUserById( id, function( err, user ) {
-        userCallback( err, user, callback );
-      });
+      sqlHandle.getUserById( id, callback );
     },
 
     /**
@@ -38,9 +24,7 @@ module.exports = function ( env ) {
      * callback: function( err, user )
      */
     getUserByUsername: function( username, callback ) {
-      sqlHandle.getUserByUsername( username, function( err, user ) {
-        userCallback( err, user, callback );
-      });
+      sqlHandle.getUserByUsername( username, callback );
     },
 
     /**
@@ -50,9 +34,7 @@ module.exports = function ( env ) {
      * callback: function( err, user )
      */
     getUserByEmail: function( email, callback ) {
-      sqlHandle.getUserByEmail( email, function( err, user ) {
-        userCallback( err, user, callback );
-      });
+      sqlHandle.getUserByEmail( email, callback );
     },
 
     /**
