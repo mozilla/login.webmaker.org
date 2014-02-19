@@ -2,19 +2,6 @@ module.exports = function( grunt ) {
   grunt.initConfig({
     pkg: grunt.file.readJSON( "package.json" ),
 
-    recess: {
-      dist: {
-        options: {
-          "noIDs": false,
-          "noOverqualifying": false,
-          "strictPropertyOrder": false
-        },
-        src: [
-          "app/http/public/css/nav.less",
-          "app/http/public/css/account.less"
-        ]
-      }
-    },
     jshint: {
       files: [
         "Gruntfile.js",
@@ -35,6 +22,6 @@ module.exports = function( grunt ) {
   grunt.loadNpmTasks( "grunt-recess" );
   grunt.loadNpmTasks( "grunt-contrib-jshint" );
 
-  grunt.registerTask( "default", [ "recess", "jshint" ]);
-  grunt.registerTask( "travis", [ "recess", "jshint" ]);
+  grunt.registerTask( "default", [ "jshint" ]);
+  grunt.registerTask( "travis", [ "jshint" ]);
 };

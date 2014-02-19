@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8">
   <meta name="csrf-token" content="{{ csrf }}">
-  <meta name="persona-email" content="{{ email }}">
   <title>Webmaker</title>
   <link rel="stylesheet" href="/bower/font-awesome/css/font-awesome.min.css">
   <link rel="stylesheet" href="/css/account.css">
@@ -19,7 +18,10 @@
         {{ gettext('Hi') }} <span id="identity" class="user-name-container"></span>
       </li>
       <li>
-        <iframe src="{{ audience }}/{{localeInfo.lang}}/sso/include.html" class="include-frame"></iframe>
+        <div class="webmaker-login persona-button" style="display: none;">
+          <span class="text">{{ gettext("Sign in") }}</span><span class="tip"></span>
+        </div>
+        <span class="webmaker-logout" style="display: none;">{{ gettext("Sign out") }}</span>
       </li>
     </ul>
   </nav>
@@ -76,6 +78,7 @@
   </div>
   <div class="ui-wrapper ui-body" id="logout-message">{{ gettext('Your user account was deleted!') }}</div>
   <div class="ui-wrapper ui-body" id="wrong-email">{{ gettext("Looks like that isnt your email") }}</div>
+  <script src="{{ personaHostname }}/include.js"></script>
   <script src="/js/ext/require.js" data-main="/js/account"></script>
   {% if ga_account %}
   <script type="text/javascript">
@@ -95,6 +98,8 @@
     })();
   </script>
   {% endif %}
+
+  {% include "../webmaker-auth-client/create-user/create-user-form.html" %}
 
 </body>
 </html>
