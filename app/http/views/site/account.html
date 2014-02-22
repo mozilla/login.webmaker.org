@@ -5,8 +5,7 @@
   <meta name="csrf-token" content="{{ csrf }}">
   <title>Webmaker</title>
   <link rel="stylesheet" href="/bower/font-awesome/css/font-awesome.min.css">
-  <link rel="stylesheet" href="/css/account.css">
-  <link rel="stylesheet" href="/bower/nav-global/nav.css">
+  <link rel="stylesheet" href="/css/account.{{ localeInfo.direction }}.css">
 </head>
 <body>
   <div id="webmaker-nav">
@@ -19,7 +18,7 @@
       </li>
       <li>
         <div class="webmaker-login persona-button" style="display: none;">
-          <span class="text">{{ gettext("Sign in") }}</span><span class="tip"></span>
+          <span dir="{{localeInfo.direction}}" class="text">{{ gettext("Sign in") }}</span><span dir="{{localeInfo.direction}}" class="tip"></span>
         </div>
         <span class="webmaker-logout" style="display: none;">{{ gettext("Sign out") }}</span>
       </li>
