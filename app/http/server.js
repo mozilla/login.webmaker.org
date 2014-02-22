@@ -13,6 +13,7 @@ var application = require( "./controllers/application" ),
     helmet      = require( "helmet" ),
     i18n        = require( "webmaker-i18n" ),
     lessMiddleWare = require( "less-middleware" ),
+    rtltrForLess = require("rtltr-for-less"),
     nunjucks    = require( "nunjucks" ),
     path        = require( "path" ),
     route       = require( "./routes" ),
@@ -90,7 +91,7 @@ http.configure(function(){
 
   var optimize = env.get( "NODE_ENV" ) !== "development",
       tmpDir = path.join( require( "os" ).tmpDir(), "mozilla.login.webmaker.org.build" );
-  http.use(lessMiddleWare({
+  http.use(lessMiddleWare(rtltrForLess({
     once: optimize,
     debug: !optimize,
     dest: tmpDir,
@@ -98,7 +99,7 @@ http.configure(function(){
     compress: optimize,
     yuicompress: optimize,
     optimization: optimize ? 0 : 2
-  }));
+  })));
   http.use( express.static( tmpDir ) );
 });
 
