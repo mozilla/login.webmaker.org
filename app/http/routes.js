@@ -133,6 +133,9 @@ module.exports = function( http, userHandle, webmakerAuth ){
   http.post( "/user", routes.user.create );
 
   http.get( "/usernames", authMiddleware, routes.user.hydrate );
+  // Support for clients that refuse to send request bodies with POST requests
+  http.post( "/usernames", authMiddleware, routes.user.hydrate );
+
   // Allow CSRF Headers
   http.options( "/user", allowCSRFHeaders );
   http.options( "/user/*", allowCSRFHeaders );
