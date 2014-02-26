@@ -3,8 +3,10 @@
   "dependencies": {
     "font-awesome": "3.2.1",
     "jquery": "2.0.3",
-    "nav-global": "https://github.com/admix/nav-global/archive/v0.1.3.tar.gz",
+    "nav-global": "https://github.com/mozilla/nav-global/archive/v0.1.4.tar.gz",
+    "persona-btn": "~0.0.6",
     "text": "2.0.9",
+    "webmaker-auth-client": "0.0.18",
     "webmaker-i18n": "https://github.com/mozilla/node-webmaker-i18n/archive/v0.3.11.tar.gz",
     "webmaker-ui": "0.0.12"
   }

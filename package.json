@@ -1,5 +1,5 @@
 {
-  "author": "Simon C. Wex <swex@mozilla.com>",
+  "author": "Webmaker Product Team <webmaker-staff@mozillafoundation.org>",
   "name": "login.webmaker.org",
   "version": "1.0.21",
   "homepage": "https://github.com/mozilla/login.webmaker.org",
@@ -24,15 +24,14 @@
     "nunjucks": "0.1.10",
     "node-statsd": "0.0.7",
     "sequelize": "1.7.0-rc6",
+    "webmaker-auth":"0.0.11",
     "webmaker-download-locales": "0.1.0",
     "webmaker-locale-mapping": "latest",
     "webmaker-i18n": "https://github.com/mozilla/node-webmaker-i18n/archive/v0.3.11.tar.gz",
-    "webmaker-loginapi": "https://github.com/mozilla/node-webmaker-loginapi/tarball/v0.1.18",
     "webmaker-postalservice": "https://github.com/mozilla/node-webmaker-postalservice/tarball/v0.2.5"
   },
   "devDependencies": {
     "grunt": "0.4.1",
-    "grunt-recess": "0.3.3",
     "grunt-contrib-jshint": "0.4.3",
     "mocha": "1.9.0",
     "request": "2.20.0"

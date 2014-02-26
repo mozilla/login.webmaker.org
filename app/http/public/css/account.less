@@ -1,6 +1,10 @@
 @import "mixins";
 @import "webfonts";
 @import "ui";
+@import "../../../../bower_components/persona-btn/persona-btn";
+@import (less) "../../../../bower_components/webmaker-auth-client/create-user/create-user-form.css";
+
+@personaBtnPath: "/bower/persona-btn";
 
 .wm-user-panel {
   display: none;
@@ -269,4 +273,24 @@ i.boxclose {
   position: absolute;
   text-align: center;
   width: 12px;
+}
+
+/*********************************************************
+* Login / logout
+*/
+
+.webmaker-logout {
+  top: -0.5em;
+  position: relative;
+  padding: 0;
+  border: medium none;
+  margin-left: 10px;
+  line-height: 30px;
+  font-size: 13px;
+  color: #555;
+  width: 4em !important;
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
 }

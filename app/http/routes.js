@@ -1,4 +1,4 @@
-module.exports = function( http, userHandle ){
+module.exports = function( http, userHandle, webmakerAuth ){
   var qs = require( "querystring" ),
       express = require( "express" ),
       basicAuth = express.basicAuth,
@@ -29,17 +29,17 @@ module.exports = function( http, userHandle ){
 
   // basicAuth + Persona authentication
   var standardAuth = function( req, res, next ) {
-    var persona = req.session.email;
+    var sessionUser = req.session.email;
 
     // SSO Auth
-    if ( persona ) {
-      userHandle.getUserByEmail( persona, function( err, user ) {
+    if ( sessionUser ) {
+      userHandle.getUserByEmail( sessionUser.email, function( err, user ) {
         if ( err || !user ) {
           return res.json( 403, "Internal error!" );
         }
 
         // Allow a call from the browser if the user is initiating it themself
-        if ( user.email === persona ){
+        if ( user.email === sessionUser.email ){
           return next();
         }
 
@@ -57,11 +57,11 @@ module.exports = function( http, userHandle ){
   };
 
   var adminOnlyAuth = function( req, res, next ) {
-    var persona = req.session.email;
+    var sessionUser = req.session.user;
 
     // SSO Auth
-    if ( persona ) {
-      userHandle.getUserByEmail( persona, function( err, user ) {
+    if ( sessionUser ) {
+      userHandle.getUserByEmail( sessionUser.email, function( err, user ) {
         if ( err || !user ) {
           return res.json( 403, "Internal error!" );
         }
@@ -111,8 +111,6 @@ module.exports = function( http, userHandle ){
 
   // Static pages
   http.get( "/",  routes.site.index );
-  http.get( "/console", csrf, adminOnlyAuth, routes.site.console );
-  http.get( "/console/signin", csrf, routes.site.signin );
 
   // Account
   http.get( "/account", csrf, routes.site.account );
@@ -142,6 +140,13 @@ module.exports = function( http, userHandle ){
   // The new hotness
   var audience_whitelist = env.get( "ALLOWED_DOMAINS" ).split( " " );
   var middleware = require("./middleware");
+
+  // admin console login routes
+  http.post('/verify', webmakerAuth.handlers.verify);
+  http.post('/authenticate', webmakerAuth.handlers.authenticate);
+  http.post('/logout', webmakerAuth.handlers.logout);
+  http.post('/create', webmakerAuth.handlers.create);
+  http.post('/check-username', webmakerAuth.handlers.exists);
 
   http.post(
     "/api/user/authenticate",

@@ -13,6 +13,7 @@ var application = require( "./controllers/application" ),
     helmet      = require( "helmet" ),
     i18n        = require( "webmaker-i18n" ),
     lessMiddleWare = require( "less-middleware" ),
+    WebmakerAuth = require( "webmaker-auth" ),
     nunjucks    = require( "nunjucks" ),
     path        = require( "path" ),
     route       = require( "./routes" ),
@@ -20,11 +21,21 @@ var application = require( "./controllers/application" ),
     util        = require( "util" );
 
 var http = express(),
-    nunjucksEnv = new nunjucks.Environment( new nunjucks.FileSystemLoader( path.join( __dirname, "views" ) ), {
+    nunjucksEnv = new nunjucks.Environment([
+      new nunjucks.FileSystemLoader( path.join( __dirname, "views" ) ),
+      new nunjucks.FileSystemLoader(path.join(__dirname, "bower_components"))
+    ], {
       autoescape: true
     }),
     messina,
     logger;
+
+var webmakerAuth = new WebmakerAuth({
+  loginURL: env.get("LOGINAPI"),
+  secretKey: env.get("SESSION_SECRET"),
+  forceSSL: env.get("FORCE_SSL"),
+  domain: env.get("COOKIE_DOMAIN")
+});
 
 nunjucksEnv.addFilter("instantiate", function(input) {
     var tmpl = new nunjucks.Template(input);
@@ -66,26 +77,24 @@ http.configure(function(){
     translation_directory: path.resolve( __dirname, "../../locale" )
   }));
 
+  var authLocaleJSON = require("../../bower_components/webmaker-auth-client/locale/en_US/create-user-form.json");
+  i18n.addLocaleObject({
+    "en-US": authLocaleJSON
+  }, function (result) {});
+
   http.locals({
     AUDIENCE: env.get("AUDIENCE"),
     profile: env.get("PROFILE"),
+    personaHostname: env.get("PERSONA_HOSTNAME", "https://login.persona.org"),
     supportedLanguages: i18n.getLanguages(),
     listDropdownLang: i18n.getSupportLanguages()
   });
 
-  http.use( express.cookieParser() );
   http.use( express.json() );
   http.use( express.urlencoded() );
   http.use( express.methodOverride() );
-  http.use( express.cookieSession({
-    key: "login.sid",
-    secret: env.get( "SESSION_SECRET" ),
-    cookie: {
-      secure: !!env.get( "FORCE_SSL" ),
-      maxAge: 2678400000 // 31 days
-    },
-    proxy: true
-  }));
+  http.use( webmakerAuth.cookieParser() );
+  http.use( webmakerAuth.cookieSession() );
   http.use( http.router );
 
   var optimize = env.get( "NODE_ENV" ) !== "development",
@@ -102,11 +111,6 @@ http.configure(function(){
   http.use( express.static( tmpDir ) );
 });
 
-require( "webmaker-loginapi" )(http, {
-  loginURL: env.get( "LOGINAPI" ),
-  audience: env.get( "audience" ),
-  middleware: express.csrf()
-});
 
 http.configure( "development", function(){
   http.use( express.errorHandler({ dumpExceptions: true, showStack: true }) );
@@ -116,7 +120,7 @@ http.configure( "production", function(){
   http.use( express.errorHandler() );
 });
 
-route( http, userHandle );
+route( http, userHandle, webmakerAuth );
 
 http.use( express.static( path.join( __dirname, "public" ) ) );
 http.use( "/bower", express.static( path.join(__dirname, "../../bower_components" )));
