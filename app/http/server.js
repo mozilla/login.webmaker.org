@@ -23,7 +23,7 @@ var application = require( "./controllers/application" ),
 var http = express(),
     nunjucksEnv = new nunjucks.Environment([
       new nunjucks.FileSystemLoader( path.join( __dirname, "views" ) ),
-      new nunjucks.FileSystemLoader(path.join(__dirname, "bower_components"))
+      new nunjucks.FileSystemLoader( path.resolve( __dirname, "../../bower_components" ) )
     ], {
       autoescape: true
     }),
