@@ -9,4 +9,4 @@ if ( process.env.NEW_RELIC_ENABLED ) {
   require( "newrelic" );
 }
 
-var httpd      = require( "./app/http/server.js" );
+var httpd = require( "./app/http/server.js" );
