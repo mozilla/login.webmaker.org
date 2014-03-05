@@ -90,7 +90,6 @@ http.configure(function(){
     supportedLanguages: i18n.getLanguages(),
     listDropdownLang: i18n.getSupportLanguages(),
     urls: {
-      persona: env.get("PERSONA_HOSTNAME", "https://login.persona.org") + '/include.js',
       profile: env.get("PROFILE"),
       myMakes: env.get("AUDIENCE") + '/me',
       accountSettings: env.get("HOSTNAME") + '/account'
