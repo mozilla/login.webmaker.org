@@ -4,13 +4,9 @@ module.exports.loadUserUrls = function(req, res, next) {
 
   res.locals.urls = {
     myMakes: env.get("AUDIENCE") + "/me",
-    accountSettings: env.get("HOSTNAME") + '/account'
+    accountSettings: env.get("HOSTNAME") + '/account',
+    profile: "//" + res.locals.user.username + env.get("PROFILE")
   };
-
-  // Set correct profile url
-  if (res.locals.user) {
-    res.locals.urls.profile = "//" + res.locals.user.username + env.get("PROFILE");
-  }
 
   next();
 };
