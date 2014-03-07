@@ -4,10 +4,13 @@
       "jquery": "../bower/jquery/jquery.min",
       "eventEmitter": "/bower/eventEmitter",
       "WebmakerAuthClient": "/bower/webmaker-auth-client/webmaker-auth-client",
+      "languages": "/bower/webmaker-language-picker/js/languages",
+      "list": "/bower/listjs/dist/list.min",
+      "fuzzySearch": "/bower/list.fuzzysearch.js/dist/list.fuzzysearch.min",
       "text": "../bower/text/text"
     }
   });
-  require([ "jquery", "/bower/webmaker-ui/ui.js", "WebmakerAuthClient" ], function ($, UI, WebmakerAuthClient) {
+  require([ "jquery", "languages", "WebmakerAuthClient" ], function ($, Languages, WebmakerAuthClient) {
     var langSelector = document.querySelector('#lang-picker'),
         csrf_token = $( "meta[name='csrf-token']" ).attr( "content" );
 
@@ -108,8 +111,8 @@
       $( "#confirm-delete" ).fadeOut();
     });
 
-    // URL redirector for language picker
-    UI.langPicker(langSelector);
+    // Call this when language picker element is ready.
+    Languages.ready({ position: 'bottom', arrow: 'top' }, true);
 
     $( "#sendEventCreationEmailsCheckbox" ).change(function(e) {
       var checked = $( this ).prop( "checked" ) ? 1 : 0;

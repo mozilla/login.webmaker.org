@@ -2,9 +2,25 @@
 @import "webfonts";
 @import "ui";
 @import "../../../../bower_components/persona-btn/persona-btn";
+@import "../../../../bower_components/webmaker-language-picker/styles/languages";
 @import (less) "../../../../bower_components/webmaker-auth-client/create-user/create-user-form.css";
 @import "../../../../bower_components/nav-global/nav.less";
 @personaBtnPath: "/bower/persona-btn";
+@language-bower-path: "../../../../bower_components";
+
+/***************************************************
+* New Language Picker
+*/
+
+.langPicker {
+  padding: 10px;
+  margin: 5px;
+}
+
+#current-language {
+  color: #000;
+  text-decoration: none;
+}
 
 .wm-user-panel {
   display: none;
@@ -123,54 +139,6 @@ iframe {
   border: none;
   width: 100%;
   height: 300px;
-}
-
-
-li.lang-picker:first-child {
-  border-right: none;
-}
-
-.ui-append.ui-select {
-  background-color: white;
-}
-
-#lang-picker {
-  margin: -7px 15px 0 -18px;
-  border-color: transparent;
-  &:hover {
-    border-color: #CCC;
-  }
-  ul {
-    background: white;
-    display: inline-block;
-    li {
-      display: block;
-    }
-  }
-
-  .ui-select-menu {
-    width: auto;
-    border-color: #CCC;
-    ul {
-      width: auto;
-    }
-  }
-
-  .ui-selected::before {
-    margin-right: 5px;
-  }
-  .ui-smedium {
-    width: auto;
-  }
-  > .icon {
-    background: none;
-    color: #555;
-    padding: 0 10px 0 0;
-    &:hover {
-      background: none;
-      color: #555;
-    }
-  }
 }
 
 
