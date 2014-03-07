@@ -157,6 +157,7 @@ module.exports = function( http, userHandle, webmakerAuth ){
     middleware.personaVerifier,
     routes.user2.authenticateUser( userHandle ),
     middleware.updateLastLoggedIn( userHandle ),
+    middleware.loadUserUrls,
     routes.user2.outputUser
   );
   http.post(
@@ -165,6 +166,7 @@ module.exports = function( http, userHandle, webmakerAuth ){
     middleware.personaVerifier,
     routes.user2.createUser( userHandle ),
     middleware.sendBSDSub,
+    middleware.loadUserUrls,
     routes.user2.outputUser
   );
   http.post(
