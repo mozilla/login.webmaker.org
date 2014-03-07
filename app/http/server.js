@@ -87,8 +87,7 @@ http.configure(function(){
     AUDIENCE: env.get("AUDIENCE"),
     profile: env.get("PROFILE"),
     personaHostname: env.get("PERSONA_HOSTNAME", "https://login.persona.org"),
-    supportedLanguages: i18n.getLanguages(),
-    listDropdownLang: i18n.getSupportLanguages()
+    languages: i18n.getSupportLanguages()
   });
 
   http.use( express.json() );
