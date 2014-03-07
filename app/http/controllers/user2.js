@@ -83,12 +83,8 @@ module.exports.exists = function(User) {
 };
 
 module.exports.outputUser = function(req, res, next) {
-
-  var output = {
+  res.json({
     email: res.locals.email,
-    user: res.locals.user,
-    urls: res.locals.urls
-  };
-
-  res.json(output);
+    user: res.locals.user
+  });
 };
