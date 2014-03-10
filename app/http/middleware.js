@@ -6,7 +6,8 @@ module.exports.personaFilter = function(audience_whitelist) {
       });
     }
 
-    if (audience_whitelist.indexOf(req.body.audience) === -1) {
+    if (audience_whitelist.indexOf(req.body.audience) === -1 &&
+        audience_whitelist.indexOf("*") === -1) {
       return res.json({
         "error": "Audience parameter not allowed"
       });
