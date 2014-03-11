@@ -3,8 +3,7 @@ var Sequelize = require( "sequelize" ),
     forkErrorHandling,
     forkSuccessHandling,
     dbHealthCheck,
-    dbErrorHandling,
-    parseQuery;
+    dbErrorHandling;
 
 // Health state
 health = {
