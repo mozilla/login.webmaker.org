@@ -5,16 +5,9 @@ var assert = require( "assert" ),
     now = Date.now(),
     env = require( "../config/environment" ),
     child,
-    hostAuth,
-    hostNoAuth,
-    illegalChars = "` ! @ # $ % ^ & * ( ) + = ; : ' \" , < . > / ?".split( " " );
-
-    // Adding a space to the illegalChars list
-    illegalChars.push(" ");
 
     // Parse URLS
     hostAuth = 'http://' + env.get( "ALLOWED_USERS" ).split( "," )[0] + "@" + env.get( "HOSTNAME" ).split( "//" )[1];
-    hostNoAuth = env.get( "HOSTNAME" );
 
 /**
  * Server functions
@@ -166,130 +159,6 @@ function unique() {
 /**
  * Unit tests
  */
-
-describe( 'POST /user (create)', function() {
-
-  var api = hostAuth + '/user';
-
-  before( function( done ) {
-    startServer( done );
-  });
-
-  after( function( done ) {
-    stopServer( done );
-  });
-
-  it( 'should error when missing required username', function( done ) {
-    apiHelper( 'post', api, 404, { email: unique().email }, done );
-  });
-
-  it( 'should create a new login with minimum required fields', function( done ) {
-    var user = unique();
-
-    apiHelper( 'post', api, 200, user, function( err, res, body ) {
-      assert.equal( body.user.fullName, user.username );
-      assert.equal( body.user.email, user.email );
-      done();
-    });
-  });
-
-  it( 'should error when username is too long', function( done ) {
-    var user = unique();
-    user.username = "123456789012345678901";
-
-    apiHelper( 'post', api, 404, user, done );
-  });
-
-  it( 'should error when username is too short', function( done ) {
-    var user = unique();
-    user.username = "";
-
-    apiHelper( 'post', api, 404, user, done );
-  });
-
-  // Test username for 404 on illegal characters
-  illegalChars.forEach( function( badString ) {
-    it( 'should error when username contains the illegal character "' + badString + '"', function( done ) {
-      var user = unique();
-      user.username = badString;
-
-      apiHelper( 'post', api, 404, user, done );
-    });
-  });
-
-  it( 'should error when username contains a bad word ("damn" is being tested)', function( done ) {
-    var user = unique();
-    user.username = "damn";
-
-    apiHelper( 'post', api, 404, user, done );
-  });
-
-  it( 'should error when username already exists', function ( done ) {
-    var user = unique();
-
-    // Create a user, then create another one with the same username
-    apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
-      var newUser = unique();
-      newUser.username = user.username;
-
-      apiHelper( 'post', api, 404, newUser, done );
-    });
-  });
-
-  it( 'should create the "createdAt" user model field by default', function ( done ) {
-    apiHelper( 'post', api, 200, unique(), function( err, res, body ) {
-      assert.ok(!!body.user.createdAt);
-      done();
-    });
-  });
-
-  it( 'should create the "updatedAt" user model field by default', function ( done ) {
-    apiHelper( 'post', api, 200, unique(), function( err, res, body ) {
-      assert.ok(!!body.user.updatedAt);
-      done();
-    });
-  });
-
-  it( 'should create the "isAdmin" user model field as false by default', function ( done ) {
-    apiHelper( 'post', api, 200, unique(), function( err, res, body ) {
-      assert.equal(body.user.isAdmin, false);
-      done();
-    });
-  });
-
-  it( 'should create the "isSuspended" user model field as false by default', function ( done ) {
-    apiHelper( 'post', api, 200, unique(), function( err, res, body ) {
-      assert.equal(body.user.isSuspended, false);
-      done();
-    });
-  });
-
-  it( 'should create the "sendNotifications" user model field as false by default', function ( done ) {
-    apiHelper( 'post', api, 200, unique(), function( err, res, body ) {
-      assert.equal(body.user.sendNotifications, false);
-      done();
-    });
-  });
-
-  it( 'should create the "sendEngagements" user model field as false by default', function ( done ) {
-    apiHelper( 'post', api, 200, unique(), function( err, res, body ) {
-      assert.equal(body.user.sendEngagements, false);
-      done();
-    });
-  });
-
-  it( 'should error if webmaker already exists (i.e. the email field is a duplicate)', function ( done ) {
-    var user = unique();
-
-    // Create a user, then create another one with the same email
-    apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
-      var newUser = unique();
-      newUser.email = user.email;
-
-      apiHelper( 'post', api, 404, newUser, done );
-    });
-  });
-});
 
 describe( 'PUT /user/:id (update)', function() {
   var api = hostAuth + '/user';

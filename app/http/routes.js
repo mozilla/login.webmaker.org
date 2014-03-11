@@ -56,29 +56,6 @@ module.exports = function( http, userHandle, webmakerAuth ){
     }
   };
 
-  var adminOnlyAuth = function( req, res, next ) {
-    var sessionUser = req.session.user;
-
-    // SSO Auth
-    if ( sessionUser ) {
-      userHandle.getUserByEmail( sessionUser.email, function( err, user ) {
-        if ( err || !user ) {
-          return res.json( 403, "Internal error!" );
-        }
-
-        // Allow a call from the browser if the user is an admin
-        if ( user.isAdmin ) {
-          return next();
-        }
-
-        return res.json( 403, "Error, admin privileges required!" );
-      });
-    } else {
-      // BasicAuth
-      authMiddleware( req, res, next );
-    }
-  };
-
   // Persona authentication (non-admin users)
   var checkPersona = function( req, res, next ) {
     if ( req.session.email ) {
@@ -87,11 +64,6 @@ module.exports = function( http, userHandle, webmakerAuth ){
     } else {
       res.send( "You are not signed in :(" );
     }
-  };
-
-  var allowCSRFHeaders = function( req, res, next ) {
-    res.header( "Access-Control-Allow-Headers", "X-CSRF-Token" );
-    res.send( 200 );
   };
 
   var filterAccountUpdates = function( req, res, next ) {
@@ -118,38 +90,19 @@ module.exports = function( http, userHandle, webmakerAuth ){
   http.put( "/account/update", csrf, checkPersona, filterAccountUpdates, routes.user.update );
 
   // Resources
-  http.get( "/js/sso-ux.js", routes.site.js( "sso-ux") );
-  http.get("/js/console.js", routes.site.js( "console" ) );
   http.get( "/js/account.js", routes.site.js( "account" ) );
-  http.get( "/js/ui.js", routes.site.js( "ui" ) );
-  http.get( "/ajax/forms/new_user.html", routes.user.userForm );
 
   http.get( "/user/id/*", standardAuth, routes.user.getById );
   http.get( "/user/username/*", standardAuth, routes.user.getByUsername );
   http.get( "/user/email/*", standardAuth, routes.user.getByEmail );
 
-  http.put( "/user/*", adminOnlyAuth, routes.user.update );
-  http.del( "/user/*", adminOnlyAuth, routes.user.del );
-  http.post( "/user", routes.user.create );
-
   http.get( "/usernames", authMiddleware, routes.user.hydrate );
   // Support for clients that refuse to send request bodies with POST requests
   http.post( "/usernames", authMiddleware, routes.user.hydrate );
 
-  // Allow CSRF Headers
-  http.options( "/user", allowCSRFHeaders );
-  http.options( "/user/*", allowCSRFHeaders );
-
   // The new hotness
   var audience_whitelist = env.get( "ALLOWED_DOMAINS" ).split( " " );
   var middleware = require("./middleware");
-
-  // admin console login routes
-  http.post('/verify', webmakerAuth.handlers.verify);
-  http.post('/authenticate', webmakerAuth.handlers.authenticate);
-  http.post('/logout', webmakerAuth.handlers.logout);
-  http.post('/create', webmakerAuth.handlers.create);
-  http.post('/check-username', webmakerAuth.handlers.exists);
 
   http.post(
     "/api/user/authenticate",
@@ -171,6 +124,13 @@ module.exports = function( http, userHandle, webmakerAuth ){
     "/api/user/exists",
     routes.user2.exists( userHandle )
   );
+
+  // Client-side Webmaker Auth support
+  http.post('/verify', webmakerAuth.handlers.verify);
+  http.post('/authenticate', webmakerAuth.handlers.authenticate);
+  http.post('/logout', webmakerAuth.handlers.logout);
+  http.post('/create', webmakerAuth.handlers.create);
+  http.post('/check-username', webmakerAuth.handlers.exists);
 
   // Devops
   http.get( "/healthcheck", routes.site.healthcheck );

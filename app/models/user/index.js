@@ -75,8 +75,6 @@ module.exports = function ( env ) {
      */
     updateUser: function ( email, data, callback ) {
       this.getUserByEmail( email, function( err, user ) {
-        var error;
-
         if ( err ) {
           return callback( err );
         }
@@ -99,8 +97,6 @@ module.exports = function ( env ) {
       // Check user exists (sequelize happily deletes
       // non existant-users)
       this.getUserByEmail( email, function( err, user ) {
-        var error;
-
         if ( err ) {
           return callback( err );
         }
