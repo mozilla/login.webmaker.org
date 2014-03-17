@@ -112,7 +112,8 @@
     });
 
     // Call this when language picker element is ready.
-    Languages.ready({ position: 'bottom', arrow: 'top' }, true);
+    // Nav option is false because we don't put language picker in nav bar for login server
+    Languages.ready({ position: 'bottom', arrow: 'top', nav: false }, true);
 
     $( "#sendEventCreationEmailsCheckbox" ).change(function(e) {
       var checked = $( this ).prop( "checked" ) ? 1 : 0;
