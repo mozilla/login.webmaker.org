@@ -6,7 +6,7 @@
     "nav-global": "https://github.com/mozilla/nav-global/archive/v0.1.4.tar.gz",
     "persona-btn": "~0.0.12",
     "text": "2.0.9",
-    "webmaker-auth-client": "0.0.25",
+    "webmaker-auth-client": "0.0.26",
     "webmaker-i18n": "https://github.com/mozilla/node-webmaker-i18n/archive/v0.3.11.tar.gz",
     "webmaker-language-picker": "0.0.16"
   }
