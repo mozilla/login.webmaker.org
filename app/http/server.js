@@ -1,8 +1,17 @@
-#!/usr/local/bin/node
-
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+var newrelic;
+if ( process.env.NEW_RELIC_ENABLED ) {
+  newrelic = require( "newrelic" );
+} else {
+  newrelic = {
+    getBrowserTimingHeader: function () {
+      return "<!-- New Relic RUM disabled -->";
+    }
+  };
+}
 
 // Module dependencies.
 require( "../../lib/extensions/number" );
@@ -85,6 +94,7 @@ http.configure(function(){
 
   http.locals({
     AUDIENCE: env.get("AUDIENCE"),
+    newrelic: newrelic,
     profile: env.get("PROFILE"),
     personaHostname: env.get("PERSONA_HOSTNAME", "https://login.persona.org"),
     languages: i18n.getSupportLanguages()
