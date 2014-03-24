@@ -13,11 +13,7 @@ if ( process.env.NEW_RELIC_ENABLED ) {
   };
 }
 
-// Module dependencies.
-require( "../../lib/extensions/number" );
-
-var application = require( "./controllers/application" ),
-    env = require( "../../config/environment" );
+var env = require( "../../config/environment" ),
     express     = require( "express" ),
     helmet      = require( "helmet" ),
     i18n        = require( "webmaker-i18n" ),
@@ -27,8 +23,7 @@ var application = require( "./controllers/application" ),
     nunjucks    = require( "nunjucks" ),
     path        = require( "path" ),
     route       = require( "./routes" ),
-    userHandle  = require( "../models/user" )( env ),
-    util        = require( "util" );
+    userHandle  = require( "../models/user" )( env );
 
 var http = express(),
     nunjucksEnv = new nunjucks.Environment([
@@ -58,7 +53,6 @@ http.configure(function(){
   nunjucksEnv.express( http );
 
   http.disable( "x-powered-by" );
-  http.use( application.allowCorsRequests );
 
   if ( !!env.get( "ENABLE_GELF_LOGS" ) ) {
     messina = require( "messina" );

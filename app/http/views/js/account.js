@@ -86,7 +86,7 @@
             webmakerAuthClient.off( "logout", onLogout );
             webmakerAuthClient.on( "logout", function onDelete() {
               setTimeout(function() {
-                window.location.href = "{{ audience }}";
+                window.location.href = "https://webmaker.org";
               }, 2000);
             });
             webmakerAuthClient.on( "error", function onError( error ) {
