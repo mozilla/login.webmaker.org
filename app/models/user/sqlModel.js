@@ -93,6 +93,10 @@ module.exports = function( sequelize, DataTypes ) {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
+    referrer: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     avatar: {
       type: DataTypes.STRING,
       get: function() {
