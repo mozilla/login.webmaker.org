@@ -6,7 +6,7 @@
   // make sure jQuery is available to us
   if( !$ ) {
     var jq = document.createElement( "script" );
-    jq.src = "{{ hostname }}/js/ext/jquery-1.9.1.min.js";
+    jq.src = "{{ APP_HOSTNAME }}/js/ext/jquery-1.9.1.min.js";
     jq.onload = function() {
       // retry, this time in the knowledge that we have jQuery
       setupUIHandler( window, document, window.jQuery );
@@ -24,7 +24,7 @@
           lang = html && html.lang ? html.lang : "en-US";
 
       if ( userData ) {
-        placeHolder.html( '<a href="{{ hostname }}/' + lang + '/account">' + userData.name + "</a>" );
+        placeHolder.html( '<a href="{{ APP_HOSTNAME }}/' + lang + '/account">' + userData.name + "</a>" );
         placeHolder.before( "<img src='https://secure.gravatar.com/avatar/" +
                             userData.hash + "?s=26&d=https%3A%2F%2Fstuff.webmaker.org%2Favatars%2Fwebmaker-avatar-44x44.png' alt='" +
                             userData.hash + "'>" );
@@ -57,7 +57,7 @@
 
       // Get the new user form from webmaker.org so that a persona-authenticated
       // user can sign up for a webmaker account before being let into the site.
-      $.get( "{{ hostname }}/" + lang + "/ajax/forms/new_user.html", function( html ) {
+      $.get( "{{ APP_HOSTNAME }}/" + lang + "/ajax/forms/new_user.html", function( html ) {
         $formContainer = $( html ).appendTo( $( "#webmaker-nav" ) );
         $formContainer.slideDown();
         $formFrag = $( "#sso_create", formAnchor );
@@ -88,7 +88,7 @@
           // information.
           $.ajax({
             type: "POST",
-            url: "{{ hostname }}/user",
+            url: "{{ APP_HOSTNAME }}/user",
             headers: {
               "X-CSRF-Token": csrfMeta.content  // express.js uses a non-standard name for csrf-token
             },

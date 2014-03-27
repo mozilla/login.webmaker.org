@@ -30,7 +30,7 @@ exports.js = function( filename ) {
   return function( req, res ){
     res.set( "Content-Type", "application/javascript" );
     res.render( "js/" + filename + ".js", {
-      hostname: env.get( "HOSTNAME" ),
+      hostname: env.get( "APP_HOSTNAME" ),
       audience: env.get( "AUDIENCE" )
     });
   };
