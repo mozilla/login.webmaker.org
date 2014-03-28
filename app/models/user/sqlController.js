@@ -162,6 +162,7 @@ module.exports = function( env ) {
       user = model.build({
         email: data.email,
         fullName: data.username,
+        subscribeToWebmakerList: data.mailingList,
         username: data.username.toLowerCase(),
         lastLoggedIn: new Date()
       });

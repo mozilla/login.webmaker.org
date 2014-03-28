@@ -84,6 +84,11 @@ module.exports = function( sequelize, DataTypes ) {
       type: DataTypes.BOOLEAN,
       defaultValue: true
     },
+    subscribeToWebmakerList: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
     wasMigrated: {
       type: DataTypes.BOOLEAN,
       defaultValue: false

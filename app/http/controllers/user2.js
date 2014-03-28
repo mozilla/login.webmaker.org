@@ -34,6 +34,7 @@ module.exports.createUser = function(User) {
 
     var userInfo = {
       email: res.locals.email,
+      mailingList: !!req.body.user.mailingList,
       username: req.body.user.username
     };
 
