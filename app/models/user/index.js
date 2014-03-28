@@ -1,6 +1,6 @@
 module.exports = function ( env ) {
-  var sqlHandle = require( "./sqlController" )( env ),
-      emailer = require( "../../../lib/emailer" );
+  var hatchet = require("hatchet");
+  var sqlHandle = require( "./sqlController" )( env );
 
   /**
    * Model Access methods
@@ -49,20 +49,14 @@ module.exports = function ( env ) {
           return callback( sqlErr );
         }
 
-        emailer.sendWelcomeEmail({
-          to: user.email,
-          fullName: user.fullName
-        }, function( emailErr, msg ) {
-          if ( emailErr ) {
-            // non-fatal error
-            console.error( emailErr );
-          }
-          if ( msg ) {
-            console.log( "Sent welcome email with id %s", msg.MessageId) ;
-          }
-
-          callback( null, user );
+        hatchet.send( "create_user", {
+          user_id: user.getDataValue("id"),
+          username: user.getDataValue("username"),
+          email: user.getDataValue("email"),
+          subscribeToWebmakerList: user.getDataValue("subscribeToWebmakerList")
         });
+
+        callback( null, user );
       });
     },
 
@@ -114,6 +108,12 @@ module.exports = function ( env ) {
           if ( err ) {
             return callback( err );
           }
+
+          hatchet.send( "delete_user", {
+            user_id: user.getDataValue("id"),
+            username: user.getDataValue("username"),
+            email: user.getDataValue("email"),
+          });
 
           callback();
         });

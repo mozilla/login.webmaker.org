@@ -164,7 +164,6 @@ module.exports = function( http, userHandle, webmakerAuth ){
     middleware.personaFilter( audience_whitelist ),
     middleware.personaVerifier,
     routes.user2.createUser( userHandle ),
-    middleware.sendBSDSub,
     routes.user2.outputUser
   );
   http.post(
