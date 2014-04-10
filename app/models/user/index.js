@@ -50,7 +50,7 @@ module.exports = function ( env ) {
         }
 
         hatchet.send( "create_user", {
-          user_id: user.getDataValue("id"),
+          userId: user.getDataValue("id"),
           username: user.getDataValue("username"),
           email: user.getDataValue("email"),
           subscribeToWebmakerList: user.getDataValue("subscribeToWebmakerList")
@@ -110,7 +110,7 @@ module.exports = function ( env ) {
           }
 
           hatchet.send( "delete_user", {
-            user_id: user.getDataValue("id"),
+            userId: user.getDataValue("id"),
             username: user.getDataValue("username"),
             email: user.getDataValue("email"),
           });
