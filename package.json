@@ -26,7 +26,7 @@
     "rtltr-for-less": "0.0.7",
     "sequelize": "1.7.0-rc6",
     "webmaker-auth": "0.0.11",
-    "webmaker-download-locales": "0.1.0",
+    "webmaker-download-locales": "0.1.2",
     "webmaker-locale-mapping": "latest",
     "webmaker-i18n": "https://github.com/mozilla/node-webmaker-i18n/archive/v0.3.11.tar.gz"
   },
