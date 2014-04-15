@@ -112,7 +112,7 @@ module.exports = function ( env ) {
           hatchet.send( "delete_user", {
             userId: user.getDataValue("id"),
             username: user.getDataValue("username"),
-            email: user.getDataValue("email"),
+            email: user.getDataValue("email")
           });
 
           callback();
