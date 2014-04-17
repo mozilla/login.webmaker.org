@@ -164,7 +164,8 @@ module.exports = function( env ) {
         fullName: data.username,
         subscribeToWebmakerList: data.mailingList,
         username: data.username.toLowerCase(),
-        lastLoggedIn: new Date()
+        lastLoggedIn: new Date(),
+        referrer: data.referrer
       });
 
       // Validate

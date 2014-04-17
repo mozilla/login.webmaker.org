@@ -53,6 +53,7 @@ module.exports = function ( env ) {
           userId: user.getDataValue("id"),
           username: user.getDataValue("username"),
           email: user.getDataValue("email"),
+          referrer: user.getDataValue("referrer"),
           subscribeToWebmakerList: user.getDataValue("subscribeToWebmakerList")
         });
 
