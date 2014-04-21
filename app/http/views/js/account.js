@@ -2,15 +2,14 @@
     baseUrl: "/js",
     paths: {
       "jquery": "../bower/jquery/jquery.min",
-      "eventEmitter": "/bower/eventEmitter",
-      "WebmakerAuthClient": "/bower/webmaker-auth-client/webmaker-auth-client",
+      "webmaker-auth-client": "/bower/webmaker-auth-client/dist/webmaker-auth-client.min",
       "languages": "/bower/webmaker-language-picker/js/languages",
       "list": "/bower/listjs/dist/list.min",
       "fuzzySearch": "/bower/list.fuzzysearch.js/dist/list.fuzzysearch.min",
       "text": "../bower/text/text"
     }
   });
-  require([ "jquery", "languages", "WebmakerAuthClient" ], function ($, Languages, WebmakerAuthClient) {
+  require([ "jquery", "languages", "webmaker-auth-client" ], function ($, Languages, WebmakerAuthClient) {
     var langSelector = document.querySelector('#lang-picker'),
         csrf_token = $( "meta[name='csrf-token']" ).attr( "content" );
 
