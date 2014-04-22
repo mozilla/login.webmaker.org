@@ -16,8 +16,7 @@ if ( process.env.NEW_RELIC_ENABLED ) {
 // Module dependencies.
 require( "../../lib/extensions/number" );
 
-var application = require( "./controllers/application" ),
-    env = require( "../../config/environment" );
+var env         = require( "../../config/environment" );
     express     = require( "express" ),
     helmet      = require( "helmet" ),
     i18n        = require( "webmaker-i18n" ),
@@ -58,7 +57,6 @@ http.configure(function(){
   nunjucksEnv.express( http );
 
   http.disable( "x-powered-by" );
-  http.use( application.allowCorsRequests );
 
   if ( !!env.get( "ENABLE_GELF_LOGS" ) ) {
     messina = require( "messina" );
