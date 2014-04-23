@@ -79,6 +79,11 @@ http.configure(function(){
     http.enable( "trust proxy" );
   }
 
+  http.use( express.json() );
+  http.use( express.urlencoded() );
+  http.use( webmakerAuth.cookieParser() );
+  http.use( webmakerAuth.cookieSession() );
+
   // Setup locales with i18n
   http.use( i18n.middleware({
     supported_languages: env.get( "SUPPORTED_LANGS" ),
@@ -96,15 +101,12 @@ http.configure(function(){
     AUDIENCE: env.get("AUDIENCE"),
     newrelic: newrelic,
     profile: env.get("PROFILE"),
+    bower_path: "bower_components",
     personaHostname: env.get("PERSONA_HOSTNAME", "https://login.persona.org"),
     languages: i18n.getSupportLanguages()
   });
 
-  http.use( express.json() );
-  http.use( express.urlencoded() );
-  http.use( express.methodOverride() );
-  http.use( webmakerAuth.cookieParser() );
-  http.use( webmakerAuth.cookieSession() );
+  // need to make sure router is after i18n.middleware
   http.use( http.router );
 
   var optimize = env.get( "NODE_ENV" ) !== "development",

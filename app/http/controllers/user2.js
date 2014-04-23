@@ -36,6 +36,7 @@ module.exports.createUser = function(User) {
       email: res.locals.email,
       mailingList: !!req.body.user.mailingList,
       username: req.body.user.username,
+      prefLocale: req.body.user.prefLocale,
       referrer: req.body.user.referrer
     };
 

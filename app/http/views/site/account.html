@@ -50,7 +50,11 @@
                   </ul>
               </li>
               <li><span class="field-label">{{ gettext("Language") }}</span><span class="wm-lang"></span>
-                {% include "webmaker-language-picker/template/partial.html" %} <i class="icon-caret-down"></i>
+                <select name="languagePref" id="languagePref" data-supported="{{languages}}">
+                  {% for locale in languages %}<option value="{{ locale }}"{%
+                  if locale == localeInfo.lang %} selected="selected"{% endif
+                  %}>{{ languageEnglishName(locale) }} - {{ languageNameFor(locale) }}</option>{% endfor %}
+                 </select>
               </li>
               <li>
                 <span class="field-label"></span>

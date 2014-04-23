@@ -53,6 +53,7 @@ module.exports = function ( env ) {
           userId: user.getDataValue("id"),
           username: user.getDataValue("username"),
           email: user.getDataValue("email"),
+          locale: user.getDataValue("prefLocale"),
           referrer: user.getDataValue("referrer"),
           subscribeToWebmakerList: user.getDataValue("subscribeToWebmakerList")
         });
@@ -113,6 +114,7 @@ module.exports = function ( env ) {
           hatchet.send( "delete_user", {
             userId: user.getDataValue("id"),
             username: user.getDataValue("username"),
+            locale: user.getDataValue("prefLocale"),
             email: user.getDataValue("email")
           });
 
