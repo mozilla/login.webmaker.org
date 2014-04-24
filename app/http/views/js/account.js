@@ -1,21 +1,26 @@
  requirejs.config({
     baseUrl: "/js",
     paths: {
+      "analytics": "/bower/webmaker-analytics/analytics",
       "jquery": "../bower/jquery/jquery.min",
       "webmaker-auth-client": "/bower/webmaker-auth-client/dist/webmaker-auth-client.min",
       "languages": "/bower/webmaker-language-picker/js/languages",
       "list": "/bower/listjs/dist/list.min",
       "fuzzySearch": "/bower/list.fuzzysearch.js/dist/list.fuzzysearch.min",
+      "selectize": "../bower/selectize/dist/js/standalone/selectize.min",
       "text": "../bower/text/text"
     }
   });
-  require([ "jquery", "languages", "webmaker-auth-client" ], function ($, Languages, WebmakerAuthClient) {
+  require([ "jquery", "languages", "webmaker-auth-client", "selectize" ], function ($, Languages, WebmakerAuthClient, Selectize) {
     var langSelector = document.querySelector('#lang-picker'),
         csrf_token = $( "meta[name='csrf-token']" ).attr( "content" );
 
     var webmakerAuthClient = new WebmakerAuthClient({
       csrfToken:csrf_token
     });
+
+    //initialized language selectize -- used in signup for webmaker-auth-client
+    $('#supportedLocales').selectize();
 
     // CRSF Protection
     $.ajaxSetup({
@@ -110,10 +115,6 @@
       $( "#confirm-delete" ).fadeOut();
     });
 
-    // Call this when language picker element is ready.
-    // Nav option is false because we don't put language picker in nav bar for login server
-    Languages.ready({ position: 'bottom', arrow: 'top', nav: false }, true);
-
     $( "#sendEventCreationEmailsCheckbox" ).change(function(e) {
       var checked = $( this ).prop( "checked" ) ? true : false;
 
@@ -131,5 +132,23 @@
           $( ".email-prefs.prefs-error" ).fadeIn().delay( 1000 ).fadeOut();
         }
       });
+    });
+
+    $("#languagePref").selectize({
+        onChange: function(value) {
+          $.ajax({
+            type: "PUT",
+            url: "/account/update",
+            data: {
+              prefLocale: value
+            },
+            success: function( data, textStatus ) {
+              Languages.langRedirector(value);
+            },
+            error: function( jqXHR, textStatus, errorThrown ) {
+              $( ".email-prefs.prefs-error" ).fadeIn().delay( 1000 ).fadeOut();
+            }
+          });
+        }
     });
   });

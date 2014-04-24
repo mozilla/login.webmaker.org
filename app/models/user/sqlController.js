@@ -165,7 +165,8 @@ module.exports = function( env ) {
         subscribeToWebmakerList: data.mailingList,
         username: data.username.toLowerCase(),
         lastLoggedIn: new Date(),
-        referrer: data.referrer
+        referrer: data.referrer,
+        prefLocale: data.prefLocale
       });
 
       // Validate

@@ -48,6 +48,11 @@ module.exports = function( sequelize, DataTypes ) {
       allowNull: false,
       unique: true
     },
+    prefLocale: {
+      type: DataTypes.STRING,
+      defaultValue: "en-US",
+      allowNull: false
+    },
     fullName: {
       type: DataTypes.STRING,
       allowNull: false,
