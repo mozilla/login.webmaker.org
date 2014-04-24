@@ -81,6 +81,9 @@ module.exports = function ( UserHandle ) {
           metrics.increment( "user.update.error" );
           return res.json( 404, { error: err || "User not found for email: " + email } );
         }
+        if ( req.session.user ) {
+          req.session.user = user;
+        }
         return res.json( 200, { user: user } );
       });
     },
