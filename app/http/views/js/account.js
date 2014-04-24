@@ -115,14 +115,15 @@
     Languages.ready({ position: 'bottom', arrow: 'top', nav: false }, true);
 
     $( "#sendEventCreationEmailsCheckbox" ).change(function(e) {
-      var checked = $( this ).prop( "checked" ) ? 1 : 0;
+      var checked = $( this ).prop( "checked" ) ? true : false;
 
       $.ajax({
         type: "PUT",
         url: "/account/update",
-        data: {
+        data: JSON.stringify({
           sendEventCreationEmails: checked
-        },
+        }),
+        contentType: "application/json",
         success: function( data, textStatus ) {
           $( ".email-prefs.prefs-saved" ).fadeIn().delay( 1000 ).fadeOut();
         },
