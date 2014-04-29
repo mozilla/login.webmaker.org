@@ -171,6 +171,16 @@ module.exports = function( http, userHandle, webmakerAuth ){
     routes.user2.exists( userHandle )
   );
 
+  http.post(
+    "/api/user/username",
+    routes.user2.getUserByUsername( userHandle )
+  );
+
+  http.post(
+    "/api/user/email",
+    routes.user2.getUserByEmail( userHandle )
+  );
+
   // Devops
   http.get( "/healthcheck", routes.site.healthcheck );
 };
