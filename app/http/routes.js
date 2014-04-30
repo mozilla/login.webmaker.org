@@ -171,7 +171,7 @@ module.exports = function( http, userHandle, webmakerAuth ){
   http.put(
     "/api/user/update/email/:email",
     authMiddleware,
-    routes.user.update
+    routes.user2.updateUserByEmail
   );
   http.post(
     "/api/user/exists",
