@@ -129,6 +129,7 @@ module.exports = function( http, userHandle, webmakerAuth ){
   http.get( "/user/username/*", standardAuth, routes.user.getByUsername );
   http.get( "/user/email/*", standardAuth, routes.user.getByEmail );
 
+  // Note: these routes are not being used. See routes prefixed with /api
   http.put( "/user/*", adminOnlyAuth, routes.user.update );
   http.del( "/user/*", adminOnlyAuth, routes.user.del );
   http.post( "/user", routes.user.create );
@@ -166,6 +167,11 @@ module.exports = function( http, userHandle, webmakerAuth ){
     middleware.personaVerifier,
     routes.user2.createUser( userHandle ),
     routes.user2.outputUser
+  );
+  http.put(
+    "/api/user/email/:email",
+    authMiddleware,
+    routes.user2.updateUserByEmail( userHandle )
   );
   http.post(
     "/api/user/exists",

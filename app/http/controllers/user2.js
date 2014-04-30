@@ -91,3 +91,21 @@ module.exports.outputUser = function(req, res, next) {
     user: res.locals.user
   });
 };
+
+module.exports.updateUserByEmail = function (User) {
+  return function (req, res, next) {
+    var email = req.params.email;
+    var userInfo = req.body;
+
+    console.log('nodddyyy', userInfo);
+
+    User.updateUser( email, userInfo, function (err, user) {
+      if (err || !user) {
+        return res.json(400, { error: err || "User not found for email: " + email });
+      }
+      return res.json({
+        user: user
+      });
+    });
+  };
+};
