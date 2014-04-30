@@ -97,7 +97,9 @@ module.exports.updateUserByEmail = function (User) {
     var email = req.params.email;
     var userInfo = req.body;
 
-    UserHandle.updateUser( email, userInfo, function (err, user) {
+    console.log('nodddyyy', userInfo);
+
+    User.updateUser( email, userInfo, function (err, user) {
       if (err || !user) {
         return res.json(400, { error: err || "User not found for email: " + email });
       }
