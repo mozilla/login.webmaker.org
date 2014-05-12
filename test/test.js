@@ -126,10 +126,10 @@ var userTracer = (function() {
         return callback();
       }
 
-      newUsers.forEach( function ( user ) {
+      newUsers.forEach( function ( email ) {
         // Delete each user in turn, then kill the process and
         // run the callback (if present)
-        apiHelper( "delete", hostAuth + '/user/' + user, 200, function( err, res, body ){
+        UserModel.deleteUser( email, function( err ) {
           if ( !--userCount ) {
             callback();
           }
@@ -208,33 +208,6 @@ describe( 'PUT /user/:id (update)', function() {
       // Update user
       apiHelper( 'put', hostAuth + "/user/" + user.email, 404, { email: invalidEmail, id: invalidEmail }, done );
     });
-  });
-});
-
-describe( 'DELETE /user/:id', function() {
-  var api = hostAuth + '/user';
-
-  before( function( done ) {
-    startServer( done );
-  });
-
-  after( function( done ) {
-    stopServer( done );
-  });
-
-  it( 'should successfully delete an account when attempting the action on an existing user', function ( done ) {
-    var user = unique();
-
-    // Create a user, then attempt to delete it
-    UserModel.createUser(user, function(err) {
-      assert.ok( !err );
-
-      apiHelper( 'delete', hostAuth + "/user/" + user.email, 200, user, done );
-    });
-  });
-
-  it( 'should error on attempting to delete a non-existent account', function ( done ) {
-    apiHelper( 'delete', hostAuth + "/user/" + unique().email, 404, {}, done );
   });
 });
 

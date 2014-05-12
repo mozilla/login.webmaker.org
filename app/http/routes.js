@@ -23,62 +23,6 @@ module.exports = function( http, userHandle, webmakerAuth ){
 
   userList = qs.parse( userList, ",", ":" );
 
-  /**
-   * Shared middleware
-   */
-
-  // basicAuth + Persona authentication
-  var standardAuth = function( req, res, next ) {
-    var sessionUser = req.session.email;
-
-    // SSO Auth
-    if ( sessionUser ) {
-      userHandle.getUserByEmail( sessionUser.email, function( err, user ) {
-        if ( err || !user ) {
-          return res.json( 403, "Internal error!" );
-        }
-
-        // Allow a call from the browser if the user is initiating it themself
-        if ( user.email === sessionUser.email ){
-          return next();
-        }
-
-        // Allow a call from the browser if the user is an admin
-        if ( user.isAdmin ) {
-          return next();
-        }
-
-        return res.json( 403, "Error, admin privileges required!" );
-      });
-    } else {
-      // BasicAuth
-      authMiddleware( req, res, next );
-    }
-  };
-
-  var adminOnlyAuth = function( req, res, next ) {
-    var sessionUser = req.session.user;
-
-    // SSO Auth
-    if ( sessionUser ) {
-      userHandle.getUserByEmail( sessionUser.email, function( err, user ) {
-        if ( err || !user ) {
-          return res.json( 403, "Internal error!" );
-        }
-
-        // Allow a call from the browser if the user is an admin
-        if ( user.isAdmin ) {
-          return next();
-        }
-
-        return res.json( 403, "Error, admin privileges required!" );
-      });
-    } else {
-      // BasicAuth
-      authMiddleware( req, res, next );
-    }
-  };
-
   // Persona authentication (non-admin users)
   var checkPersona = function( req, res, next ) {
     if ( req.session.email ) {
@@ -116,13 +60,11 @@ module.exports = function( http, userHandle, webmakerAuth ){
   // Resources
   http.get( "/js/account.js", routes.site.js( "account" ) );
 
-  http.get( "/user/id/*", standardAuth, routes.user.getById );
-  http.get( "/user/username/*", standardAuth, routes.user.getByUsername );
-  http.get( "/user/email/*", standardAuth, routes.user.getByEmail );
-
-  // Note: these routes are not being used. See routes prefixed with /api
-  http.put( "/user/*", adminOnlyAuth, routes.user.update );
-  http.del( "/user/*", adminOnlyAuth, routes.user.del );
+  // Used by webmaker-user-client with basicAuth
+  http.get( "/user/id/*", authMiddleware, routes.user.getById );
+  http.get( "/user/username/*", authMiddleware, routes.user.getByUsername );
+  http.get( "/user/email/*", authMiddleware, routes.user.getByEmail );
+  http.put( "/user/*", authMiddleware, routes.user.update );
 
   http.get( "/usernames", authMiddleware, routes.user.hydrate );
   // Support for clients that refuse to send request bodies with POST requests
