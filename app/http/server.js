@@ -26,8 +26,7 @@ var env         = require( "../../config/environment" );
     nunjucks    = require( "nunjucks" ),
     path        = require( "path" ),
     route       = require( "./routes" ),
-    userHandle  = require( "../models/user" )( env ),
-    util        = require( "util" );
+    userHandle  = require( "../models/user" )( env );
 
 var http = express(),
     nunjucksEnv = new nunjucks.Environment([
