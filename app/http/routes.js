@@ -89,11 +89,6 @@ module.exports = function( http, userHandle, webmakerAuth ){
     }
   };
 
-  var allowCSRFHeaders = function( req, res, next ) {
-    res.header( "Access-Control-Allow-Headers", "X-CSRF-Token" );
-    res.send( 200 );
-  };
-
   var filterAccountUpdates = function( req, res, next ) {
     var filtered = {},
         input = req.body;
@@ -119,11 +114,7 @@ module.exports = function( http, userHandle, webmakerAuth ){
   http.put( "/account/update", csrf, checkPersona, filterAccountUpdates, routes.user.update );
 
   // Resources
-  http.get( "/js/sso-ux.js", routes.site.js( "sso-ux") );
-  http.get("/js/console.js", routes.site.js( "console" ) );
   http.get( "/js/account.js", routes.site.js( "account" ) );
-  http.get( "/js/ui.js", routes.site.js( "ui" ) );
-  http.get( "/ajax/forms/new_user.html", routes.user.userForm );
 
   http.get( "/user/id/*", standardAuth, routes.user.getById );
   http.get( "/user/username/*", standardAuth, routes.user.getByUsername );
@@ -137,14 +128,11 @@ module.exports = function( http, userHandle, webmakerAuth ){
   // Support for clients that refuse to send request bodies with POST requests
   http.post( "/usernames", authMiddleware, routes.user.hydrate );
 
-  // Allow CSRF Headers
-  http.options( "/user/*", allowCSRFHeaders );
-
   // The new hotness
   var audience_whitelist = env.get( "ALLOWED_DOMAINS" ).split( " " );
   var middleware = require("./middleware");
 
-  // admin console login routes
+  // Client-side Webmaker Auth support
   http.post('/verify', webmakerAuth.handlers.verify);
   http.post('/authenticate', webmakerAuth.handlers.authenticate);
   http.post('/logout', webmakerAuth.handlers.logout);

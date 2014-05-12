@@ -124,12 +124,6 @@ module.exports = function ( UserHandle ) {
 
         res.json( 200, responseObject );
       });
-    },
-
-    userForm: function( req, res ) {
-      res.render( "ajax/forms/new_user.html", {
-        ssoAudience: env.get( "AUDIENCE" )
-      } );
     }
   };
 }; // END Exports function

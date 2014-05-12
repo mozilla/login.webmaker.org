@@ -13,9 +13,6 @@ if ( process.env.NEW_RELIC_ENABLED ) {
   };
 }
 
-// Module dependencies.
-require( "../../lib/extensions/number" );
-
 var env         = require( "../../config/environment" );
     express     = require( "express" ),
     helmet      = require( "helmet" ),
@@ -26,8 +23,7 @@ var env         = require( "../../config/environment" );
     nunjucks    = require( "nunjucks" ),
     path        = require( "path" ),
     route       = require( "./routes" ),
-    userHandle  = require( "../models/user" )( env ),
-    util        = require( "util" );
+    userHandle  = require( "../models/user" )( env );
 
 var http = express(),
     nunjucksEnv = new nunjucks.Environment([
@@ -96,7 +92,9 @@ http.configure(function(){
   }, function (result) {});
 
   http.locals({
-    AUDIENCE: env.get("AUDIENCE"),
+    // audience and webmakerorg are duplicated because of i18n
+    AUDIENCE: env.get("WEBMAKERORG"),
+    WEBMAKERORG: env.get("WEBMAKERORG"),
     newrelic: newrelic,
     profile: env.get("PROFILE"),
     bower_path: "bower_components",
