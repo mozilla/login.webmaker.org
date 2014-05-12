@@ -132,14 +132,12 @@ module.exports = function( http, userHandle, webmakerAuth ){
   // Note: these routes are not being used. See routes prefixed with /api
   http.put( "/user/*", adminOnlyAuth, routes.user.update );
   http.del( "/user/*", adminOnlyAuth, routes.user.del );
-  http.post( "/user", routes.user.create );
 
   http.get( "/usernames", authMiddleware, routes.user.hydrate );
   // Support for clients that refuse to send request bodies with POST requests
   http.post( "/usernames", authMiddleware, routes.user.hydrate );
 
   // Allow CSRF Headers
-  http.options( "/user", allowCSRFHeaders );
   http.options( "/user/*", allowCSRFHeaders );
 
   // The new hotness

@@ -24,20 +24,6 @@ module.exports = function ( UserHandle ) {
   }
 
   return {
-    create: function ( req, res ) {
-      var userInfo = req.body;
-
-      UserHandle.createUser( userInfo, function( err, thisUser ) {
-        if ( err || !thisUser ) {
-          metrics.increment( "user.create.error" );
-          res.json( 404, { error: err || "Unknown error!" } );
-          return;
-        }
-        metrics.increment( "user.create.success" );
-        res.json( { user: thisUser } );
-      });
-    },
-
     getById: function ( req, res ) {
       var id = req.params[ 0 ];
       UserHandle.getUserById( id, function( err, user ) {

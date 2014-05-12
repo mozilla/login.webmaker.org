@@ -4,17 +4,9 @@ var assert = require( "assert" ),
     request = require( "request" ),
     now = Date.now(),
     env = require( "../config/environment" ),
+    UserModel = require( "../app/models/user" )( env ),
     child,
-    hostAuth,
-    hostNoAuth,
-    illegalChars = "` ! @ # $ % ^ & * ( ) + = ; : ' \" , < . > / ?".split( " " );
-
-    // Adding a space to the illegalChars list
-    illegalChars.push(" ");
-
-    // Parse URLS
     hostAuth = 'http://' + env.get( "ALLOWED_USERS" ).split( "," )[0] + "@" + env.get( "APP_HOSTNAME" ).split( "//" )[1];
-    hostNoAuth = env.get( "APP_HOSTNAME" );
 
 /**
  * Server functions
@@ -95,11 +87,6 @@ function apiHelper( verb, uri, httpCode, data, callback, customAssertions ) {
       user = body.user;
     }
 
-    // Track new user, if applicable
-    if ( verb === "post" && httpCode == 200 && user ) {
-      userTracer.watchUser( user.email );
-    }
-
     assertion( err, res, body, callback );
   });
 }
@@ -167,130 +154,6 @@ function unique() {
  * Unit tests
  */
 
-describe( 'POST /user (create)', function() {
-
-  var api = hostAuth + '/user';
-
-  before( function( done ) {
-    startServer( done );
-  });
-
-  after( function( done ) {
-    stopServer( done );
-  });
-
-  it( 'should error when missing required username', function( done ) {
-    apiHelper( 'post', api, 404, { email: unique().email }, done );
-  });
-
-  it( 'should create a new login with minimum required fields', function( done ) {
-    var user = unique();
-
-    apiHelper( 'post', api, 200, user, function( err, res, body ) {
-      assert.equal( body.user.fullName, user.username );
-      assert.equal( body.user.email, user.email );
-      done();
-    });
-  });
-
-  it( 'should error when username is too long', function( done ) {
-    var user = unique();
-    user.username = "123456789012345678901";
-
-    apiHelper( 'post', api, 404, user, done );
-  });
-
-  it( 'should error when username is too short', function( done ) {
-    var user = unique();
-    user.username = "";
-
-    apiHelper( 'post', api, 404, user, done );
-  });
-
-  // Test username for 404 on illegal characters
-  illegalChars.forEach( function( badString ) {
-    it( 'should error when username contains the illegal character "' + badString + '"', function( done ) {
-      var user = unique();
-      user.username = badString;
-
-      apiHelper( 'post', api, 404, user, done );
-    });
-  });
-
-  it( 'should error when username contains a bad word ("damn" is being tested)', function( done ) {
-    var user = unique();
-    user.username = "damn";
-
-    apiHelper( 'post', api, 404, user, done );
-  });
-
-  it( 'should error when username already exists', function ( done ) {
-    var user = unique();
-
-    // Create a user, then create another one with the same username
-    apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
-      var newUser = unique();
-      newUser.username = user.username;
-
-      apiHelper( 'post', api, 404, newUser, done );
-    });
-  });
-
-  it( 'should create the "createdAt" user model field by default', function ( done ) {
-    apiHelper( 'post', api, 200, unique(), function( err, res, body ) {
-      assert.ok(!!body.user.createdAt);
-      done();
-    });
-  });
-
-  it( 'should create the "updatedAt" user model field by default', function ( done ) {
-    apiHelper( 'post', api, 200, unique(), function( err, res, body ) {
-      assert.ok(!!body.user.updatedAt);
-      done();
-    });
-  });
-
-  it( 'should create the "isAdmin" user model field as false by default', function ( done ) {
-    apiHelper( 'post', api, 200, unique(), function( err, res, body ) {
-      assert.equal(body.user.isAdmin, false);
-      done();
-    });
-  });
-
-  it( 'should create the "isSuspended" user model field as false by default', function ( done ) {
-    apiHelper( 'post', api, 200, unique(), function( err, res, body ) {
-      assert.equal(body.user.isSuspended, false);
-      done();
-    });
-  });
-
-  it( 'should create the "sendNotifications" user model field as false by default', function ( done ) {
-    apiHelper( 'post', api, 200, unique(), function( err, res, body ) {
-      assert.equal(body.user.sendNotifications, false);
-      done();
-    });
-  });
-
-  it( 'should create the "sendEngagements" user model field as false by default', function ( done ) {
-    apiHelper( 'post', api, 200, unique(), function( err, res, body ) {
-      assert.equal(body.user.sendEngagements, false);
-      done();
-    });
-  });
-
-  it( 'should error if webmaker already exists (i.e. the email field is a duplicate)', function ( done ) {
-    var user = unique();
-
-    // Create a user, then create another one with the same email
-    apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
-      var newUser = unique();
-      newUser.email = user.email;
-
-      apiHelper( 'post', api, 404, newUser, done );
-    });
-  });
-});
-
 describe( 'PUT /user/:id (update)', function() {
   var api = hostAuth + '/user';
 
@@ -305,7 +168,10 @@ describe( 'PUT /user/:id (update)', function() {
   it( "should update a user when new, valid, username is passed", function ( done ) {
     var user = unique();
     // Create a user, then update it with a unique username
-    apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
+    UserModel.createUser(user, function(err) {
+      assert.ok( !err );
+      userTracer.watchUser(user.email);
+
       user.username = unique().username;
       apiHelper( 'put', hostAuth + "/user/" + user.email, 200, user, done );
     });
@@ -320,7 +186,9 @@ describe( 'PUT /user/:id (update)', function() {
     var user = unique();
 
     // Create user
-    apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
+    UserModel.createUser(user, function(err) {
+      assert.ok( !err );
+      userTracer.watchUser(user.email);
       user.username = "damn";
 
       // Update user
@@ -332,7 +200,9 @@ describe( 'PUT /user/:id (update)', function() {
     var user = unique();
 
     // Create user
-    apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
+    UserModel.createUser(user, function(err) {
+      assert.ok( !err );
+      userTracer.watchUser(user.email);
       var invalidEmail = "invalid";
 
       // Update user
@@ -356,11 +226,10 @@ describe( 'DELETE /user/:id', function() {
     var user = unique();
 
     // Create a user, then attempt to delete it
-    apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
-      // Remove user from auto-delete after test suite
-      userTracer.unwatchUser( body.user.email );
+    UserModel.createUser(user, function(err) {
+      assert.ok( !err );
 
-      apiHelper( 'delete', hostAuth + "/user/" + body.user.email, 200, user, done );
+      apiHelper( 'delete', hostAuth + "/user/" + user.email, 200, user, done );
     });
   });
 
@@ -426,8 +295,10 @@ describe( 'GET /user/email/*', function() {
   it( 'should successfully return an account when attempting the retrieve an existing user by email', function ( done ) {
     var user = unique();
 
-  // Create a user, then attempt to retrieve it
-  apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
+    // Create a user, then attempt to retrieve it
+    UserModel.createUser(user, function(err) {
+      assert.ok( !err );
+      userTracer.watchUser(user.email);
       apiHelper( 'get', hostAuth + "/user/email/" + user.email, 200, {}, done, getAssertions );
     });
   });
@@ -455,9 +326,11 @@ describe( 'GET /user/id/*', function() {
   it( 'should successfully return an account when attempting the retrieve an existing user by id', function ( done ) {
     var user = unique();
 
-  // Create a user, then attempt to retrieve it
-  apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
-      apiHelper( 'get', hostAuth + "/user/id/" + body.user.id, 200, {}, done, getAssertions );
+    // Create a user, then attempt to retrieve it
+    UserModel.createUser(user, function(err, newUser) {
+      assert.ok( !err );
+      userTracer.watchUser(user.email);
+      apiHelper( 'get', hostAuth + "/user/id/" + newUser.id, 200, {}, done, getAssertions );
     });
   });
 
@@ -484,8 +357,10 @@ describe( 'GET /user/username/*', function() {
   it( 'should successfully return an account when attempting the retrieve an existing user by username', function ( done ) {
     var user = unique();
 
-  // Create a user, then attempt to retrieve it
-  apiHelper( 'post', api, 200, user, done, function ( err, res, body, done ) {
+    // Create a user, then attempt to retrieve it
+    UserModel.createUser(user, function(err) {
+      assert.ok( !err );
+      userTracer.watchUser(user.email);
       apiHelper( 'get', hostAuth + "/user/username/" + user.username, 200, {}, done, getAssertions );
     });
   });
@@ -515,7 +390,9 @@ describe( 'basicauth', function() {
     var user = unique();
 
     // Create a user, then attempt to check it
-    apiHelper( 'post',  hostAuth + '/user', 200, user, done, function ( err, res, body, done ) {
+    UserModel.createUser(user, function(err) {
+      assert.ok( !err );
+      userTracer.watchUser(user.email);
       apiHelper( 'get', invalidAuthAPI + user.email, 401, {}, done);
     });
   });
@@ -526,11 +403,11 @@ describe( 'GET /usernames', function() {
   var createUsersArray = [];
 
   function createUniqueUser( callback ) {
-    apiHelper( 'post',  hostAuth + '/user', 200, unique(), function ( err, res, body ) {
-      if ( err ) {
-        return callback( err );
-      }
-      return callback( null, body.user );
+    UserModel.createUser(unique(), function(err, newUser) {
+      assert.ok( !err );
+      userTracer.watchUser(newUser.email);
+
+      return callback( err, newUser );
     });
   }
 
