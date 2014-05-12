@@ -89,11 +89,6 @@ module.exports = function( http, userHandle, webmakerAuth ){
     }
   };
 
-  var allowCSRFHeaders = function( req, res, next ) {
-    res.header( "Access-Control-Allow-Headers", "X-CSRF-Token" );
-    res.send( 200 );
-  };
-
   var filterAccountUpdates = function( req, res, next ) {
     var filtered = {},
         input = req.body;
@@ -132,9 +127,6 @@ module.exports = function( http, userHandle, webmakerAuth ){
   http.get( "/usernames", authMiddleware, routes.user.hydrate );
   // Support for clients that refuse to send request bodies with POST requests
   http.post( "/usernames", authMiddleware, routes.user.hydrate );
-
-  // Allow CSRF Headers
-  http.options( "/user/*", allowCSRFHeaders );
 
   // The new hotness
   var audience_whitelist = env.get( "ALLOWED_DOMAINS" ).split( " " );
