@@ -119,7 +119,6 @@ module.exports = function( http, userHandle, webmakerAuth ){
   http.put( "/account/update", csrf, checkPersona, filterAccountUpdates, routes.user.update );
 
   // Resources
-  http.get( "/js/sso-ux.js", routes.site.js( "sso-ux") );
   http.get("/js/console.js", routes.site.js( "console" ) );
   http.get( "/js/account.js", routes.site.js( "account" ) );
   http.get( "/js/ui.js", routes.site.js( "ui" ) );
