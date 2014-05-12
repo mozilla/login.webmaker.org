@@ -132,7 +132,7 @@ module.exports = function( http, userHandle, webmakerAuth ){
   var audience_whitelist = env.get( "ALLOWED_DOMAINS" ).split( " " );
   var middleware = require("./middleware");
 
-  // admin console login routes
+  // Client-side Webmaker Auth support
   http.post('/verify', webmakerAuth.handlers.verify);
   http.post('/authenticate', webmakerAuth.handlers.authenticate);
   http.post('/logout', webmakerAuth.handlers.logout);
