@@ -13,9 +13,6 @@ if ( process.env.NEW_RELIC_ENABLED ) {
   };
 }
 
-// Module dependencies.
-require( "../../lib/extensions/number" );
-
 var env         = require( "../../config/environment" );
     express     = require( "express" ),
     helmet      = require( "helmet" ),
