@@ -96,7 +96,9 @@ http.configure(function(){
   }, function (result) {});
 
   http.locals({
-    AUDIENCE: env.get("AUDIENCE"),
+    // audience and webmakerorg are duplicated because of i18n
+    AUDIENCE: env.get("WEBMAKERORG"),
+    WEBMAKERORG: env.get("WEBMAKERORG"),
     newrelic: newrelic,
     profile: env.get("PROFILE"),
     bower_path: "bower_components",

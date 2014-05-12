@@ -16,7 +16,6 @@ exports.index = function( req, res ){
 exports.account = function( req, res ){
   res.render( "site/account.html", {
     email: req.session.email || "",
-    audience: env.get( "AUDIENCE" ),
     csrf: req.csrfToken(),
     ga_account: env.get( "GA_ACCOUNT" ),
     ga_domain: env.get( "GA_DOMAIN" )
@@ -30,8 +29,7 @@ exports.js = function( filename ) {
   return function( req, res ){
     res.set( "Content-Type", "application/javascript" );
     res.render( "js/" + filename + ".js", {
-      hostname: env.get( "APP_HOSTNAME" ),
-      audience: env.get( "AUDIENCE" )
+      hostname: env.get( "APP_HOSTNAME" )
     });
   };
 };
