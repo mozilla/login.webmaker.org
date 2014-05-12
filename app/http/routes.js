@@ -120,7 +120,6 @@ module.exports = function( http, userHandle, webmakerAuth ){
 
   // Resources
   http.get( "/js/account.js", routes.site.js( "account" ) );
-  http.get( "/js/ui.js", routes.site.js( "ui" ) );
   http.get( "/ajax/forms/new_user.html", routes.user.userForm );
 
   http.get( "/user/id/*", standardAuth, routes.user.getById );
