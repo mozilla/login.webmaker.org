@@ -20,7 +20,7 @@
     "MD5": "1.0.3",
     "messina": "0.1.1",
     "mysql": "2.0.1",
-    "newrelic": "1.4.0",
+    "newrelic": "1.5.5",
     "nunjucks": "0.1.10",
     "node-statsd": "0.0.7",
     "rtltr-for-less": "0.0.7",
