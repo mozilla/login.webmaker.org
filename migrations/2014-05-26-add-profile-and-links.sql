@@ -1,0 +1,3 @@
+CREATE TABLE IF NOT EXISTS `Profiles` (`user_id` INTEGER NOT NULL , `bio` TEXT, `location` TEXT, `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL, PRIMARY KEY (`user_id`), FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON DELETE CASCADE) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
+
+CREATE TABLE IF NOT EXISTS `Links` (`id` CHAR(36) BINARY , `user_id` INTEGER NOT NULL, `link` TEXT, `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL, PRIMARY KEY (`id`), FOREIGN KEY (`user_id`) REFERENCES `Profiles` (`user_id`) ON DELETE CASCADE) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;

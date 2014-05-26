@@ -93,6 +93,23 @@ module.exports = function( env ) {
 
   // Connect to table, confirm health
   User = sequelize.import( __dirname + "/user_model.js" );
+  Profile = sequelize.import( __dirname + "/profile_model.js" );
+  Link = sequelize.import( __dirname + "/link_model.js" );
+
+  User.hasOne(Profile, {
+    foreignKey: "user_id"
+  });
+  Profile.belongsTo(User, {
+    foreignKey: "user_id"
+  });
+
+  Profile.hasMany(Link, {
+    foreignKey: "user_id"
+  });
+  Link.belongsTo(Profile, {
+    foreignKey: "user_id"
+  });
+
   sequelize.sync().complete(function( err ) {
     if ( err ) {
       dbErrorHandling( err, forkErrorHandling );
