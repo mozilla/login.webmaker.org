@@ -53,7 +53,7 @@ dbErrorHandling = function dbErrorHandling( err, callback ) {
 
   // Error display
   err = Array.isArray( err ) ? err[ 0 ] : err;
-  console.error( "models/user/sqlModel.js: DB setup error\n", err.number ? err.number : err.code, err.message );
+  console.error( "models/user/sqlController.js: DB setup error\n", err.number ? err.number : err.code, err.message );
 
   // Set state
   health.connected = false;
@@ -92,7 +92,24 @@ module.exports = function( env ) {
   }
 
   // Connect to table, confirm health
-  model = sequelize.import( __dirname + "/sqlModel.js" );
+  User = sequelize.import( __dirname + "/user_model.js" );
+  Profile = sequelize.import( __dirname + "/profile_model.js" );
+  Link = sequelize.import( __dirname + "/link_model.js" );
+
+  User.hasOne(Profile, {
+    foreignKey: "user_id"
+  });
+  Profile.belongsTo(User, {
+    foreignKey: "user_id"
+  });
+
+  Profile.hasMany(Link, {
+    foreignKey: "user_id"
+  });
+  Link.belongsTo(Profile, {
+    foreignKey: "user_id"
+  });
+
   sequelize.sync().complete(function( err ) {
     if ( err ) {
       dbErrorHandling( err, forkErrorHandling );
@@ -114,7 +131,7 @@ module.exports = function( env ) {
      * callback: function( err, user )
      */
     getUserById: function( id, callback ) {
-      model.find({ where: { id: id } }).complete( callback );
+      User.find({ where: { id: id } }).complete( callback );
     },
 
     /**
@@ -124,7 +141,7 @@ module.exports = function( env ) {
      * callback: function( err, user )
      */
     getUserByUsername: function( username, callback ) {
-      model.find({ where: { username: username } }).complete( callback );
+      User.find({ where: { username: username } }).complete( callback );
     },
 
     /**
@@ -134,7 +151,7 @@ module.exports = function( env ) {
      * callback: function( err, user )
      */
     getUserByEmail: function( email, callback ) {
-      model.find({ where: { email: email } }).complete( callback );
+      User.find({ where: { email: email } }).complete( callback );
     },
     /**
      * createUser( data, callback )
@@ -158,7 +175,7 @@ module.exports = function( env ) {
         return callback( "No email passed!" );
       }
 
-      user = model.build({
+      user = User.build({
         email: data.email,
         fullName: data.username,
         subscribeToWebmakerList: data.mailingList,
@@ -218,7 +235,7 @@ module.exports = function( env ) {
      * callback: function( err, thisUser )
      */
     deleteUser: function ( email, callback ) {
-      model.find({
+      User.find({
           where: { email: email }
         }).complete(function( err, user ){
           if ( err ) {
@@ -240,7 +257,7 @@ module.exports = function( env ) {
      * callback: function( err, users )
      */
     getAllWithEmails: function( emails, callback ) {
-      model.findAll({
+      User.findAll({
         where: { "email": emails }
       }).complete( callback );
     },
