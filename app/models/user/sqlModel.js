@@ -3,7 +3,7 @@ var badword = require( "badword" ),
     md5 = require( "MD5" ),
     isNotBlacklisted,
     isUsername,
-    usernameRegex = /^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\-\_]{1,20}$/;
+    usernameRegex = /^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\-]{1,20}$/;
 
 /**
  * Custom Validation
@@ -17,7 +17,7 @@ isNotBlacklisted = function( str ) {
 isUsername = function( str ) {
   if ( (typeof( str ) !== "string") || !usernameRegex.test( str ) ) {
     throw new Error("Invalid username. All usernames must be between 1-20 characters, " +
-                    "and only include \"-\", \"_\" and alphanumeric characters");
+                    "and only include \"-\" and alphanumeric characters");
   }
 };
 
