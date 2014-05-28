@@ -96,15 +96,40 @@ module.exports = function( http, userHandle, webmakerAuth ){
     routes.user2.createUser( userHandle ),
     routes.user2.outputUser
   );
+  // For backwards compatibility; this can be removed at any time
   http.put(
     "/api/user/email/:email",
     authMiddleware,
-    routes.user2.updateUserByEmail( userHandle )
+    routes.user2.updateUserWithBody( userHandle ),
+    routes.user2.outputUser
+  );
+  http.patch(
+    "/api/user/email/:email",
+    authMiddleware,
+    routes.user2.updateUserWithBody( userHandle ),
+    routes.user2.outputUser
+  );
+  http.patch(
+    "/api/user/id/:id",
+    authMiddleware,
+    routes.user2.updateUserWithBody( userHandle ),
+    routes.user2.outputUser
+  );
+  http.patch(
+    "/api/user/username/:username",
+    authMiddleware,
+    routes.user2.updateUserWithBody( userHandle ),
+    routes.user2.outputUser
   );
   http.post(
     "/api/user/exists",
     routes.user2.exists( userHandle )
   );
+
+  // Parameters
+  http.param("email", middleware.fetchUserBy( "Email", userHandle ));
+  http.param("id", middleware.fetchUserBy( "Id", userHandle ));
+  http.param("username", middleware.fetchUserBy( "Username", userHandle ));
 
   // Devops
   http.get( "/healthcheck", routes.site.healthcheck );

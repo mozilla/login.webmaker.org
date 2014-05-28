@@ -92,20 +92,24 @@ module.exports.outputUser = function(req, res, next) {
   });
 };
 
-module.exports.updateUserByEmail = function (User) {
-  return function (req, res, next) {
-    var email = req.params.email;
-    var userInfo = req.body;
-
-    console.log('nodddyyy', userInfo);
-
-    User.updateUser( email, userInfo, function (err, user) {
-      if (err || !user) {
-        return res.json(400, { error: err || "User not found for email: " + email });
+module.exports.updateUserWithBody = function (User) {
+  return function(req, res, next) {
+    User.updateUser(res.locals.user.email, req.body, function(err, user) {
+      if (err) {
+        return res.json({
+          "error": "Login database error",
+          "login_error": err.toString()
+        });
       }
-      return res.json({
-        user: user
-      });
+
+      if (!user) {
+        return res.json({
+          "error": "User with email `" + res.locals.user.email + "` not found"
+        });
+      }
+
+      res.locals.user = user;
+      process.nextTick(next);
     });
   };
 };
