@@ -1,27 +1,3 @@
-module.exports.fetchUserBy = function(name, User) {
-  var fetch = User["getUserBy" + name];
-
-  return function(req, res, next, param) {
-    fetch(param, function(err, user) {
-      if (err) {
-        return res.json({
-          "error": "Login database error",
-          "login_error": err.toString()
-        });
-      }
-
-      if (!user) {
-        return res.json({
-          "error": "User with " + name + " `" + id + "` not found"
-        });
-      }
-
-      res.locals.user = user;
-      process.nextTick(next);
-    });
-  };
-};
-
 module.exports.personaFilter = function(audience_whitelist) {
   return function(req, res, next) {
     if (!req.body.audience) {
