@@ -7,7 +7,7 @@
     "persona-btn": "~0.0.12",
     "text": "2.0.9",
     "webmaker-analytics": "0.0.5",
-    "webmaker-auth-client": "0.1.2",
+    "webmaker-auth-client": "0.1.4",
     "webmaker-i18n": "0.3.19",
     "webmaker-language-picker": "0.0.22"
   }
