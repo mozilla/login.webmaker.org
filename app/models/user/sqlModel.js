@@ -102,29 +102,22 @@ module.exports = function( sequelize, DataTypes ) {
       type: DataTypes.STRING,
       allowNull: true
     },
-    avatar: {
-      type: DataTypes.STRING,
-      get: function() {
+  }, {
+    charset: 'utf8',
+    collate: 'utf8_general_ci',
+    getterMethods: {
+      avatar: function() {
         return "https://secure.gravatar.com/avatar/" +
                 md5(this.getDataValue("email")) +
-                "?s=26&d=" + defaultGravatar;
-      }
-    },
-    emailHash: {
-      type: DataTypes.STRING,
-      get: function() {
+                "?d=" + defaultGravatar;
+      },
+      emailHash: function() {
         return md5(this.getDataValue("email"));
-      }
-    },
-    displayName: {
-      type: DataTypes.STRING,
-      get: function() {
+      },
+      displayName: function() {
         return this.getDataValue("fullName");
       }
     }
-  }, {
-    charset: 'utf8',
-    collate: 'utf8_general_ci'
   });
 };
 

@@ -244,6 +244,9 @@ function getAssertions( err, res, body, callback ) {
   assert.ok( user.hasOwnProperty( "updatedAt" ) );
   assert.notDeepEqual( user.updatedAt, "undefined" );
   assert.notDeepEqual( user.updatedAt, "null" );
+  assert.ok( user.hasOwnProperty( "avatar" ) );
+  assert.notDeepEqual( user.avatar, "undefined" );
+  assert.notDeepEqual( user.avatar, "null" );
   assert.ok( user.hasOwnProperty( "displayName" ) );
   assert.notDeepEqual( user.displayName, "undefined" );
   assert.notDeepEqual( user.displayName, "null" );
