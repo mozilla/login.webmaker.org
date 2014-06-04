@@ -1,3 +1,33 @@
+module.exports.fetchUserBy = function(name, User) {
+  var fetch = User["getUserBy" + name];
+
+  return function(req, res, next, param) {
+    fetch(param, function(err, user) {
+      if (err) {
+        return res.json({
+          "error": "Login database error",
+          "login_error": err instanceof Error ? err.toString() : err
+        });
+      }
+
+      if (!user) {
+        return res.json({
+          "error": "User with " + name + " `" + id + "` not found"
+        });
+      }
+
+      res.locals.user = user;
+      process.nextTick(next);
+    });
+  };
+};
+
+module.exports.filterUserAttributesForSession = function(req, res, next) {
+  res.locals.user = res.locals.user.serializeForSession();
+
+  process.nextTick(next);
+};
+
 module.exports.personaFilter = function(audience_whitelist) {
   return function(req, res, next) {
     if (!req.body.audience) {
@@ -30,7 +60,7 @@ module.exports.personaVerifier = function(req, res, next) {
     if (err) {
       return res.json({
         "error": "Persona verifier error",
-        "verifier_error": err.toString()
+        "verifier_error": err instanceof Error ? err.toString() : err
       });
     }
 

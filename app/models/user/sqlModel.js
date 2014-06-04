@@ -1,5 +1,5 @@
 var badword = require( "badword" ),
-    defaultGravatar = encodeURIComponent("https://stuff.webmaker.org/avatars/webmaker-avatar-44x44.png"),
+    defaultGravatar = encodeURIComponent("https://stuff.webmaker.org/avatars/webmaker-avatar-200x200.png"),
     md5 = require( "MD5" ),
     isNotBlacklisted,
     isUsername,
@@ -101,6 +101,45 @@ module.exports = function( sequelize, DataTypes ) {
     referrer: {
       type: DataTypes.STRING,
       allowNull: true
+    },
+    bio: {
+      type: DataTypes.STRING,
+      validate: {
+        len: {
+          args: [0, 255],
+          msg: "`bio` length must be 0-255 characters"
+        }
+      }
+    },
+    location: {
+      type: DataTypes.STRING,
+      validate: {
+        len: {
+          args: [0, 255],
+          msg: "`location` length must be 0-255 characters"
+        }
+      }
+    },
+    links: {
+      type: DataTypes.STRING,
+      validate: {
+        len: {
+          args: [0, 255],
+          msg: "`links` length must be 0-255 characters"
+        }
+      },
+      get: function() {
+        var val = this.getDataValue("links");
+
+        if (!val) {
+          return [];
+        }
+
+        return JSON.parse(val);
+      },
+      set: function(val) {
+        this.setDataValue("links", JSON.stringify(val));
+      }
     }
   }, {
     charset: 'utf8',
@@ -116,6 +155,35 @@ module.exports = function( sequelize, DataTypes ) {
       },
       displayName: function() {
         return this.getDataValue("fullName");
+      }
+    },
+    instanceMethods: {
+      serializeForSession: function() {
+        return {
+          avatar: this.avatar,
+          // bio: this.bio,
+          // createdAt: this.createdAt,
+          // displayName: this.displayName,
+          email: this.email,
+          emailHash: this.emailHash,
+          // fullName: this.fullName,
+          id: this.id,
+          isAdmin: this.isAdmin,
+          // isCollaborator: this.isCollaborator,
+          // isSuspended: this.isSuspended,
+          // lastLoggedIn: this.lastLoggedIn,
+          // links: this.links,
+          // location: this.location,
+          prefLocale: this.prefLocale,
+          // referrer: this.referrer
+          // sendEngagements: this.sendEngagements,
+          sendEventCreationEmails: this.sendEventCreationEmails,
+          // sendNotifications: this.sendNotifications,
+          // subscribeToWebmakerList: this.subscribeToWebmakerList,
+          // updatedAt: this.updatedAt,
+          username: this.username
+          // wasMigrated: this.wasMigrated
+        };
       }
     }
   });
