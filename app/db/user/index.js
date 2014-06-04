@@ -1,116 +1,15 @@
-var Sequelize = require( "sequelize" ),
-    health,
-    forkErrorHandling,
-    forkSuccessHandling,
-    dbHealthCheck,
-    dbErrorHandling;
+module.exports = function (sequelize) {
+  var hatchet = require('hatchet');
+  var model = sequelize.import(__dirname + '/model.js');
 
-// Health state
-health = {
-  connected: false,
-  err: null
-};
-
-// FOR MOCHA TESTING:
-// If we're running as a child process, let our parent know there was a
-// problem.
-forkErrorHandling = function forkErrorHandling() {
-  if ( process.send ) {
-    try {
-      process.send( "sqlNoConnection" );
-    } catch ( e ) {
-      // exit the worker if master is gone
-      process.exit(1);
-    }
-  }
-};
-
-// FOR MOCHA TESTING:
-// If we're running as a child process, let our parent know we're ready.
-forkSuccessHandling = function forkSuccessHandling() {
-  if ( process.send ) {
-    try {
-      process.send( "sqlStarted" );
-    } catch ( e ) {
-      // exit the worker if master is gone
-      process.exit(1);
-    }
-  }
-};
-
-// Healthcheck middleware
-dbHealthCheck = function dbHealthCheck( req, res, next ) {
-  if ( health.connected ) {
-    next();
-  } else {
-    next( new Error( "MySQL Error!\n", health.err ) );
-  }
-};
-
-// Display a database error
-dbErrorHandling = function dbErrorHandling( err, callback ) {
-  callback = callback || function() {};
-
-  // Error display
-  err = Array.isArray( err ) ? err[ 0 ] : err;
-  console.error( "models/user/sqlModel.js: DB setup error\n", err.number ? err.number : err.code, err.message );
-
-  // Set state
-  health.connected = false;
-  health.err = err;
-
-  callback();
-};
-
-// Exports
-module.exports = function( env ) {
-  /**
-   * ENV parsing
-   */
-  var db,
-      dbOptions = {};
-
-  // DB Config parsing
-  db = env.get("DB");
-  dbOptions = env.get("DBOPTIONS");
-
-  /**
-   * Model preparation
-   */
-  var sequelize,
-      model;
-
-  // Connect to mysql
-  try {
-    sequelize = new Sequelize( db.database, db.username, db.password, dbOptions );
-  } catch ( error ) {
-    dbErrorHandling( error, forkErrorHandling );
-
-    return {
-      dbHealthCheck: dbHealthCheck
-    };
-  }
-
-  // Connect to table, confirm health
-  model = sequelize.import( __dirname + "/sqlModel.js" );
-  sequelize.sync().complete(function( err ) {
-    if ( err ) {
-      dbErrorHandling( err, forkErrorHandling );
-    } else {
-      health.connected = true;
-      forkSuccessHandling();
-    }
-  });
-
-  /**
-   * Model Access methods
-   */
   return {
+
+    model: model,
 
     /**
      * getUserById( id, callback )
      * -
-     * id: _id
+     * id: sql id
      * callback: function( err, user )
      */
     getUserById: function( id, callback ) {
@@ -136,6 +35,7 @@ module.exports = function( env ) {
     getUserByEmail: function( email, callback ) {
       model.find({ where: { email: email } }).complete( callback );
     },
+
     /**
      * createUser( data, callback )
      * -
@@ -175,7 +75,22 @@ module.exports = function( env ) {
       }
 
       // Delegates all server-side validation to sequelize during this step
-      user.save().complete( callback );
+      user.save().complete( function (err, data) {
+        if (err) {
+          return callback(err);
+        }
+
+        hatchet.send( "create_user", {
+          userId: user.getDataValue("id"),
+          username: user.getDataValue("username"),
+          email: user.getDataValue("email"),
+          locale: user.getDataValue("prefLocale"),
+          referrer: user.getDataValue("referrer"),
+          subscribeToWebmakerList: user.getDataValue("subscribeToWebmakerList")
+        });
+
+        callback(null, data);
+      });
     },
 
     /**
@@ -218,19 +133,33 @@ module.exports = function( env ) {
      * callback: function( err, thisUser )
      */
     deleteUser: function ( email, callback ) {
-      model.find({
-          where: { email: email }
-        }).complete(function( err, user ){
+      // Check user exists (sequelize happily deletes
+      // non existant-users)
+      this.getUserByEmail( email, function( err, user ) {
+        if ( err ) {
+          return callback( err );
+        }
+
+        if ( !user  ) {
+          return callback( "User not found!" );
+        }
+
+        // Delete user
+        user.destroy().complete( function( err ) {
           if ( err ) {
             return callback( err );
           }
 
-          if ( !user ) {
-            return callback( "User not found for email " + email );
-          }
+          hatchet.send( "delete_user", {
+            userId: user.getDataValue("id"),
+            username: user.getDataValue("username"),
+            locale: user.getDataValue("prefLocale"),
+            email: user.getDataValue("email")
+          });
 
-          user.destroy().complete( callback );
+          callback();
         });
+      });
     },
 
     /**
@@ -243,7 +172,6 @@ module.exports = function( env ) {
       model.findAll({
         where: { "email": emails }
       }).complete( callback );
-    },
-    health: health
+    }
   };
 };

@@ -4,7 +4,7 @@ var assert = require( "assert" ),
     request = require( "request" ),
     now = Date.now(),
     env = require( "../config/environment" ),
-    UserModel = require( "../app/models/user" )( env ),
+    UserModel = require( "../app/db" )( env ).User,
     child,
     hostAuth = 'http://' + env.get( "ALLOWED_USERS" ).split( "," )[0] + "@" + env.get( "APP_HOSTNAME" ).split( "//" )[1];
 

@@ -14,7 +14,7 @@ module.exports = function( grunt ) {
         "app/http/controllers/*.js",
         "app/http/public/js/*.js",
         "app/http/views/js/*.ejs",
-        "app/models/**/*.js"
+        "app/db/**/*.js"
       ]
     }
   });

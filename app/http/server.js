@@ -23,7 +23,7 @@ var env         = require( "../../config/environment" );
     nunjucks    = require( "nunjucks" ),
     path        = require( "path" ),
     route       = require( "./routes" ),
-    userHandle  = require( "../models/user" )( env );
+    userHandle  = require( "../db" )( env ).User;
 
 var http = express(),
     nunjucksEnv = new nunjucks.Environment([
