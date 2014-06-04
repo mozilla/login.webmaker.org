@@ -1,9 +1,7 @@
 var badword = require( "badword" ),
     defaultGravatar = encodeURIComponent("https://stuff.webmaker.org/avatars/webmaker-avatar-200x200.png"),
     md5 = require( "MD5" ),
-    isNotBlacklisted,
-    isUsername,
-    usernameRegex = /^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\-\_]{1,20}$/;
+    isNotBlacklisted;
 
 /**
  * Custom Validation
@@ -11,13 +9,6 @@ var badword = require( "badword" ),
 isNotBlacklisted = function( str ) {
   if ( badword( str ) ) {
     throw new Error("Contains a bad word!");
-  }
-};
-
-isUsername = function( str ) {
-  if ( (typeof( str ) !== "string") || !usernameRegex.test( str ) ) {
-    throw new Error("Invalid username. All usernames must be between 1-20 characters, " +
-                    "and only include \"-\", \"_\" and alphanumeric characters");
   }
 };
 
@@ -42,7 +33,6 @@ module.exports = function( sequelize, DataTypes ) {
     username: {
       type: "VARCHAR(20)",
       validate: {
-        isUsername: isUsername,
         isNotBlacklisted: isNotBlacklisted
       },
       allowNull: false,

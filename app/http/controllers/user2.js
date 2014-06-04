@@ -2,6 +2,12 @@
 * License, v. 2.0. If a copy of the MPL was not distributed with this file,
 * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+var usernameRegex = /^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\-]{1,20}$/;
+
+function isInvalidUsername( str ) {
+  return typeof str !== "string" || !usernameRegex.test( str );
+}
+
 module.exports.authenticateUser = function(User) {
   return function(req, res, next) {
     User.getUserByEmail(res.locals.email, function(err, user) {
@@ -29,6 +35,12 @@ module.exports.createUser = function(User) {
     if (req.body.user && !req.body.user.username) {
       return res.json({
         "error": "Missing username"
+      });
+    }
+
+    if (isInvalidUsername( req.body.user.username )) {
+      return res.json({
+        "error": "Invalid username. All usernames must be between 1-20 characters, and only include \"-\" and alphanumeric characters"
       });
     }
 
