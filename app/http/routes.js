@@ -94,6 +94,7 @@ module.exports = function( http, userHandle, webmakerAuth ){
     middleware.personaFilter( audience_whitelist ),
     middleware.personaVerifier,
     routes.user2.createUser( userHandle ),
+    middleware.updateLastLoggedIn( userHandle ),
     routes.user2.outputUser
   );
   http.put(

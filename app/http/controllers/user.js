@@ -41,19 +41,6 @@ module.exports = function ( UserHandle ) {
     getByEmail: function ( req, res ) {
       var email = req.params[ 0 ];
       UserHandle.getUserByEmail( email, function( err, user ) {
-        if ( !err && user ) {
-          // asynchronously update the user model with a new lastLoggedIn time
-          process.nextTick(function() {
-            UserHandle.updateUser( email, {
-              lastLoggedIn: new Date()
-            }, function( err ) {
-              if ( err ) {
-                //chuck this error
-                throw err;
-              }
-            });
-          });
-        }
         userCallback( err, user, email, res );
       });
     },
