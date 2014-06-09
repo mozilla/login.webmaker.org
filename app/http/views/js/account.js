@@ -38,8 +38,7 @@
       var lang = $('html').attr('lang') || 'en-US';
 
       if (userData) {
-        placeHolder.html('<img src="https://secure.gravatar.com/avatar/' +
-          userData.emailHash + '?s=26&d=https%3A%2F%2Fstuff.webmaker.org%2Favatars%2Fwebmaker-avatar-44x44.png" alt="">' +
+        placeHolder.html('<img src="' + userData.avatar + '" alt="">' +
           '<a href="/' + lang + '/account">' + userData.username + "</a>");
       } else {
         userElement.html('<span id="identity"></span>');
