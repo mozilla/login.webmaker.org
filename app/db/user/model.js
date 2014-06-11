@@ -77,6 +77,14 @@ module.exports = function( sequelize, DataTypes ) {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
+    isMentor: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    isSuperMentor: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
     sendNotifications: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
@@ -170,6 +178,8 @@ module.exports = function( sequelize, DataTypes ) {
           id: this.id,
           isAdmin: this.isAdmin,
           // isCollaborator: this.isCollaborator,
+          isMentor: this.isMentor,
+          isSuperMentor: this.isSuperMentor,
           // isSuspended: this.isSuspended,
           // lastLoggedIn: this.lastLoggedIn,
           // links: this.links,
