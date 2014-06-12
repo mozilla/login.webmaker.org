@@ -1,6 +1,20 @@
+var env = require( "../../../config/environment" );
+
+var DEV_LOG_TOKEN = !!env.get( "DEV_LOG_TOKEN" );
+
 module.exports = function (sequelize) {
+  var HAT_BITS = 24;
+  var HAT_BASE = 36;
+  var EXPIRY_TIME = 1000 * 60 * 30;
+
+  var hat = require('hat');
   var hatchet = require('hatchet');
+
   var model = sequelize.import(__dirname + '/model.js');
+  var loginToken = sequelize.import(__dirname + '/loginToken.js');
+
+  model.hasMany(loginToken);
+  loginToken.belongsTo(model);
 
   return {
 
@@ -202,6 +216,123 @@ module.exports = function (sequelize) {
       model.findAll({
         where: { "email": emails }
       }).complete( callback );
+    },
+
+    createToken: function( email, callback ) {
+      this.getUserByEmail(email, function(err, user) {
+        if (err) {
+          return res.json({
+            "error": "Login database error",
+            "login_error": err instanceof Error ? err.toString() : err
+          });
+        } else if ( !user ) {
+          return callback({
+            "error": "User not found"
+          });
+        }
+
+        var token = loginToken.build({
+          token: hat(HAT_BITS, HAT_BASE),
+          UserId: user.id
+        });
+
+        token.save().complete(function( err, savedToken) {
+          if (err) {
+            return res.json({
+              "error": "Login database error",
+              "login_error": err instanceof Error ? err.toString() : err
+            });
+          }
+
+          // log the token in the console
+          if ( DEV_LOG_TOKEN ) {
+            console.info( "LOGIN TOKEN: " + savedToken.token );
+          }
+
+          hatchet.send("login_token_email", {
+            userId: user.getDataValue("id"),
+            username: user.getDataValue("username"),
+            email: user.getDataValue("email"),
+            token: savedToken.token
+          });
+
+          callback();
+        });
+      });
+    },
+
+    lookupToken: function( email, token, callback ) {
+      // lookup email to get the userID
+      this.getUserByEmail(email, function(err, user) {
+        if (err) {
+          return callback({
+            "error": "Login database error",
+            "login_error": err instanceof Error ? err.toString() : err
+          });
+        } else if ( !user ) {
+          return callback({
+            "error": "unauthorised"
+          });
+        }
+
+        // search for the token
+        loginToken.find({
+          where: {
+            token: token
+          }
+        }).complete(function( err, logintoken) {
+          if (err) {
+            return callback({
+              "error": "Login Database error"
+            });
+          }
+
+          // If the token is expired, but the id's match,
+          // continue, so the user can be told of an expired token
+          var wrongUserAndExpired = logintoken &&
+                                    logintoken.UserId !== user.id &&
+                                    logintoken.failedAttempts >= 3;
+
+          if (!logintoken || wrongUserAndExpired) {
+            return callback({
+              "error": "unauthorised"
+            });
+          }
+
+          // in most cases, invalid login attempts should increment failedAttempts
+          if (logintoken.UserId !== user.id ||
+              logintoken.used === true) {
+
+            logintoken.failedAttempts++;
+            return logintoken.save().complete(function() {
+              return callback({
+                "error": "unauthorised"
+              });
+            });
+          }
+
+          // everything looks okay, but this is an expired token!
+          if (logintoken.createdAt <= Date.now() - EXPIRY_TIME ||
+              logintoken.failedAttempts >= 3) {
+
+            return callback({
+              "error": "expired"
+            });
+          }
+
+          // mark token used and save
+          logintoken.used = true;
+
+          logintoken.save().complete(function(err){
+            if ( err ) {
+              return callback({
+                "error": "Login database error"
+              });
+            }
+            callback(null, user);
+          });
+        });
+      });
     }
   };
 };

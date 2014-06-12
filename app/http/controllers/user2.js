@@ -125,3 +125,49 @@ module.exports.updateUserWithBody = function (User) {
     });
   };
 };
+
+module.exports.generateLoginTokenForUser = function (User) {
+  return function(req, res, next) {
+    if ( !req.body.email ) {
+      return res.json({
+        "error": "No Email Provided"
+      });
+    }
+
+    User.createToken(req.body.email, function(err) {
+      if ( err ) {
+        return res.json(err);
+      }
+      res.json({
+        "status": "Login Token Sent"
+      });
+    });
+  };
+};
+
+
+module.exports.verifyTokenForUser = function (User) {
+  return function(req, res, next) {
+    if ( !req.body.email ) {
+      return res.json({
+        "error": "No Email Provided"
+      });
+    }
+    if ( !req.body.token ) {
+      return res.json({
+        "error": "No token Provided"
+      });
+    }
+
+    User.lookupToken(req.body.email, req.body.token, function(err, user) {
+      if ( err ) {
+        if ( err.error && err.error === "unauthorised" ) {
+          return res.json(403, err);
+        }
+        return res.json(err);
+      }
+      res.locals.user = user;
+      next();
+    });
+  };
+};

@@ -139,6 +139,18 @@ module.exports = function( http, userHandle, webmakerAuth ){
   http.param("id", middleware.fetchUserBy( "Id", userHandle ));
   http.param("username", middleware.fetchUserBy( "Username", userHandle ));
 
+  // Passwordless API
+  http.post(
+    "/api/user/request",
+    routes.user2.generateLoginTokenForUser( userHandle )
+  );
+  http.post(
+    "/api/user/authenticateToken",
+    routes.user2.verifyTokenForUser( userHandle ),
+    middleware.filterUserAttributesForSession,
+    routes.user2.outputUser
+  );
+
   // Devops
   http.get( "/healthcheck", routes.site.healthcheck );
 };
