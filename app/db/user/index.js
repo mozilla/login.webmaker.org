@@ -1,14 +1,28 @@
+var moment = require("moment");
+var bPromise = require("bluebird");
+var crypto = require("crypto");
+var proquint = require("proquint");
+var env = require("../../../config/environment");
+var hatchet = require("hatchet");
+
 module.exports = function (sequelize) {
-  var hatchet = require('hatchet');
+
+  var TOKEN_EXPIRY_TIME = 1000 * 60 * 30;
+
   var model = sequelize.import(__dirname + '/model.js');
   var modelReferrerCode = sequelize.import(__dirname + '/modelreferrercode.js');
+  var loginToken = sequelize.import(__dirname + '/loginToken.js');
 
   model.hasMany(modelReferrerCode);
   modelReferrerCode.belongsTo(model);
 
+  model.hasMany(loginToken);
+  loginToken.belongsTo(model);
+
   return {
 
     model: model,
+    loginToken: loginToken,
 
     /**
      * getUserById( id, callback )
@@ -245,6 +259,85 @@ module.exports = function (sequelize) {
             referrercode.save().complete( callback );
           }
         });
+      });
+    },
+
+    createToken: function( email, callback ) {
+      this.getUserByEmail(email, function(err, user) {
+        if (err) {
+          return res.json({
+            "error": "Login database error",
+            "login_error": err instanceof Error ? err.toString() : err
+          });
+        }
+
+        if ( !user ) {
+          return callback({
+            "error": "User not found"
+          });
+        }
+
+        var token = loginToken.build({
+          token: proquint.encode( crypto.randomBytes( 4 ) ),
+          UserId: user.id
+        });
+
+        token.save().complete(function( err, savedToken) {
+          if (err) {
+            return callback(err);
+          }
+
+          // To log loginUrl to console, do not define "HATCHET_QUEUE_URL" in your environment
+          hatchet.send("login_token_email", {
+            userId: user.getDataValue("id"),
+            username: user.getDataValue("username"),
+            email: user.getDataValue("email"),
+            loginUrl: env.get("WEBMAKERORG") + "/?email=" + user.getDataValue("email") + "&token=" + savedToken.token,
+            token: savedToken.token
+          });
+
+          callback();
+        });
+      });
+    },
+
+    lookupToken: function( email, token, callback ) {
+      var user;
+
+      model.find({
+        where: {
+          email: email
+        },
+        include: [{
+          model: loginToken,
+          where: {
+            token: token,
+            used: false,
+            createdAt: {
+              gte: moment(Date.now() - TOKEN_EXPIRY_TIME).utc().format("YYYY-MM-DD HH:mm:ss Z")
+            }
+          }
+        }]
+      }).
+      then(function(foundUser) {
+        if (!foundUser || !foundUser.loginTokens || !foundUser.loginTokens.length) {
+          return bPromise.reject({
+            error:"unauthorized"
+          });
+        }
+
+        user = foundUser;
+
+        return user.loginTokens[0].updateAttributes({
+            used: true
+          }, ["used"]);
+
+      })
+      .then(function(){
+        callback(null, user);
+      })
+      .caught(function(err) {
+        callback(err);
       });
     }
   };

@@ -30,6 +30,10 @@ module.exports = function( sequelize, DataTypes ) {
       allowNull: false,
       unique: true
     },
+    verified: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
     username: {
       type: "VARCHAR(20)",
       validate: {

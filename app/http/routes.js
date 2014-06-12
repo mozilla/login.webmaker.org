@@ -7,7 +7,8 @@ module.exports = function( http, userHandle, webmakerAuth ){
       routes = {
         site: require( "./controllers/site" ),
         user: require( "./controllers/user" )( userHandle ),
-        user2: require( "./controllers/user2" )
+        user2: require( "./controllers/user2" ),
+        user3: require( "./controllers/user3" )
       },
       userList = env.get( "ALLOWED_USERS" ),
       authMiddleware = basicAuth( function( user, pass ) {
@@ -20,6 +21,11 @@ module.exports = function( http, userHandle, webmakerAuth ){
         }
         return false;
       });
+
+
+  if ( env.get("ENABLE_RATE_LIMITING") ) {
+    require( "./limiter" )( http );
+  }
 
   userList = qs.parse( userList, ",", ":" );
 
@@ -91,17 +97,17 @@ module.exports = function( http, userHandle, webmakerAuth ){
     middleware.personaFilter( audience_whitelist ),
     middleware.personaVerifier,
     routes.user2.authenticateUser( userHandle ),
-    middleware.updateLastLoggedIn( userHandle ),
+    middleware.updateUser( userHandle ),
     middleware.engagedWithReferrerCode( userHandle, {"userStatus": "existing"} ),
     middleware.filterUserAttributesForSession,
     routes.user2.outputUser
   );
   http.post(
     "/api/user/create",
-    middleware.personaFilter( audience_whitelist ),
+    middleware.audienceFilter( audience_whitelist ),
+    middleware.personaFilter(),
     middleware.personaVerifier,
     routes.user2.createUser( userHandle ),
-    middleware.updateLastLoggedIn( userHandle ),
     middleware.engagedWithReferrerCode( userHandle, {"userStatus": "new"} ),
     middleware.filterUserAttributesForSession,
     routes.user2.outputUser
@@ -134,6 +140,24 @@ module.exports = function( http, userHandle, webmakerAuth ){
   http.post(
     "/api/user/exists",
     routes.user2.exists( userHandle )
+  );
+  http.post(
+    "/api/v2/user/create",
+    middleware.audienceFilter( audience_whitelist ),
+    routes.user2.createUser( userHandle ),
+    middleware.filterUserAttributesForSession,
+    routes.user2.outputUser
+  );
+  http.post(
+    "/api/v2/user/request",
+    routes.user3.generateLoginTokenForUser( userHandle )
+  );
+  http.post(
+    "/api/v2/user/authenticateToken",
+    routes.user3.verifyTokenForUser( userHandle ),
+    routes.user3.updateUser( userHandle ),
+    middleware.filterUserAttributesForSession,
+    routes.user2.outputUser
   );
 
   // Parameters

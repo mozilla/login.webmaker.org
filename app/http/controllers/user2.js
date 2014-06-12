@@ -45,11 +45,12 @@ module.exports.createUser = function(User) {
     }
 
     var userInfo = {
-      email: res.locals.email,
+      email: res.locals.email || req.body.user.email,
       mailingList: !!req.body.user.mailingList,
       username: req.body.user.username,
       prefLocale: req.body.user.prefLocale,
-      referrer: req.body.user.referrer
+      referrer: req.body.user.referrer,
+      lastLoggedIn: new Date()
     };
 
     User.createUser(userInfo, function(err, user) {

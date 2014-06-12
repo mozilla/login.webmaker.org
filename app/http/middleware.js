@@ -28,7 +28,7 @@ module.exports.filterUserAttributesForSession = function(req, res, next) {
   process.nextTick(next);
 };
 
-module.exports.personaFilter = function(audience_whitelist) {
+module.exports.audienceFilter = function(audience_whitelist) {
   return function(req, res, next) {
     if (!req.body.audience) {
       return res.json({
@@ -42,13 +42,17 @@ module.exports.personaFilter = function(audience_whitelist) {
         "error": "Audience parameter not allowed"
       });
     }
+    process.nextTick(next);
+  };
+};
 
+module.exports.personaFilter = function() {
+  return function(req, res, next) {
     if (!req.body.assertion) {
       return res.json({
         "error": "Missing assertion"
       });
     }
-
     process.nextTick(next);
   };
 };
@@ -76,10 +80,11 @@ module.exports.personaVerifier = function(req, res, next) {
   });
 };
 
-module.exports.updateLastLoggedIn = function(User) {
+module.exports.updateUser = function(User) {
   return function(req, res, next) {
     User.updateUser( res.locals.email, {
-      lastLoggedIn: new Date()
+      lastLoggedIn: new Date(),
+      verified: true
     }, function( err ) {
       //TODO do something useful if this error happens
       process.nextTick(next);
