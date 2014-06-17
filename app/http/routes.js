@@ -64,6 +64,9 @@ module.exports = function( http, userHandle, webmakerAuth ){
   http.get( "/user/id/*", authMiddleware, routes.user.getById );
   http.get( "/user/username/*", authMiddleware, routes.user.getByUsername );
   http.get( "/user/email/*", authMiddleware, routes.user.getByEmail );
+  http.post( "/user/ids", authMiddleware, routes.user.getByIds );
+  http.post( "/user/usernames", authMiddleware, routes.user.getByUsernames );
+  http.post( "/user/emails", authMiddleware, routes.user.getByEmails );
   http.put( "/user/*", authMiddleware, routes.user.update );
 
   http.get( "/usernames", authMiddleware, routes.user.hydrate );

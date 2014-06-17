@@ -37,6 +37,36 @@ module.exports = function (sequelize) {
     },
 
     /**
+     * getUsersByIds( ids, callback )
+     * -
+     * ids: Array of sql ids
+     * callback: function( err, users )
+     */
+    getUsersByIds: function( ids, callback ) {
+      model.findAll({ where: { id: ids } }).complete( callback );
+    },
+
+    /**
+     * getUsersByUsernames( usernames, callback )
+     * -
+     * usernames: array of usernames
+     * callback: function( err, users )
+     */
+    getUsersByUsernames: function( usernames, callback ) {
+      model.findAll({ where: { username: usernames } }).complete( callback );
+    },
+
+    /**
+     * getUserByEmail( email, callback )
+     * -
+     * emails: array of emails
+     * callback: function( err, user )
+     */
+    getUsersByEmails: function( emails, callback ) {
+      model.findAll({ where: { email: emails } }).complete( callback );
+    },
+
+    /**
      * createUser( data, callback )
      * -
      * data: JSON object containing user fields

@@ -23,6 +23,17 @@ module.exports = function ( UserHandle ) {
     res.json( { user: user } );
   }
 
+  function usersCallback( err, users, type, res ) {
+    if ( err ) {
+      metrics.increment( "user.getBy" + type + ".error" );
+      res.json( 500, { error: err } );
+      return;
+    }
+
+    metrics.increment( "user.getBy" + type + ".success" );
+    res.json( { users: users } );
+  }
+
   return {
     getById: function ( req, res ) {
       var id = req.params[ 0 ];
@@ -42,6 +53,33 @@ module.exports = function ( UserHandle ) {
       var email = req.params[ 0 ];
       UserHandle.getUserByEmail( email, function( err, user ) {
         userCallback( err, user, email, res );
+      });
+    },
+
+    getByIds: function ( req, res ) {
+      var ids = req.body.ids.filter(function( elem, pos, self ) {
+        return self.indexOf( elem ) === pos;
+      });
+      UserHandle.getUsersByIds( ids, function( err, users ) {
+        usersCallback( err, users, "Ids", res );
+      });
+    },
+
+    getByEmails: function ( req, res ) {
+      var emails = req.body.emails.filter(function( elem, pos, self ) {
+        return self.indexOf( elem ) === pos;
+      });
+      UserHandle.getUsersByEmails( emails, function( err, users ) {
+        usersCallback( err, users, "Emails", res );
+      });
+    },
+
+    getByUsernames: function ( req, res ) {
+      var usernames = req.body.usernames.filter(function( elem, pos, self ) {
+        return self.indexOf( elem ) === pos;
+      });
+      UserHandle.getUsersByUsernames( usernames, function( err, users ) {
+        usersCallback( err, users, "Usernames", res );
       });
     },
 
