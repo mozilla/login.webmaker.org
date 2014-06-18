@@ -59,6 +59,8 @@
       $( "#user-avatar" ).css( "background-image", "url(https://secure.gravatar.com/avatar/" + user.emailHash + "?s=200&d=https%3A%2F%2Fstuff.webmaker.org%2Favatars%2Fwebmaker-avatar-200x200.png)" );
 
       $( "#sendEventCreationEmailsCheckbox" ).prop( "checked", user.sendEventCreationEmails );
+      $( "#sendMentorRequestEmailsCheckbox" ).prop( "checked", user.sendMentorRequestEmails );
+      $( "#sendCoorganizerRequestEmailsCheckbox" ).prop( "checked", user.sendCoorganizerRequestEmails );
     }
 
     function onLogout() {
@@ -122,6 +124,44 @@
         url: "/account/update",
         data: JSON.stringify({
           sendEventCreationEmails: checked
+        }),
+        contentType: "application/json",
+        success: function( data, textStatus ) {
+          $( ".email-prefs.prefs-saved" ).fadeIn().delay( 1000 ).fadeOut();
+        },
+        error: function( jqXHR, textStatus, errorThrown ) {
+          $( ".email-prefs.prefs-error" ).fadeIn().delay( 1000 ).fadeOut();
+        }
+      });
+    });
+
+    $( "#sendMentorRequestEmailsCheckbox" ).change(function(e) {
+      var checked = $( this ).prop( "checked" ) ? true : false;
+
+      $.ajax({
+        type: "PUT",
+        url: "/account/update",
+        data: JSON.stringify({
+          sendMentorRequestEmails: checked
+        }),
+        contentType: "application/json",
+        success: function( data, textStatus ) {
+          $( ".email-prefs.prefs-saved" ).fadeIn().delay( 1000 ).fadeOut();
+        },
+        error: function( jqXHR, textStatus, errorThrown ) {
+          $( ".email-prefs.prefs-error" ).fadeIn().delay( 1000 ).fadeOut();
+        }
+      });
+    });
+
+    $( "#sendCoorganizerRequestEmailsCheckbox" ).change(function(e) {
+      var checked = $( this ).prop( "checked" ) ? true : false;
+
+      $.ajax({
+        type: "PUT",
+        url: "/account/update",
+        data: JSON.stringify({
+          sendCoorganizerRequestEmails: checked
         }),
         contentType: "application/json",
         success: function( data, textStatus ) {

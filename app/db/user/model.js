@@ -97,6 +97,16 @@ module.exports = function( sequelize, DataTypes ) {
       type: DataTypes.BOOLEAN,
       defaultValue: true
     },
+    sendMentorRequestEmails: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true
+    },
+    sendCoorganizerRequestEmails: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true
+    },
     subscribeToWebmakerList: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
@@ -188,6 +198,8 @@ module.exports = function( sequelize, DataTypes ) {
           // referrer: this.referrer
           // sendEngagements: this.sendEngagements,
           sendEventCreationEmails: this.sendEventCreationEmails,
+          sendCoorganizerRequestEmails: this.sendCoorganizerRequestEmails,
+          sendMentorRequestEmails: this.sendMentorRequestEmails,
           // sendNotifications: this.sendNotifications,
           // subscribeToWebmakerList: this.subscribeToWebmakerList,
           // updatedAt: this.updatedAt,

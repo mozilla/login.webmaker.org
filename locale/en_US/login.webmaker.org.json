@@ -10,6 +10,8 @@
   "Hi": "Hi",
   "I agree to your terms": "I agree to your <a href='{{ AUDIENCE }}/{{localeInfo.lang}}/terms'>terms</a> and <a href='{{ AUDIENCE }}/{{localeInfo.lang}}/privacy'>conditions</a>",
   "I create an event": "I create an event",
+  "I receive an Event Mentor request": "I receive an Event Mentor request",
+  "I receive an Event Co-organizer request": "I receive an Event Co-organizer request",
   "Language": "Language",
   "Looks like that isnt your email": "Looks like that isn't your email",
   "Send me email updates": "Send me email updates about Mozilla Webmaker and other projects",
