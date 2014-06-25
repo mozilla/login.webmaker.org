@@ -6,9 +6,12 @@
     "nav-global": "https://github.com/mozilla/nav-global/archive/v0.1.4.tar.gz",
     "persona-btn": "~0.0.12",
     "text": "2.0.9",
-    "webmaker-analytics": "0.0.5",
-    "webmaker-auth-client": "0.1.5",
+    "webmaker-analytics": "0.1.0",
+    "webmaker-auth-client": "0.1.7",
     "webmaker-i18n": "0.3.19",
     "webmaker-language-picker": "0.0.22"
+  },
+  "resolutions": {
+    "webmaker-analytics": "~0.1.0"
   }
 }
