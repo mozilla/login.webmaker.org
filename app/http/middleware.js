@@ -12,7 +12,7 @@ module.exports.fetchUserBy = function(name, User) {
 
       if (!user) {
         return res.json({
-          "error": "User with " + name + " `" + id + "` not found"
+          "error": "User with " + name + " `" + param + "` not found"
         });
       }
 
