@@ -52,6 +52,7 @@
       logoutEl.show();
 
       $( "#logout-message" ).hide();
+      $( ".wm-logged-out-panel" ).hide();
       $( ".wm-user-panel" ).fadeIn();
       $( ".wm-email" ).text( user.email );
       $( ".wm-page").html( '<a href="//' + user.username + "{{ profile }}" +'">' + user.username + "{{ profile }}" + '</a>');
@@ -69,6 +70,7 @@
       loginEl.show();
       logoutEl.hide();
       $( ".wm-user-panel" ).hide();
+      $( ".wm-logged-out-panel" ).fadeIn();
       $( "#confirm-delete" ).hide();
     }
 
