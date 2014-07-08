@@ -36,7 +36,8 @@ var http = express(),
     logger;
 
 var webmakerAuth = new WebmakerAuth({
-  loginURL: env.get("LOGINAPI"),
+  loginURL: env.get("APP_HOSTNAME"),
+  authLoginURL: env.get("LOGINAPI"),
   secretKey: env.get("SESSION_SECRET"),
   forceSSL: env.get("FORCE_SSL"),
   domain: env.get("COOKIE_DOMAIN")
