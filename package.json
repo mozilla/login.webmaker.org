@@ -1,7 +1,7 @@
 {
   "author": "Webmaker Product Team <webmaker-staff@mozillafoundation.org>",
   "name": "login.webmaker.org",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "homepage": "https://github.com/mozilla/login.webmaker.org",
   "repository": {
     "type": "git",
