@@ -92,7 +92,6 @@ module.exports = function( http, userHandle, webmakerAuth ){
     middleware.personaVerifier,
     routes.user2.authenticateUser( userHandle ),
     middleware.updateLastLoggedIn( userHandle ),
-    middleware.updateEngagedWithCampaign( userHandle ),
     middleware.filterUserAttributesForSession,
     routes.user2.outputUser
   );
@@ -102,7 +101,6 @@ module.exports = function( http, userHandle, webmakerAuth ){
     middleware.personaVerifier,
     routes.user2.createUser( userHandle ),
     middleware.updateLastLoggedIn( userHandle ),
-    middleware.updateEngagedWithCampaign( userHandle ),
     middleware.filterUserAttributesForSession,
     routes.user2.outputUser
   );
