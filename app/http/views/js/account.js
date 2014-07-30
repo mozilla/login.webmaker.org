@@ -61,7 +61,7 @@
 
       $( "#sendEventCreationEmailsCheckbox" ).prop( "checked", user.sendEventCreationEmails );
       $( "#sendMentorRequestEmailsCheckbox" ).prop( "checked", user.sendMentorRequestEmails );
-      $( "#sendCoorganizerRequestEmailsCheckbox" ).prop( "checked", user.sendCoorganizerRequestEmails );
+      $( "#sendCoorganizerNotificationEmailsCheckbox" ).prop( "checked", user.sendCoorganizerNotificationEmails );
     }
 
     function onLogout() {
@@ -156,14 +156,14 @@
       });
     });
 
-    $( "#sendCoorganizerRequestEmailsCheckbox" ).change(function(e) {
+    $( "#sendCoorganizerNotificationEmailsCheckbox" ).change(function(e) {
       var checked = $( this ).prop( "checked" ) ? true : false;
 
       $.ajax({
         type: "PUT",
         url: "/account/update",
         data: JSON.stringify({
-          sendCoorganizerRequestEmails: checked
+          sendCoorganizerNotificationEmails: checked
         }),
         contentType: "application/json",
         success: function( data, textStatus ) {

@@ -40,7 +40,7 @@ module.exports = function( http, userHandle, webmakerAuth ){
     // Only allow attributes that users should be able to set on their own account
     filtered.sendEventCreationEmails = input.sendEventCreationEmails;
     filtered.sendMentorRequestEmails = input.sendMentorRequestEmails;
-    filtered.sendCoorganizerRequestEmails = input.sendCoorganizerRequestEmails;
+    filtered.sendCoorganizerNotificationEmails = input.sendCoorganizerNotificationEmails;
     filtered.prefLocale = input.prefLocale;
 
     req.body = filtered;

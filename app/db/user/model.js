@@ -92,7 +92,7 @@ module.exports = function( sequelize, DataTypes ) {
       allowNull: false,
       defaultValue: true
     },
-    sendCoorganizerRequestEmails: {
+    sendCoorganizerNotificationEmails: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true
@@ -188,7 +188,7 @@ module.exports = function( sequelize, DataTypes ) {
           // referrer: this.referrer
           // sendEngagements: this.sendEngagements,
           sendEventCreationEmails: this.sendEventCreationEmails,
-          sendCoorganizerRequestEmails: this.sendCoorganizerRequestEmails,
+          sendCoorganizerNotificationEmails: this.sendCoorganizerNotificationEmails,
           sendMentorRequestEmails: this.sendMentorRequestEmails,
           // sendNotifications: this.sendNotifications,
           // subscribeToWebmakerList: this.subscribeToWebmakerList,
