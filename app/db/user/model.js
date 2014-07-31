@@ -106,10 +106,6 @@ module.exports = function( sequelize, DataTypes ) {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
-    referrer: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
     bio: {
       type: DataTypes.STRING,
       validate: {

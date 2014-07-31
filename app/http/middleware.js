@@ -86,3 +86,20 @@ module.exports.updateLastLoggedIn = function(User) {
     });
   };
 };
+
+module.exports.engagedWithReferrerCode = function(User, options) {
+  return function(req, res, next) {
+
+    // the referrer value is only passed in if the cookie exists client-side
+    if (req.body.user && req.body.user.referrer) {
+
+      User.engagedWithReferrerCode( res.locals.email, req.body.user.referrer, options.userStatus,
+        function( err ) {
+        //TODO do something useful if this error happens
+        process.nextTick(next);
+      });
+    }
+
+    process.nextTick(next);
+  };
+};
