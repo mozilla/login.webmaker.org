@@ -96,8 +96,17 @@ module.exports = function( http, userHandle, webmakerAuth ){
     routes.user2.outputUser
   );
   http.post(
+    "/api/user/create2",
+    middleware.audienceFilter( audience_whitelist ),
+    routes.user2.createUser( userHandle ),
+    middleware.updateLastLoggedIn( userHandle ),
+    middleware.filterUserAttributesForSession,
+    routes.user2.outputUser
+  );
+  http.post(
     "/api/user/create",
-    middleware.personaFilter( audience_whitelist ),
+    middleware.audienceFilter( audience_whitelist ),
+    middleware.personaFilter(),
     middleware.personaVerifier,
     routes.user2.createUser( userHandle ),
     middleware.updateLastLoggedIn( userHandle ),

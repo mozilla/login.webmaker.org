@@ -28,7 +28,7 @@ module.exports.filterUserAttributesForSession = function(req, res, next) {
   process.nextTick(next);
 };
 
-module.exports.personaFilter = function(audience_whitelist) {
+module.exports.audienceFilter = function(audience_whitelist) {
   return function(req, res, next) {
     if (!req.body.audience) {
       return res.json({
@@ -42,13 +42,17 @@ module.exports.personaFilter = function(audience_whitelist) {
         "error": "Audience parameter not allowed"
       });
     }
+    process.nextTick(next);
+  };
+};
 
+module.exports.personaFilter = function() {
+  return function(req, res, next) {
     if (!req.body.assertion) {
       return res.json({
         "error": "Missing assertion"
       });
     }
-
     process.nextTick(next);
   };
 };
