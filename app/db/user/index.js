@@ -253,6 +253,8 @@ module.exports = function (sequelize) {
             userId: user.getDataValue("id"),
             username: user.getDataValue("username"),
             email: user.getDataValue("email"),
+            // contextualize this based on where the login request came from
+            loginUrl: env.get('WEBMAKERORG') + '/?e=' + user.getDataValue("email") + '&t=' + savedToken.token,
             token: savedToken.token
           });
 
