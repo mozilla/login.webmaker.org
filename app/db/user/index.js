@@ -3,22 +3,35 @@ var env = require( "../../../config/environment" );
 var DEV_LOG_TOKEN = !!env.get( "DEV_LOG_TOKEN" );
 
 module.exports = function (sequelize) {
-  var HAT_BITS = 24;
-  var HAT_BASE = 36;
-  var EXPIRY_TIME = 1000 * 60 * 30;
+  const TOKEN_HAT_BITS = 24;
+  const TOKEN_HAT_BASE = 36;
+  const TOKEN_EXPIRY_TIME = 1000 * 60 * 30;
 
+  const RESET_HAT_BITS = 128;
+  const RESET_HAT_BASE = 16;
+  const RESET_EXPIRY_TIME = 1000 * 60 * 60 * 24;
+  const BCRYPT_ROUNDS = 12;
+
+  var bcrypt = require('bcrypt');
   var hat = require('hat');
   var hatchet = require('hatchet');
 
   var model = sequelize.import(__dirname + '/model.js');
   var loginToken = sequelize.import(__dirname + '/loginToken.js');
+  var password = sequelize.import(__dirname + '/password.js');
+  var resetAuthorization = sequelize.import(__dirname + '/resetAuthorization.js');
 
+  model.hasOne(password);
   model.hasMany(loginToken);
+  model.hasMany(resetAuthorization);
   loginToken.belongsTo(model);
 
   return {
 
     model: model,
+    loginToken: loginToken,
+    password: password,
+    resetAuthorization: resetAuthorization,
 
     /**
      * getUserById( id, callback )
@@ -232,7 +245,7 @@ module.exports = function (sequelize) {
         }
 
         var token = loginToken.build({
-          token: hat(HAT_BITS, HAT_BASE),
+          token: hat(TOKEN_HAT_BITS, TOKEN_HAT_BASE),
           UserId: user.id
         });
 
@@ -314,7 +327,7 @@ module.exports = function (sequelize) {
           }
 
           // everything looks okay, but this is an expired token!
-          if (logintoken.createdAt <= Date.now() - EXPIRY_TIME ||
+          if (logintoken.createdAt <= Date.now() - TOKEN_EXPIRY_TIME ||
               logintoken.failedAttempts >= 3) {
 
             return callback({
@@ -334,6 +347,101 @@ module.exports = function (sequelize) {
             callback(null, user);
           });
         });
+      });
+    },
+
+    createResetAuthorization: function(user, callback) {
+      var resetToken = hat(RESET_HAT_BITS, RESET_HAT_BASE);
+      var rA = resetAuthorization.build({
+        token: resetToken,
+        used: false
+      });
+
+      rA
+        .setUser(user)
+        .success(function(){
+          hatchet.send( "reset_authorization_created", {
+            email: user.getDataValue("email"),
+            username: user.getDataValue("username"),
+            resetURL: env.get("WEBMAKERORG") + '/passwordReset/' + rA.getDataValue("token")
+          });
+          callback();
+        })
+        .error(function(err) {
+          console.error(err);
+          callback("Error Creating Reset Authorization");
+        });
+    },
+
+    validateReset: function(token, user, callback) {
+      resetAuthorization.find({
+        where: {
+          token: token,
+          userId: user.id,
+          used: false,
+          createdAt: {
+            gt: Date.now - RESET_EXPIRY_TIME
+          }
+        }
+      })
+      .then(function(token) {
+        if ( !token ) {
+          return callback(null, false);
+        }
+
+        token
+          .updateAttributes({
+            used: true
+          })
+          .success(function(){
+            callback(null, true);
+          })
+          .error(callback);
+      })
+      .error(callback);
+    },
+
+    changePassword: function(newPass, user, callback) {
+      var pass = user.password || password.build();
+
+      var firstPassword = !!user.password;
+
+      bcrypt.genSalt(BCRYPT_ROUNDS, function(err, salt) {
+        bcrypt.hash(newPass, salt, function(err, hash) {
+          pass.hash = hash;
+          pass.salt = salt;
+          user
+            .updateAttributes({
+              usePasswordLogin: true
+            })
+            .then(function() {
+             return user.setPassword(pass);
+            })
+            .then(function() {
+              hatchet.send('user-password-changed', {
+                email: user.getDataValue('email'),
+                username: user.getDataValue('username'),
+                firstPassword: firstPassword
+              });
+              callback(null);
+            })
+            .error(function(err) {
+              console.error( err );
+              callback({
+                error: "Login Database Error"
+              });
+            });
+        });
+      });
+    },
+
+    compareHash: function(pass, user, callback) {
+      if ( !user.password ) {
+        callback(err, false);
+      }
+
+      bcrypt.compare(pass, user.password.hash, function(err, res) {
+        callback(err, res);
       });
     }
   };

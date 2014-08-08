@@ -143,6 +143,36 @@ module.exports = function( http, userHandle, webmakerAuth ){
     routes.user2.exists( userHandle )
   );
 
+  http.post(
+    "/api/user/changePassword",
+    authMiddleware,
+    routes.user2.setUser( userHandle ),
+    routes.user2.verifyReset( userHandle ),
+    routes.user2.changePassword( userHandle )
+  );
+
+  http.post(
+    "/api/user/setFirstPassword",
+    authMiddleware,
+    routes.user2.setUser( userHandle ),
+    routes.user2.setFirstPassword( userHandle )
+  );
+
+  http.post(
+    "/api/user/resetRequest",
+    authMiddleware,
+    routes.user2.setUser( userHandle ),
+    routes.user2.createResetAuthorization( userHandle )
+  );
+
+  http.post(
+    "/api/user/verifyPassword",
+    routes.user2.setUser( userHandle ),
+    routes.user2.verifyPassword( userHandle ),
+    middleware.filterUserAttributesForSession,
+    routes.user2.outputUser
+  );
+
   // Parameters
   http.param("email", middleware.fetchUserBy( "Email", userHandle ));
   http.param("id", middleware.fetchUserBy( "Id", userHandle ));

@@ -110,6 +110,10 @@ module.exports = function( sequelize, DataTypes ) {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
+    usePasswordLogin: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
     referrer: {
       type: DataTypes.STRING,
       allowNull: true
@@ -197,8 +201,9 @@ module.exports = function( sequelize, DataTypes ) {
           // sendNotifications: this.sendNotifications,
           // subscribeToWebmakerList: this.subscribeToWebmakerList,
           // updatedAt: this.updatedAt,
-          username: this.username
+          username: this.username,
           // wasMigrated: this.wasMigrated
+          usePasswordLogin: this.usePasswordLogin
         };
       }
     }
