@@ -73,7 +73,8 @@ http.configure(function(){
     http.use( helmet.hsts() );
     http.enable( "trust proxy" );
   }
-
+  var middleware = require("./middleware");
+  http.use( middleware.cors );
   http.use( express.json() );
   http.use( express.urlencoded() );
   http.use( webmakerAuth.cookieParser() );

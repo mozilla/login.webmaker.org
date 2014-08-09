@@ -85,6 +85,9 @@ module.exports = function( http, userHandle, webmakerAuth ){
   http.post('/logout', webmakerAuth.handlers.logout);
   http.post('/create', webmakerAuth.handlers.create);
   http.post('/check-username', webmakerAuth.handlers.exists);
+  http.get('/csrfToken', csrf, function(req, res) {
+    res.send(req.csrfToken());
+  });
 
   http.post(
     "/api/user/authenticate",
