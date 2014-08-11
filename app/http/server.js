@@ -122,10 +122,6 @@ http.configure(function(){
 
 
 http.configure( "development", function(){
-  http.use( express.errorHandler({ dumpExceptions: true, showStack: true }) );
-});
-
-http.configure( "production", function(){
   http.use( express.errorHandler() );
 });
 
