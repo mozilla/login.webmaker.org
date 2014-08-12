@@ -79,12 +79,21 @@ module.exports = function( http, userHandle, webmakerAuth ){
   var audience_whitelist = env.get( "ALLOWED_DOMAINS" ).split( " " );
   var middleware = require("./middleware");
 
+  http.options("/verify", middleware.cors);
+  http.options("/authenticate", middleware.cors);
+  http.options("/logout", middleware.cors);
+  http.options("/create", middleware.cors);
+  http.options("/check-username", middleware.cors);
+
   // Client-side Webmaker Auth support
-  http.post('/verify', webmakerAuth.handlers.verify);
-  http.post('/authenticate', webmakerAuth.handlers.authenticate);
-  http.post('/logout', webmakerAuth.handlers.logout);
-  http.post('/create', webmakerAuth.handlers.create);
-  http.post('/check-username', webmakerAuth.handlers.exists);
+  http.post('/verify', middleware.cors, csrf, webmakerAuth.handlers.verify);
+  http.post('/authenticate', middleware.cors, csrf, webmakerAuth.handlers.authenticate);
+  http.post('/logout', middleware.cors, csrf, webmakerAuth.handlers.logout);
+  http.post('/create', middleware.cors, csrf, webmakerAuth.handlers.create);
+  http.post('/check-username', middleware.cors, csrf, webmakerAuth.handlers.exists);
+  http.get('/csrfToken', middleware.cors, csrf, function(req, res) {
+    res.send(req.csrfToken());
+  });
 
   http.post(
     "/api/user/authenticate",
