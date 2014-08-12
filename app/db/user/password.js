@@ -1,11 +1,8 @@
 
 module.exports = function( sequelize, DataTypes ) {
   return sequelize.define( "Password", {
-    hash: {
+    saltedHash: {
       type: DataTypes.STRING(60)
-    },
-    salt: {
-      type: DataTypes.UUID
     }
   });
 };

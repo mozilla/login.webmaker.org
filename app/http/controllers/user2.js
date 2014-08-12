@@ -215,7 +215,7 @@ module.exports.changePassword = function(User) {
     var newPass = req.body.newPassword;
     var user = res.locals.user;
 
-    User.compareHash(oldPassword, user, function(err, result) {
+    User.compare(oldPassword, user, function(err, result) {
       if ( err || !result ) {
         return fourOhOne(res);
       }
@@ -288,7 +288,7 @@ module.exports.verifyPassword = function(User) {
       return fourOhOne(res);
     }
 
-    User.compareHash(pass, user, function(err, result) {
+    User.compare(pass, user, function(err, result) {
       if ( err || !result ) {
         return fourOhOne(res);
       }

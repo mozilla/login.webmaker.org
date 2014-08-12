@@ -408,8 +408,7 @@ module.exports = function (sequelize) {
 
       bcrypt.genSalt(BCRYPT_ROUNDS, function(err, salt) {
         bcrypt.hash(newPass, salt, function(err, hash) {
-          pass.hash = hash;
-          pass.salt = salt;
+          pass.saltedHash = hash;
           user
             .updateAttributes({
               usePasswordLogin: true
@@ -435,12 +434,12 @@ module.exports = function (sequelize) {
       });
     },
 
-    compareHash: function(pass, user, callback) {
+    compare: function(pass, user, callback) {
       if ( !user.password ) {
         callback(err, false);
       }
 
-      bcrypt.compare(pass, user.password.hash, function(err, res) {
+      bcrypt.compare(pass, user.password.saltedHash, function(err, res) {
         callback(err, res);
       });
     }
