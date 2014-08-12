@@ -87,12 +87,13 @@ module.exports.updateLastLoggedIn = function(User) {
   };
 };
 
+var env = require( "../../config/environment" );
+var ALLOWED_CORS_DOMAINS = env.get("ALLOWED_CORS_DOMAINS");
+
 module.exports.cors = function (req, res, next) {
-  var env = require( "../../config/environment" );
-  var ALLOWED_CORS_DOMAINS = env.get("ALLOWED_CORS_DOMAINS");
   if (ALLOWED_CORS_DOMAINS.indexOf(req.headers.origin) > -1) {
     res.header('Access-Control-Allow-Origin', req.headers.origin);
-    res.header('Access-Control-Allow-Methods', 'POST, GET, PUT');
+    res.header('Access-Control-Allow-Methods', 'POST, GET');
     res.header('Access-Control-Allow-Headers', 'Content-Type, X-CSRF-Token');
     res.header('Access-Control-Allow-Credentials', true);
   }

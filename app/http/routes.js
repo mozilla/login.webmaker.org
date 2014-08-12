@@ -86,11 +86,11 @@ module.exports = function( http, userHandle, webmakerAuth ){
   http.options("/check-username", middleware.cors);
 
   // Client-side Webmaker Auth support
-  http.post('/verify', middleware.cors, webmakerAuth.handlers.verify);
-  http.post('/authenticate', middleware.cors, webmakerAuth.handlers.authenticate);
-  http.post('/logout', middleware.cors, webmakerAuth.handlers.logout);
-  http.post('/create', middleware.cors, webmakerAuth.handlers.create);
-  http.post('/check-username', middleware.cors, webmakerAuth.handlers.exists);
+  http.post('/verify', middleware.cors, csrf, webmakerAuth.handlers.verify);
+  http.post('/authenticate', middleware.cors, csrf, webmakerAuth.handlers.authenticate);
+  http.post('/logout', middleware.cors, csrf, webmakerAuth.handlers.logout);
+  http.post('/create', middleware.cors, csrf, webmakerAuth.handlers.create);
+  http.post('/check-username', middleware.cors, csrf, webmakerAuth.handlers.exists);
   http.get('/csrfToken', middleware.cors, csrf, function(req, res) {
     res.send(req.csrfToken());
   });
