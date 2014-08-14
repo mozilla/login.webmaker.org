@@ -144,11 +144,12 @@ module.exports = function( http, userHandle, webmakerAuth ){
   );
 
   http.post(
-    "/api/user/changePassword",
+    "/api/user/resetPassword",
     authMiddleware,
     routes.user2.setUser( userHandle ),
+    routes.user2.canResetPassword,
     routes.user2.verifyReset( userHandle ),
-    routes.user2.changePassword( userHandle )
+    routes.user2.resetPassword( userHandle )
   );
 
   http.post(
@@ -162,6 +163,8 @@ module.exports = function( http, userHandle, webmakerAuth ){
     "/api/user/resetRequest",
     authMiddleware,
     routes.user2.setUser( userHandle ),
+    routes.user2.canResetPassword,
+    routes.user2.cancelActiveResets( userHandle ),
     routes.user2.createResetAuthorization( userHandle )
   );
 

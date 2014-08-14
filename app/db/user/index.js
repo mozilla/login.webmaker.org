@@ -350,20 +350,37 @@ module.exports = function (sequelize) {
       });
     },
 
+    cancelActiveResets: function(user, callback) {
+      resetAuthorization.update({
+        used: true
+      }, {
+        UserId: user.id,
+        used: false,
+        createdAt: {
+          gt: Date.now() - RESET_EXPIRY_TIME
+        }
+      })
+      .then(function(affectedRows) {
+        callback(null, affectedRows);
+      })
+      .error(callback);
+    },
+
     createResetAuthorization: function(user, callback) {
       var resetToken = hat(RESET_HAT_BITS, RESET_HAT_BASE);
       var rA = resetAuthorization.build({
         token: resetToken,
-        used: false
+        used: false,
+        UserId: user.id
       });
 
       rA
-        .setUser(user)
+        .save()
         .success(function(){
           hatchet.send( "reset_authorization_created", {
             email: user.getDataValue("email"),
             username: user.getDataValue("username"),
-            resetURL: env.get("WEBMAKERORG") + '/passwordReset/' + rA.getDataValue("token")
+            resetUrl: env.get("WEBMAKERORG") + '/password-reset/' + user.getDataValue("email") + '/' + rA.getDataValue("token")
           });
           callback();
         })
@@ -377,10 +394,10 @@ module.exports = function (sequelize) {
       resetAuthorization.find({
         where: {
           token: token,
-          userId: user.id,
+          UserId: user.id,
           used: false,
           createdAt: {
-            gt: Date.now - RESET_EXPIRY_TIME
+            gt: Date.now() - RESET_EXPIRY_TIME
           }
         }
       })
@@ -402,9 +419,8 @@ module.exports = function (sequelize) {
     },
 
     changePassword: function(newPass, user, callback) {
-      var pass = user.password || password.build();
-
-      var firstPassword = !!user.password;
+      var pass = user.password || password.build(),
+          firstPassword = !!user.password;
 
       bcrypt.genSalt(BCRYPT_ROUNDS, function(err, salt) {
         bcrypt.hash(newPass, salt, function(err, hash) {

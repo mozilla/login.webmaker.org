@@ -209,22 +209,18 @@ module.exports.setUser = function(User) {
   };
 };
 
-module.exports.changePassword = function(User) {
+module.exports.resetPassword = function(User) {
   return function(req, res, next) {
-    var oldPassword = req.body.oldPassword;
     var newPass = req.body.newPassword;
     var user = res.locals.user;
 
-    User.compare(oldPassword, user, function(err, result) {
-      if ( err || !result ) {
+    User.changePassword(newPass, user, function(err) {
+      if ( err ) {
+        console.error( err );
         return fourOhOne(res);
       }
-      User.changePassword(newPass, user, function(err, result) {
-        if ( err ) {
-          console.error( err );
-          return fourOhOne(res);
-        }
-        res.json( result );
+      res.json({
+        status: "success"
       });
     });
   };
@@ -297,14 +293,32 @@ module.exports.verifyPassword = function(User) {
   };
 };
 
-module.exports.createResetAuthorization = function(User) {
-  return function(req, res) {
-    var user = res.locals.user;
+module.exports.canResetPassword = function(req, res, next) {
+  if ( !res.locals.user.password ) {
+    return fourOhOne(res);
+  }
+  process.nextTick(next);
+};
 
-    User.createResetAuthorization(user, function(err) {
+module.exports.cancelActiveResets = function(User) {
+  return function(req, res, next) {
+    User.cancelActiveResets(res.locals.user, function(err) {
       if ( err ) {
         return res.json(500, {
-          error: err
+          error: "Failed to update reset authorizations for user"
+        });
+      }
+      process.nextTick(next);
+    });
+  };
+};
+
+module.exports.createResetAuthorization = function(User) {
+  return function(req, res) {
+    User.createResetAuthorization(res.locals.user, function(err) {
+      if ( err ) {
+        return res.json(500, {
+          error: "Failed to create reset authorization"
         });
       }
       res.json({
