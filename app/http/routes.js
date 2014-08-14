@@ -96,14 +96,6 @@ module.exports = function( http, userHandle, webmakerAuth ){
     routes.user2.outputUser
   );
   http.post(
-    "/api/user/create2",
-    middleware.audienceFilter( audience_whitelist ),
-    routes.user2.createUser( userHandle ),
-    middleware.updateLastLoggedIn( userHandle ),
-    middleware.filterUserAttributesForSession,
-    routes.user2.outputUser
-  );
-  http.post(
     "/api/user/create",
     middleware.audienceFilter( audience_whitelist ),
     middleware.personaFilter(),
@@ -144,7 +136,15 @@ module.exports = function( http, userHandle, webmakerAuth ){
   );
 
   http.post(
-    "/api/user/resetPassword",
+    "/api/v2/user/create",
+    middleware.audienceFilter( audience_whitelist ),
+    routes.user2.createUser( userHandle ),
+    middleware.updateLastLoggedIn( userHandle ),
+    middleware.filterUserAttributesForSession,
+    routes.user2.outputUser
+  );
+  http.post(
+    "/api/v2/user/resetPassword",
     authMiddleware,
     routes.user2.setUser( userHandle ),
     routes.user2.canResetPassword,
@@ -153,14 +153,14 @@ module.exports = function( http, userHandle, webmakerAuth ){
   );
 
   http.post(
-    "/api/user/setFirstPassword",
+    "/api/v2/user/setFirstPassword",
     authMiddleware,
     routes.user2.setUser( userHandle ),
     routes.user2.setFirstPassword( userHandle )
   );
 
   http.post(
-    "/api/user/resetRequest",
+    "/api/v2/user/resetRequest",
     authMiddleware,
     routes.user2.setUser( userHandle ),
     routes.user2.canResetPassword,
@@ -169,9 +169,21 @@ module.exports = function( http, userHandle, webmakerAuth ){
   );
 
   http.post(
-    "/api/user/verifyPassword",
+    "/api/v2/user/verifyPassword",
     routes.user2.setUser( userHandle ),
     routes.user2.verifyPassword( userHandle ),
+    middleware.filterUserAttributesForSession,
+    routes.user2.outputUser
+  );
+
+  http.post(
+    "/api/v2/user/request",
+    routes.user2.generateLoginTokenForUser( userHandle )
+  );
+
+  http.post(
+    "/api/v2/user/authenticateToken",
+    routes.user2.verifyTokenForUser( userHandle ),
     middleware.filterUserAttributesForSession,
     routes.user2.outputUser
   );
@@ -180,18 +192,6 @@ module.exports = function( http, userHandle, webmakerAuth ){
   http.param("email", middleware.fetchUserBy( "Email", userHandle ));
   http.param("id", middleware.fetchUserBy( "Id", userHandle ));
   http.param("username", middleware.fetchUserBy( "Username", userHandle ));
-
-  // Passwordless API
-  http.post(
-    "/api/user/request",
-    routes.user2.generateLoginTokenForUser( userHandle )
-  );
-  http.post(
-    "/api/user/authenticateToken",
-    routes.user2.verifyTokenForUser( userHandle ),
-    middleware.filterUserAttributesForSession,
-    routes.user2.outputUser
-  );
 
   // Devops
   http.get( "/healthcheck", routes.site.healthcheck );
