@@ -1,6 +1,6 @@
 var env = require( "../../../config/environment" );
 
-var DEV_LOG_TOKEN = !!env.get( "DEV_LOG_TOKEN" );
+var DEV_LOG_LINKS = !!env.get( "DEV_LOG_LINKS" );
 
 module.exports = function (sequelize) {
   const TOKEN_HAT_BITS = 24;
@@ -257,9 +257,11 @@ module.exports = function (sequelize) {
             });
           }
 
+          var loginLink = env.get('WEBMAKERORG') + '/?e=' + user.getDataValue("email") + '&t=' + savedToken.token
+
           // log the token in the console
-          if ( DEV_LOG_TOKEN ) {
-            console.info( "LOGIN TOKEN: " + savedToken.token );
+          if ( DEV_LOG_LINKS ) {
+            console.log( "*****\nLOGIN TOKEN: " + savedToken.token + "\nLOGIN LINK: " + loginLink + "\n*****");
           }
 
           hatchet.send("login_token_email", {
@@ -267,7 +269,7 @@ module.exports = function (sequelize) {
             username: user.getDataValue("username"),
             email: user.getDataValue("email"),
             // contextualize this based on where the login request came from
-            loginUrl: env.get('WEBMAKERORG') + '/?e=' + user.getDataValue("email") + '&t=' + savedToken.token,
+            loginUrl: loginLink,
             token: savedToken.token
           });
 
@@ -377,10 +379,17 @@ module.exports = function (sequelize) {
       rA
         .save()
         .success(function(){
+
+          var resetUrl = env.get("WEBMAKERORG") + '/password-reset/' + user.getDataValue("email") + '/' + rA.getDataValue("token");
+
+          if ( DEV_LOG_LINKS ) {
+            console.log("*****\nRESET LINK: ", resetUrl + "\n*****");
+          }
+
           hatchet.send( "reset_authorization_created", {
             email: user.getDataValue("email"),
             username: user.getDataValue("username"),
-            resetUrl: env.get("WEBMAKERORG") + '/password-reset/' + user.getDataValue("email") + '/' + rA.getDataValue("token")
+            resetUrl: resetUrl
           });
           callback();
         })
