@@ -30,6 +30,10 @@ module.exports = function( sequelize, DataTypes ) {
       allowNull: false,
       unique: true
     },
+    verified: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
     username: {
       type: "VARCHAR(20)",
       validate: {
@@ -103,6 +107,10 @@ module.exports = function( sequelize, DataTypes ) {
       defaultValue: false
     },
     wasMigrated: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    usePasswordLogin: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
@@ -193,8 +201,9 @@ module.exports = function( sequelize, DataTypes ) {
           // sendNotifications: this.sendNotifications,
           // subscribeToWebmakerList: this.subscribeToWebmakerList,
           // updatedAt: this.updatedAt,
-          username: this.username
+          username: this.username,
           // wasMigrated: this.wasMigrated
+          usePasswordLogin: this.usePasswordLogin
         };
       }
     }

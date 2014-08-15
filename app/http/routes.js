@@ -97,7 +97,8 @@ module.exports = function( http, userHandle, webmakerAuth ){
   );
   http.post(
     "/api/user/create",
-    middleware.personaFilter( audience_whitelist ),
+    middleware.audienceFilter( audience_whitelist ),
+    middleware.personaFilter(),
     middleware.personaVerifier,
     routes.user2.createUser( userHandle ),
     middleware.updateLastLoggedIn( userHandle ),
@@ -132,6 +133,59 @@ module.exports = function( http, userHandle, webmakerAuth ){
   http.post(
     "/api/user/exists",
     routes.user2.exists( userHandle )
+  );
+
+  http.post(
+    "/api/v2/user/create",
+    middleware.audienceFilter( audience_whitelist ),
+    routes.user2.createUser( userHandle ),
+    middleware.updateLastLoggedIn( userHandle ),
+    middleware.filterUserAttributesForSession,
+    routes.user2.outputUser
+  );
+  http.post(
+    "/api/v2/user/resetPassword",
+    authMiddleware,
+    routes.user2.setUser( userHandle ),
+    routes.user2.canResetPassword,
+    routes.user2.verifyReset( userHandle ),
+    routes.user2.resetPassword( userHandle )
+  );
+
+  http.post(
+    "/api/v2/user/setFirstPassword",
+    authMiddleware,
+    routes.user2.setUser( userHandle ),
+    routes.user2.setFirstPassword( userHandle )
+  );
+
+  http.post(
+    "/api/v2/user/resetRequest",
+    authMiddleware,
+    routes.user2.setUser( userHandle ),
+    routes.user2.canResetPassword,
+    routes.user2.cancelActiveResets( userHandle ),
+    routes.user2.createResetAuthorization( userHandle )
+  );
+
+  http.post(
+    "/api/v2/user/verifyPassword",
+    routes.user2.setUser( userHandle ),
+    routes.user2.verifyPassword( userHandle ),
+    middleware.filterUserAttributesForSession,
+    routes.user2.outputUser
+  );
+
+  http.post(
+    "/api/v2/user/request",
+    routes.user2.generateLoginTokenForUser( userHandle )
+  );
+
+  http.post(
+    "/api/v2/user/authenticateToken",
+    routes.user2.verifyTokenForUser( userHandle ),
+    middleware.filterUserAttributesForSession,
+    routes.user2.outputUser
   );
 
   // Parameters
