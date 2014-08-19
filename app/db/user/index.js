@@ -459,6 +459,29 @@ module.exports = function (sequelize) {
       });
     },
 
+    removePassword: function(user, callback) {
+      var pass = user.password;
+
+      pass.destroy().then(function() {
+        return user.updateAttributes({
+          usePasswordLogin: false
+        });
+      })
+      .then(function() {
+        hatchet.send('user-password-removed', {
+          email: user.getDataValue('email'),
+          username: user.getDataValue('username')
+        });
+        callback(null);
+      })
+      .error(function(err) {
+        console.error(err);
+        callback({
+          error: "Login Database Error"
+        });
+      });
+    },
+
     compare: function(pass, user, callback) {
       if ( !user.password ) {
         callback(err, false);

@@ -143,14 +143,6 @@ module.exports = function( http, userHandle, webmakerAuth ){
     middleware.filterUserAttributesForSession,
     routes.user2.outputUser
   );
-  http.post(
-    "/api/v2/user/resetPassword",
-    authMiddleware,
-    routes.user2.setUser( userHandle ),
-    routes.user2.canResetPassword,
-    routes.user2.verifyReset( userHandle ),
-    routes.user2.resetPassword( userHandle )
-  );
 
   http.post(
     "/api/v2/user/setFirstPassword",
@@ -160,12 +152,30 @@ module.exports = function( http, userHandle, webmakerAuth ){
   );
 
   http.post(
-    "/api/v2/user/resetRequest",
+    "/api/v2/user/requestReset",
     authMiddleware,
     routes.user2.setUser( userHandle ),
-    routes.user2.canResetPassword,
+    routes.user2.hasPassword,
     routes.user2.cancelActiveResets( userHandle ),
     routes.user2.createResetAuthorization( userHandle )
+  );
+
+  http.post(
+    "/api/v2/user/resetPassword",
+    authMiddleware,
+    routes.user2.setUser( userHandle ),
+    routes.user2.hasPassword,
+    routes.user2.verifyReset( userHandle ),
+    routes.user2.resetPassword( userHandle )
+  );
+
+  http.post(
+    "/api/v2/user/removePassword",
+    authMiddleware,
+    routes.user2.setUser( userHandle ),
+    routes.user2.hasPassword,
+    routes.user2.verifyReset( userHandle ),
+    routes.user2.removePassword( userHandle )
   );
 
   http.post(

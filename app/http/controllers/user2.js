@@ -226,6 +226,22 @@ module.exports.resetPassword = function(User) {
   };
 };
 
+module.exports.removePassword = function(User) {
+  return function(req, res, next) {
+    var user = res.locals.user;
+
+    User.removePassword(user, function(err) {
+      if ( err ) {
+        console.error( err );
+        return fourOhOne(res);
+      }
+      res.json({
+        status: "success"
+      });
+    });
+  };
+};
+
 module.exports.setFirstPassword = function(User) {
   return function(req, res, next) {
     var token = req.body.token;
@@ -293,7 +309,7 @@ module.exports.verifyPassword = function(User) {
   };
 };
 
-module.exports.canResetPassword = function(req, res, next) {
+module.exports.hasPassword = function(req, res, next) {
   if ( !res.locals.user.password ) {
     return fourOhOne(res);
   }
