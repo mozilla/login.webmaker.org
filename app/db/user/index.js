@@ -251,10 +251,7 @@ module.exports = function (sequelize) {
 
         token.save().complete(function( err, savedToken) {
           if (err) {
-            return res.json({
-              "error": "Login database error",
-              "login_error": err instanceof Error ? err.toString() : err
-            });
+            return callback(err);
           }
 
           var loginLink = env.get('WEBMAKERORG') + '/?e=' + user.getDataValue("email") + '&t=' + savedToken.token
