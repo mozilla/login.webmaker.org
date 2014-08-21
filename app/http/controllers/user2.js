@@ -144,7 +144,9 @@ module.exports.generateLoginTokenForUser = function (User) {
 
     User.createToken(req.body.email, function(err) {
       if ( err ) {
-        return res.json(err);
+        return res.json(500, {
+          "error": "login database error"
+        });
       }
       res.json({
         "status": "Login Token Sent"

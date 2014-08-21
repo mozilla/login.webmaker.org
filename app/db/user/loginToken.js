@@ -7,12 +7,12 @@ module.exports = function( sequelize, DataTypes ) {
     failedAttempts: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      dafaultValue: 0
+      defaultValue: 0
     },
     used: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-      dafaultValue: false
+      defaultValue: false
     }
   });
 };

@@ -2,7 +2,8 @@
 module.exports = function( sequelize, DataTypes ) {
   return sequelize.define( "Password", {
     saltedHash: {
-      type: DataTypes.STRING(60)
+      type: DataTypes.STRING(60),
+      allowNull: false
     }
   });
 };
