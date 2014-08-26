@@ -16,7 +16,7 @@
     "express": "3.4.5",
     "habitat": "0.4.2",
     "hat": "0.0.3",
-    "hatchet": "0.1.0",
+    "hatchet": "0.2.2",
     "helmet": "0.1.2",
     "less-middleware": "https://github.com/Pomax/less.js-middleware/archive/master.tar.gz",
     "MD5": "1.0.3",

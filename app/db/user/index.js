@@ -1,7 +1,5 @@
 var env = require( "../../../config/environment" );
 
-var DEV_LOG_LINKS = !!env.get( "DEV_LOG_LINKS" );
-
 module.exports = function (sequelize) {
   const TOKEN_HAT_BITS = 24;
   const TOKEN_HAT_BASE = 36;
@@ -238,7 +236,9 @@ module.exports = function (sequelize) {
             "error": "Login database error",
             "login_error": err instanceof Error ? err.toString() : err
           });
-        } else if ( !user ) {
+        }
+
+        if ( !user ) {
           return callback({
             "error": "User not found"
           });
@@ -254,19 +254,12 @@ module.exports = function (sequelize) {
             return callback(err);
           }
 
-          var loginLink = env.get('WEBMAKERORG') + '/?e=' + user.getDataValue("email") + '&t=' + savedToken.token
-
-          // log the token in the console
-          if ( DEV_LOG_LINKS ) {
-            console.log( "*****\nLOGIN TOKEN: " + savedToken.token + "\nLOGIN LINK: " + loginLink + "\n*****");
-          }
-
+          // To log loginUrl to console, do not define "HATCHET_QUEUE_URL" in your environment
           hatchet.send("login_token_email", {
             userId: user.getDataValue("id"),
             username: user.getDataValue("username"),
             email: user.getDataValue("email"),
-            // contextualize this based on where the login request came from
-            loginUrl: loginLink,
+            loginUrl: env.get('WEBMAKERORG') + '/?email=' + user.getDataValue("email") + '&token=' + savedToken.token,
             token: savedToken.token
           });
 
@@ -375,18 +368,12 @@ module.exports = function (sequelize) {
 
       rA
         .save()
-        .success(function(){
-
-          var resetUrl = env.get("WEBMAKERORG") + '/password-reset/' + user.getDataValue("email") + '/' + rA.getDataValue("token");
-
-          if ( DEV_LOG_LINKS ) {
-            console.log("*****\nRESET LINK: ", resetUrl + "\n*****");
-          }
-
+        .success(function() {
+          // To log resetUrl in your console, do not define "HATCHET_QUEUE_URL" in your environment
           hatchet.send( "reset_authorization_created", {
             email: user.getDataValue("email"),
             username: user.getDataValue("username"),
-            resetUrl: resetUrl
+            resetUrl: env.get("WEBMAKERORG") + '/password-reset/' + user.getDataValue("email") + '/' + rA.getDataValue("token")
           });
           callback();
         })
