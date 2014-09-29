@@ -8,6 +8,7 @@
     "url": "git@github.com:mozilla/login.webmaker.org.git"
   },
   "dependencies": {
+    "MD5": "1.0.3",
     "async": "0.2.9",
     "badword": "0.0.1",
     "bluebird": "2.3.2",
@@ -19,22 +20,21 @@
     "hatchet": "0.2.2",
     "helmet": "0.1.2",
     "less-middleware": "https://github.com/Pomax/less.js-middleware/archive/master.tar.gz",
-    "MD5": "1.0.3",
     "messina": "0.1.1",
     "moment": "2.8.2",
     "mysql": "2.0.1",
     "newrelic": "1.8.0",
-    "nunjucks": "0.1.10",
     "node-statsd": "0.0.7",
+    "nunjucks": "0.1.10",
     "proquint": "0.0.1",
     "redis": "0.12.1",
     "rtltr-for-less": "0.0.7",
     "sequelize": "1.7.10",
     "webmaker-auth": "0.1.4",
     "webmaker-download-locales": "0.1.2",
-    "webmaker-locale-mapping": "latest",
-    "webmaker-translation-stats": "0.0.1",
-    "webmaker-i18n": "0.3.19"
+    "webmaker-i18n": "0.3.19",
+    "webmaker-locale-mapping": "0.0.5",
+    "webmaker-translation-stats": "0.0.1"
   },
   "devDependencies": {
     "grunt": "0.4.1",
