@@ -20,8 +20,9 @@ module.exports = function( http, userHandle, webmakerAuth ){
           }
         }
         return false;
-      });
-
+      }),
+      allowedCorsDomains = env.get('ALLOWED_CORS_DOMAINS').split(/[\s,]+/),
+      cors = require('./cors')(env.get('APP_HOSTNAME'), allowedCorsDomains);
 
   if ( env.get("ENABLE_RATE_LIMITING") ) {
     require( "./limiter" )( http );
@@ -86,11 +87,13 @@ module.exports = function( http, userHandle, webmakerAuth ){
   var middleware = require("./middleware");
 
   // Client-side Webmaker Auth support
-  http.post('/verify', webmakerAuth.handlers.verify);
-  http.post('/authenticate', webmakerAuth.handlers.authenticate);
-  http.post('/logout', webmakerAuth.handlers.logout);
-  http.post('/create', webmakerAuth.handlers.create);
-  http.post('/check-username', webmakerAuth.handlers.exists);
+  http.post('/verify', cors, webmakerAuth.handlers.verify);
+  http.post('/authenticate', cors, webmakerAuth.handlers.authenticate);
+  http.post('/logout', cors, webmakerAuth.handlers.logout);
+  http.post('/create', cors, webmakerAuth.handlers.create);
+  http.post('/check-username', cors, webmakerAuth.handlers.exists);
+  // Needed for all options requests via CORS
+  http.options('*', cors);
 
   http.post(
     "/api/user/authenticate",
