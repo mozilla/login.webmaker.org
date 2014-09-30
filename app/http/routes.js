@@ -22,7 +22,7 @@ module.exports = function( http, userHandle, webmakerAuth ){
         return false;
       }),
       allowedCorsDomains = env.get('ALLOWED_CORS_DOMAINS').split(/[\s,]+/),
-      cors = require('./cors')(env.get('APP_HOSTNAME'), allowedCorsDomains);
+      cors = require('./cors')(allowedCorsDomains);
 
   if ( env.get("ENABLE_RATE_LIMITING") ) {
     require( "./limiter" )( http );
@@ -92,8 +92,13 @@ module.exports = function( http, userHandle, webmakerAuth ){
   http.post('/logout', cors, webmakerAuth.handlers.logout);
   http.post('/create', cors, webmakerAuth.handlers.create);
   http.post('/check-username', cors, webmakerAuth.handlers.exists);
+
   // Needed for all options requests via CORS
-  http.options('*', cors);
+  http.options('/verify', cors);
+  http.options('/authenticate', cors);
+  http.options('/logout', cors);
+  http.options('/create', cors);
+  http.options('/check-username', cors);
 
   http.post(
     "/api/user/authenticate",
