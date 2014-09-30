@@ -1,3 +1,4 @@
+
 module.exports.fetchUserBy = function(name, User) {
   var fetch = User["getUserBy" + name];
 
@@ -57,9 +58,14 @@ module.exports.personaFilter = function() {
   };
 };
 
-var verify = require( "browserid-verify" )();
+var browserIdVerify = require( "browserid-verify" );
+var verifyPersona = browserIdVerify();
+var verifyFxa = browserIdVerify({
+  url: "https://verifier.accounts.firefox.com/v2"
+});
 
 module.exports.personaVerifier = function(req, res, next) {
+  var verify = req.body.fxa ? verifyFxa : verifyPersona;
   verify(req.body.assertion, req.body.audience, function(err, email, response) {
     if (err) {
       return res.json({
