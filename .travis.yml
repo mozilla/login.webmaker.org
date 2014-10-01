@@ -1,8 +1,17 @@
----
 before_script:
-  - "npm install -g grunt-cli && mysql -e 'create database myapp_test'"
+- npm install -g grunt-cli && mysql -e 'create database myapp_test'
 env:
-  - "PORT=3000 APP_HOSTNAME=\"http://localhost:3000\" DB_USERNAME=\"travis\" DB_PASSWORD=\"\" DB_DATABASE=\"myapp_test\" DBOPTIONS_DIALECT=\"mysql\" DBOPTIONS_LOGGING=false SESSION_SECRET=\"secret\" ALLOWED_USERS=\"travis:travis\" ALLOWED_DOMAINS=\"http://localhost:3001 http://localhost:3002\" LOGINAPI=\"http://travis:travis@localhost:3000\" SUPPORTED_LANGS='[\"en-US\"]'"
+- PORT=3000 APP_HOSTNAME="http://localhost:3000" DB_USERNAME="travis" DB_PASSWORD=""
+  DB_DATABASE="myapp_test" DBOPTIONS_DIALECT="mysql" DBOPTIONS_LOGGING=false SESSION_SECRET="secret"
+  ALLOWED_USERS="travis:travis" ALLOWED_DOMAINS="http://localhost:3001 http://localhost:3002"
+  LOGINAPI="http://travis:travis@localhost:3000" SUPPORTED_LANGS='["en-US"]'
 language: node_js
 node_js:
-  - "0.10"
+- '0.10'
+deploy:
+  provider: heroku
+  api_key:
+    secure: NGP8um/WNZb6D8Xv6nyXUnyAdBpke64GkoQvFG3WJPeOBl9wbwsTulsOyRCkICDLZu6DX+3FLZ/R3IAyijD5Ad/0yLRMqR8TCmZA8EGrnaMKInZKxjcv/wKiBxTfsj4uhrFiqRYhngL1TZlT3RRdKoVzGDc3BgzgkXwVAJmeve0=
+  app: webmaker-dev-login
+  on:
+    repo: mozilla/login.webmaker.org
