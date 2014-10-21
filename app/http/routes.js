@@ -1,4 +1,4 @@
-module.exports = function( http, userHandle, webmakerAuth ){
+module.exports = function( http, modelsController, webmakerAuth ){
   var qs = require( "querystring" ),
       express = require( "express" ),
       basicAuth = express.basicAuth,
@@ -6,7 +6,7 @@ module.exports = function( http, userHandle, webmakerAuth ){
       env = require( "../../config/environment" ),
       routes = {
         site: require( "./controllers/site" ),
-        user: require( "./controllers/user" )( userHandle ),
+        user: require( "./controllers/user" )( modelsController ),
         user2: require( "./controllers/user2" ),
         user3: require( "./controllers/user3" )
       },
@@ -32,8 +32,8 @@ module.exports = function( http, userHandle, webmakerAuth ){
 
   // Persona authentication (non-admin users)
   var checkPersona = function( req, res, next ) {
-    if ( req.session.email ) {
-      req.params[0] = req.session.email;
+    if ( req.session.user ) {
+      req.params[0] = req.session.user.email;
       next();
     } else {
       res.send( "You are not signed in :(" );
@@ -100,13 +100,16 @@ module.exports = function( http, userHandle, webmakerAuth ){
   http.options('/create', cors);
   http.options('/check-username', cors);
 
+  http.post('/auth/v2/enable-passwords', csrf, checkPersona, webmakerAuth.handlers.enablePasswords);
+  http.post('/auth/v2/remove-password', csrf, checkPersona, webmakerAuth.handlers.removePassword);
+
   http.post(
     "/api/user/authenticate",
     middleware.personaFilter( audience_whitelist ),
     middleware.personaVerifier,
-    routes.user2.authenticateUser( userHandle ),
-    middleware.updateUser( userHandle ),
-    middleware.engagedWithReferrerCode( userHandle, {"userStatus": "existing"} ),
+    routes.user2.authenticateUser( modelsController ),
+    middleware.updateUser( modelsController ),
+    middleware.engagedWithReferrerCode( modelsController, {"userStatus": "existing"} ),
     middleware.filterUserAttributesForSession,
     routes.user2.outputUser
   );
@@ -115,8 +118,8 @@ module.exports = function( http, userHandle, webmakerAuth ){
     middleware.audienceFilter( audience_whitelist ),
     middleware.personaFilter(),
     middleware.personaVerifier,
-    routes.user2.createUser( userHandle ),
-    middleware.engagedWithReferrerCode( userHandle, {"userStatus": "new"} ),
+    routes.user2.createUser( modelsController ),
+    middleware.engagedWithReferrerCode( modelsController, {"userStatus": "new"} ),
     middleware.filterUserAttributesForSession,
     routes.user2.outputUser
   );
@@ -124,54 +127,116 @@ module.exports = function( http, userHandle, webmakerAuth ){
   http.put(
     "/api/user/email/:email",
     authMiddleware,
-    routes.user2.updateUserWithBody( userHandle ),
+    routes.user2.updateUserWithBody( modelsController ),
     routes.user2.outputUser
   );
   http.patch(
     "/api/user/email/:email",
     authMiddleware,
-    routes.user2.updateUserWithBody( userHandle ),
+    routes.user2.updateUserWithBody( modelsController ),
     routes.user2.outputUser
   );
   http.patch(
     "/api/user/id/:id",
     authMiddleware,
-    routes.user2.updateUserWithBody( userHandle ),
+    routes.user2.updateUserWithBody( modelsController ),
     routes.user2.outputUser
   );
   http.patch(
     "/api/user/username/:username",
     authMiddleware,
-    routes.user2.updateUserWithBody( userHandle ),
+    routes.user2.updateUserWithBody( modelsController ),
     routes.user2.outputUser
   );
   http.post(
     "/api/user/exists",
-    routes.user2.exists( userHandle )
+    routes.user2.exists( modelsController )
   );
   http.post(
     "/api/v2/user/create",
     middleware.audienceFilter( audience_whitelist ),
-    routes.user2.createUser( userHandle ),
+    routes.user2.createUser( modelsController ),
+    middleware.engagedWithReferrerCode( modelsController, {"userStatus": "new"} ),
+    middleware.verifyPasswordStrength(true),
+    routes.user3.setPassword( modelsController ),
     middleware.filterUserAttributesForSession,
     routes.user2.outputUser
   );
   http.post(
     "/api/v2/user/request",
-    routes.user3.generateLoginTokenForUser( userHandle )
+    authMiddleware,
+    routes.user3.setUser( modelsController ),
+    routes.user3.doesUserHavePassword( false ),
+    routes.user3.generateLoginTokenForUser( modelsController )
   );
   http.post(
     "/api/v2/user/authenticateToken",
-    routes.user3.verifyTokenForUser( userHandle ),
-    routes.user3.updateUser( userHandle ),
+    authMiddleware,
+    routes.user3.setUser( modelsController ),
+    routes.user3.verifyTokenForUser( modelsController ),
+    routes.user3.updateUser( modelsController ),
+    middleware.engagedWithReferrerCode( modelsController, {"userStatus": "existing"} ),
     middleware.filterUserAttributesForSession,
     routes.user2.outputUser
   );
+  http.post(
+    "/api/v2/user/verify-password",
+    authMiddleware,
+    routes.user3.setUser( modelsController ),
+    routes.user3.doesUserHavePassword( true ),
+    routes.user3.verifyPassword( modelsController ),
+    routes.user3.updateUser( modelsController ),
+    middleware.engagedWithReferrerCode( modelsController, {"userStatus": "existing"} ),
+    middleware.filterUserAttributesForSession,
+    routes.user2.outputUser
+  );
+  http.post(
+    "/api/v2/user/reset-password",
+    authMiddleware,
+    routes.user3.setUser( modelsController ),
+    routes.user3.doesUserHavePassword( true ),
+    middleware.verifyPasswordStrength(false),
+    routes.user3.verifyResetCode( modelsController ),
+    routes.user3.resetPassword( modelsController )
+  );
+  http.post(
+    "/api/v2/user/request-reset-code",
+    authMiddleware,
+    routes.user3.setUser( modelsController ),
+    routes.user3.doesUserHavePassword( true ),
+    routes.user3.invalidateActiveResets( modelsController ),
+    routes.user3.createResetCode( modelsController)
+  );
+  http.post(
+    "/api/v2/user/enable-passwords",
+    authMiddleware,
+    routes.user3.setUser( modelsController ),
+    routes.user3.doesUserHavePassword( false ),
+    middleware.verifyPasswordStrength( false ),
+    routes.user3.setPassword( modelsController ),
+    middleware.filterUserAttributesForSession,
+    routes.user2.outputUser
+  );
+  http.post(
+    "/api/v2/user/remove-password",
+    authMiddleware,
+    routes.user3.setUser( modelsController ),
+    routes.user3.doesUserHavePassword( true ),
+    routes.user3.removePassword( modelsController ),
+    middleware.filterUserAttributesForSession,
+    routes.user2.outputUser
+  );
+  http.post(
+    '/api/v2/user/exists',
+    authMiddleware,
+    routes.user3.setUser( modelsController ),
+    routes.user3.outputUser
+  );
 
   // Parameters
-  http.param("email", middleware.fetchUserBy( "Email", userHandle ));
-  http.param("id", middleware.fetchUserBy( "Id", userHandle ));
-  http.param("username", middleware.fetchUserBy( "Username", userHandle ));
+  http.param("email", middleware.fetchUserBy( "Email", modelsController ));
+  http.param("id", middleware.fetchUserBy( "Id", modelsController ));
+  http.param("username", middleware.fetchUserBy( "Username", modelsController ));
 
   // Devops
   http.get( "/healthcheck", routes.site.healthcheck );

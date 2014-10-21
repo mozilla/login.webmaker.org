@@ -23,7 +23,7 @@ var env         = require( "../../config/environment" );
     nunjucks    = require( "nunjucks" ),
     path        = require( "path" ),
     route       = require( "./routes" ),
-    userHandle  = require( "../db" )( env ).User;
+    Models  = require( "../db" )( env ).Models;
 
 var http = express(),
     nunjucksEnv = new nunjucks.Environment([
@@ -38,6 +38,7 @@ var http = express(),
 var webmakerAuth = new WebmakerAuth({
   loginURL: env.get("APP_HOSTNAME"),
   authLoginURL: env.get("LOGINAPI"),
+  loginHost: env.get("APP_HOSTNAME"),
   secretKey: env.get("SESSION_SECRET"),
   forceSSL: env.get("FORCE_SSL"),
   domain: env.get("COOKIE_DOMAIN")
@@ -125,7 +126,7 @@ http.configure( "development", function(){
   http.use( express.errorHandler() );
 });
 
-route( http, userHandle, webmakerAuth );
+route( http, Models, webmakerAuth );
 
 http.use( express.static( path.join( __dirname, "public" ) ) );
 http.use( "/bower", express.static( path.join(__dirname, "../../bower_components" )));

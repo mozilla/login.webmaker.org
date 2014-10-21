@@ -19,7 +19,7 @@ module.exports = function(env) {
   }
 
   // Controllers
-  var UserCtrl = require('./user')(sequelize);
+  var modelControllers = require('./models')(sequelize);
 
   // Sync
   sequelize.sync().complete(function(err) {
@@ -33,7 +33,7 @@ module.exports = function(env) {
 
   // Export models
   return {
-    User: UserCtrl
+    Models: modelControllers
   };
 
 };

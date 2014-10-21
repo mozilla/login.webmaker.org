@@ -4,7 +4,7 @@ var assert = require( "assert" ),
     request = require( "request" ),
     now = Date.now(),
     env = require( "../config/environment" ),
-    UserModel = require( "../app/db" )( env ).User,
+    ModelController = require( "../app/db" )( env ).Models,
     child,
     hostAuth = 'http://' + env.get( "ALLOWED_USERS" ).split( "," )[0] + "@" + env.get( "APP_HOSTNAME" ).split( "//" )[1];
 
@@ -129,7 +129,7 @@ var userTracer = (function() {
       newUsers.forEach( function ( email ) {
         // Delete each user in turn, then kill the process and
         // run the callback (if present)
-        UserModel.deleteUser( email, function( err ) {
+        ModelController.deleteUser( email, function( err ) {
           if ( !--userCount ) {
             callback();
           }
@@ -168,7 +168,7 @@ describe( 'PUT /user/:id (update)', function() {
   it( "should update a user when new, valid, username is passed", function ( done ) {
     var user = unique();
     // Create a user, then update it with a unique username
-    UserModel.createUser(user, function(err) {
+    ModelController.createUser(user, function(err) {
       assert.ok( !err );
       userTracer.watchUser(user.email);
 
@@ -186,7 +186,7 @@ describe( 'PUT /user/:id (update)', function() {
     var user = unique();
 
     // Create user
-    UserModel.createUser(user, function(err) {
+    ModelController.createUser(user, function(err) {
       assert.ok( !err );
       userTracer.watchUser(user.email);
       user.username = "damn";
@@ -200,7 +200,7 @@ describe( 'PUT /user/:id (update)', function() {
     var user = unique();
 
     // Create user
-    UserModel.createUser(user, function(err) {
+    ModelController.createUser(user, function(err) {
       assert.ok( !err );
       userTracer.watchUser(user.email);
       var invalidEmail = "invalid";
@@ -272,7 +272,7 @@ describe( 'GET /user/email/*', function() {
     var user = unique();
 
     // Create a user, then attempt to retrieve it
-    UserModel.createUser(user, function(err) {
+    ModelController.createUser(user, function(err) {
       assert.ok( !err );
       userTracer.watchUser(user.email);
       apiHelper( 'get', hostAuth + "/user/email/" + user.email, 200, {}, done, getAssertions );
@@ -303,7 +303,7 @@ describe( 'GET /user/id/*', function() {
     var user = unique();
 
     // Create a user, then attempt to retrieve it
-    UserModel.createUser(user, function(err, newUser) {
+    ModelController.createUser(user, function(err, newUser) {
       assert.ok( !err );
       userTracer.watchUser(user.email);
       apiHelper( 'get', hostAuth + "/user/id/" + newUser.id, 200, {}, done, getAssertions );
@@ -334,7 +334,7 @@ describe( 'GET /user/username/*', function() {
     var user = unique();
 
     // Create a user, then attempt to retrieve it
-    UserModel.createUser(user, function(err) {
+    ModelController.createUser(user, function(err) {
       assert.ok( !err );
       userTracer.watchUser(user.email);
       apiHelper( 'get', hostAuth + "/user/username/" + user.username, 200, {}, done, getAssertions );
@@ -366,7 +366,7 @@ describe( 'basicauth', function() {
     var user = unique();
 
     // Create a user, then attempt to check it
-    UserModel.createUser(user, function(err) {
+    ModelController.createUser(user, function(err) {
       assert.ok( !err );
       userTracer.watchUser(user.email);
       apiHelper( 'get', invalidAuthAPI + user.email, 401, {}, done);
@@ -379,7 +379,7 @@ describe( 'GET /usernames', function() {
   var createUsersArray = [];
 
   function createUniqueUser( callback ) {
-    UserModel.createUser(unique(), function(err, newUser) {
+    ModelController.createUser(unique(), function(err, newUser) {
       assert.ok( !err );
       userTracer.watchUser(newUser.email);
 

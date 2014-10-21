@@ -104,7 +104,7 @@ module.exports.engagedWithReferrerCode = function(User, options) {
     // the referrer value is only passed in if the cookie exists client-side
     if (req.body.user && req.body.user.referrer) {
 
-      User.engagedWithReferrerCode( res.locals.email, req.body.user.referrer, options.userStatus,
+      return User.engagedWithReferrerCode( res.locals.user.email, req.body.user.referrer, options.userStatus,
         function( err ) {
         //TODO do something useful if this error happens
         process.nextTick(next);
@@ -112,5 +112,41 @@ module.exports.engagedWithReferrerCode = function(User, options) {
     }
 
     process.nextTick(next);
+  };
+};
+
+module.exports.verifyPasswordStrength = function(nextIfNone) {
+  var PassTest = require("pass-test");
+
+  var passTest = new PassTest({
+    specialChars: {
+      enabled: false
+    },
+    userValues: {
+      enabled: true
+    }
+  });
+
+  return function(req, res, next) {
+    var password = req.body.password || req.body.newPassword;
+    var user = res.locals.user;
+
+    if ( !password ) {
+      if ( nextIfNone ) {
+        return process.nextTick(next);
+      }
+
+      return res.json(400, {
+        error: "Missing password param"
+      });
+    }
+
+    var testResults = passTest.test(password, [ user.username, user.email ]);
+
+    if ( testResults.passed ) {
+      return process.nextTick(next);
+    }
+
+    res.json(400, testResults);
   };
 };

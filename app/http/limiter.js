@@ -25,20 +25,71 @@ module.exports = function( app ) {
 
   var limiter = require( "express-limiter" )( app, redisClient );
 
+  // key requests on the client IP and user uid
+  var lookupKeys = ["headers.x-forwarded-for", "body.uid"];
+
+  // Due to: https://github.com/ded/express-limiter/issues/3 you have to add 1
+  // to the total requests you want to allow. upstream patch filed.
+
+  limiter({
+  // Throttle create-account requests to 250 per hour / IP
+    path: "/api/v2/user/create",
+    method: "post",
+    lookup: "headers.x-forwarded-for",
+    total: 251,
+    expire: 1000 * 60 * 60
+  });
+
+  // Throttle OTP login requests to 1 per 10 seconds
   limiter({
     path: "/api/v2/user/request",
     method: "post",
-    lookup: ["headers.x-forwarded-for", "body.email"],
-    // one request per minute - https://github.com/ded/express-limiter/issues/3
+    lookup: lookupKeys,
     total: 2,
-    expire: 1000 * 60
+    expire: 1000 * 10
   });
 
+  // Throttle token authentication attempts to 10 per 10 seconds
   limiter({
     path: "/api/v2/user/authenticateToken",
     method: "post",
-    lookup: ["headers.x-forwarded-for", "body.email"],
-    // ten requests per ten seconds - https://github.com/ded/express-limiter/issues/3
+    lookup: lookupKeys,
+    total: 11,
+    expire: 1000 * 10
+  });
+
+  // Throttle password authentication attempts to 10 per 10 seconds
+  limiter({
+    path: "/api/v2/user/verify-password",
+    method: "post",
+    lookup: lookupKeys,
+    total: 11,
+    expire: 1000 * 10
+  });
+
+  // Throttle reset requests to one per hour
+  limiter({
+    path: "/api/v2/user/reset-request-code",
+    method: "post",
+    lookup: lookupKeys,
+    total: 2,
+    expire: 1000 * 60 * 60
+  });
+
+  // Throttle reset password attempts to 10 per 10 seconds
+  limiter({
+    path: "/api/v2/user/reset-password",
+    method: "post",
+    lookup: lookupKeys,
+    total: 11,
+    expire: 1000 * 10
+  });
+
+  // Throttle remove password attempts to 10 per 10 seconds
+  limiter({
+    path: "/api/v2/user/reset-password",
+    method: "post",
+    lookup: lookupKeys,
     total: 11,
     expire: 1000 * 10
   });

@@ -59,6 +59,10 @@ module.exports = function( sequelize, DataTypes ) {
     lastLoggedIn: {
       type: "TIMESTAMP NULL DEFAULT NULL"
     },
+    usePasswordLogin: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
     isAdmin: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
@@ -194,6 +198,7 @@ module.exports = function( sequelize, DataTypes ) {
           // subscribeToWebmakerList: this.subscribeToWebmakerList,
           // updatedAt: this.updatedAt,
           username: this.username
+          // usePasswordLogin: this.usePasswordLogin
           // wasMigrated: this.wasMigrated
         };
       }
