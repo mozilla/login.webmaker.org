@@ -6,10 +6,14 @@
   <meta name="csrf-token" content="{{ csrf }}">
   <title>Webmaker</title>
   <link rel="stylesheet" href="/bower/font-awesome/css/font-awesome.min.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/bower/makerstrap/dist/makerstrap.min.css" rel="stylesheet">
+  <link href="/bower/webmaker-login-ux/dist/css/webmakerLogin.css" rel="stylesheet">
   <link rel="stylesheet" href="/css/account.{{ localeInfo.direction }}.css">
+  <script src="/bower/webmaker-login-ux/dist/webmakerLogin.js"></script>
 </head>
 <body>
-  <div id="webmaker-nav">
+<div id="webmaker-nav">
   <!-- the webmaker bar -->
   <nav class="webmaker-nav-container">
     <a id="logo" href="https://webmaker.org/{{localeInfo.lang}}"><img src="/img/webmaker-logo.png" alt="Mozilla Webmaker" /></a>
@@ -18,15 +22,12 @@
         {{ gettext('Hi') }} <span id="identity" class="user-name-container"></span>
       </li>
       <li>
-        <div class="webmaker-login persona-button" style="display: none;">
-          <span dir="{{localeInfo.direction}}" class="text">{{ gettext("Sign in") }}</span><span dir="{{localeInfo.direction}}" class="tip"></span>
-        </div>
-        <span class="webmaker-logout" style="display: none;">{{ gettext("Sign out") }}</span>
+        <button class="btn btn-primary join-webmaker">{{ gettext('Join Webmaker') }}</button>
+        <button class="btn btn-secondary-nav webmaker-signin">{{ gettext('Sign in') }}</button>
+        <span class="webmaker-logout">{{ gettext('Sign out') }}</span>
       </li>
     </ul>
   </nav>
-  <div class="my-projects-container">
-  </div>
 </div>
 <div id="logged-out-message" class="wm-logged-out-panel" style="display: none;">
   <div class="ui-wrapper ui-body">
@@ -52,6 +53,44 @@
               <li><span class="field-label">{{ gettext('Username') }}</span><span class="wm-username"></span></li>
               <li><span class="field-label">{{ gettext('My profile') }}</span><span class="wm-page"></span></li>
               <li><span class="field-label">{{ gettext('Email') }}</span><span class="wm-email"></span></li>
+              <li><span class="field-label">{{ gettext('Security') }}</span>
+                <ul class="wm-security-pref-list no-list-styling">
+                  <li class="webmaker-login-message"><i class="fa fa-lock"></i> {{ gettext('Using Webmaker Login') }}</li>
+                  <li class="custom-password-message"><i class="fa fa-lock"></i> {{ gettext('Using Custom Password') }}</li>
+                  <li class="subtext webmaker-login-subtext">{{ gettext('About Webmaker Login') }}</li>
+                  <li class="subtext password-login-subtext">{{ gettext('About Password Login') }}</li>
+                  <li class="set-password"><a href="#">{{ gettext('Set a Permanent Password') }}</a></li>
+                  <li class="disable-password">
+                    <a href="#">{{ gettext('Use Webmaker Login') }}</a>
+                    <input type="hidden" name="confirmDeletePassword" value="{{ gettext('Switch to Webmaker Login') }}">
+                  </li>
+                  <li class="remove-password-failed"><span>{{ gettext("Failed to remove password") }}</span></li>
+                  <!-- Show/hide this ul to display password fields and submit -->
+                  <li>
+                    <ul class="create-password-form no-list-styling" style="display: none" class="no-list-styling">
+                      <li>
+                        <div class="form-group">
+                          <p class="password-label">{{ gettext('Minimum password requirements') }}</p>
+                          <ul class="list-unstyled password-strength">
+                            <li id="eight-chars">{{ gettext('At least 8 characters') }}</li>
+                            <li id="one-each-case">{{ gettext('At least 1 upper and lower case character') }}</li>
+                            <li id="one-number">{{ gettext('At least 1 number') }}</li>
+                          </ul>
+                        </div>
+                      </li>
+                      <li><input class="password-input-main" type="password" class="form-control account-form" placeholder="{{ gettext('Enter Password') }}"/></li>
+                      <li><input class="password-input-confirm" type="password" class="form-control account-form" placeholder="{{ gettext('Confirm Password') }}"/></li>
+                      <li>
+                        <button class="btn btn-primary set-password-button">{{ gettext('Set Password') }}</button>
+                        <input type="hidden" name="confirmSetPassword" value="{{ gettext('Switch to custom password') }}">
+                      </li>
+                      <li class="set-password-failed"><span>{{ gettext("Failed to set password") }}</span></li>
+                    </ul>
+                  </li>
+                  <!--  -->
+                </ul>
+              </li>
+
               <li><span class="field-label">{{ gettext('Send me emails when') }}:</span>
                   <ul class="wm-email-pref-list no-list-styling">
                     <li>
@@ -68,13 +107,16 @@
                     </li>
                   </ul>
               </li>
-              <li><span class="field-label">{{ gettext("Language") }}</span><span class="wm-lang"></span>
-                <select name="languagePref" id="languagePref" data-supported="{{languages}}">
+              <li><span class="field-label">{{ gettext("Language") }}</span>
+                <span class="wm-lang">
+                  <select name="languagePref" id="languagePref" data-supported="{{languages}}">
                   {% for locale in languages %}<option value="{{ locale }}"{%
                   if locale == localeInfo.lang %} selected="selected"{% endif
                   %}>{{ languageEnglishName(locale) }} - {{ languageNameFor(locale) }}</option>{% endfor %}
                  </select>
+                </span>
               </li>
+              <li><span class="field-label">Account</span><span class="wm-delete"><a id="delete-account">{{ gettext('Delete account') }}</a></span></li>
               <li>
                 <span class="field-label"></span>
                 <span class="email-prefs prefs-saved">{{ gettext("Your preferences have been saved") }}</span>
@@ -82,7 +124,6 @@
               </li>
             </ul>
 
-            <p><a id="delete-account">{{ gettext('Delete account?') }}</a></p>
           </div>
         </div>
       </div>
@@ -117,8 +158,5 @@
     })();
   </script>
   {% endif %}
-
-  {% include "/webmaker-auth-client/create-user/create-user-form.html" %}
-
 </body>
 </html>

@@ -2,25 +2,20 @@
     baseUrl: "/js",
     paths: {
       "analytics": "/bower/webmaker-analytics/analytics",
-      "jquery": "../bower/jquery/jquery.min",
-      "webmaker-auth-client": "/bower/webmaker-auth-client/dist/webmaker-auth-client.min",
-      "languages": "/bower/webmaker-language-picker/js/languages",
+      "jquery": "/bower/jquery/jquery.min",
       "list": "/bower/listjs/dist/list.min",
       "fuzzySearch": "/bower/list.fuzzysearch.js/dist/list.fuzzysearch.min",
-      "selectize": "../bower/selectize/dist/js/standalone/selectize.min",
-      "text": "../bower/text/text"
+      "text": "/bower/text/text",
+      "selectize": "../bower/selectize/dist/js/standalone/selectize.min"
     }
   });
-  require([ "jquery", "languages", "webmaker-auth-client", "selectize" ], function ($, Languages, WebmakerAuthClient, Selectize) {
-    var langSelector = document.querySelector('#lang-picker'),
-        csrf_token = $( "meta[name='csrf-token']" ).attr( "content" );
+  require([ "jquery", "selectize"], function ($, selectize) {
+    var csrf_token = $( "meta[name='csrf-token']" ).attr( "content" );
 
-    var webmakerAuthClient = new WebmakerAuthClient({
-      csrfToken:csrf_token
+    var webmakerLogin = new WebmakerLogin({
+      csrfToken: csrf_token,
+      showCTA: true
     });
-
-    //initialized language selectize -- used in signup for webmaker-auth-client
-    $('#supportedLocales').selectize();
 
     // CRSF Protection
     $.ajaxSetup({
@@ -29,8 +24,14 @@
       }
     });
 
-    var loginEl = $('.webmaker-login');
+    var signupEl = $('.join-webmaker');
+    var loginEl = $('.webmaker-signin');
     var logoutEl = $('.webmaker-logout');
+    var userInfoEl = $('.user');
+    var passwordLoginUsed = false;
+
+    $( ".set-password-failed" ).hide();
+    $( ".remove-password-failed" ).hide();
 
     function toggleUserData(userData) {
       var placeHolder = $('#identity');
@@ -45,10 +46,44 @@
       }
     }
 
-    function onLogin( user ) {
+    function showPasswordLoginUI() {
+      if ( passwordLoginUsed ) {
+        return;
+      }
+      passwordLoginUsed = true;
+      $( ".webmaker-login-message" ).hide();
+      $( ".webmaker-login-subtext" ).hide();
+      $( ".set-password" ).hide();
+      $( ".create-password-form" ).hide();
+
+      $( ".custom-password-message" ).fadeIn();
+      $( ".password-login-subtext" ).fadeIn();
+      $( ".disable-password" ).fadeIn();
+    }
+
+    function showWebmakerLoginUI() {
+      if ( !passwordLoginUsed ) {
+        return;
+      }
+      passwordLoginUsed = false;
+      $( ".custom-password-message" ).hide();
+      $( ".password-login-subtext" ).hide();
+      $( ".disable-password" ).hide();
+      $( ".create-password-form" ).hide();
+
+      $( ".webmaker-login-message" ).fadeIn();
+      $( ".webmaker-login-subtext" ).fadeIn();
+      $( ".set-password" ).fadeIn();
+    }
+
+    showPasswordLoginUI();
+
+    function onLogin( user, verified ) {
       $('#webmaker-nav').addClass('loggedin');
       toggleUserData(user);
+      signupEl.hide();
       loginEl.hide();
+      userInfoEl.show();
       logoutEl.show();
 
       $( "#logout-message" ).hide();
@@ -62,25 +97,49 @@
       $( "#sendEventCreationEmailsCheckbox" ).prop( "checked", user.sendEventCreationEmails );
       $( "#sendMentorRequestEmailsCheckbox" ).prop( "checked", user.sendMentorRequestEmails );
       $( "#sendCoorganizerNotificationEmailsCheckbox" ).prop( "checked", user.sendCoorganizerNotificationEmails );
+
+      $.ajax({
+        type: "POST",
+        url: "/auth/v2/uid-exists",
+        data: JSON.stringify({
+          uid: user.email
+        }),
+        contentType: "application/json",
+        success: function(data) {
+          if ( data.usePasswordLogin ) {
+            showPasswordLoginUI();
+          } else {
+            showWebmakerLoginUI();
+          }
+        }
+      });
     }
 
     function onLogout() {
       $('#webmaker-nav').removeClass('loggedin');
       toggleUserData();
+      signupEl.show();
       loginEl.show();
+      userInfoEl.hide();
       logoutEl.hide();
       $( ".wm-user-panel" ).hide();
       $( ".wm-logged-out-panel" ).fadeIn();
       $( "#confirm-delete" ).hide();
     }
 
-    webmakerAuthClient.on( "login", onLogin );
-    webmakerAuthClient.on( "logout", onLogout );
+    webmakerLogin.on( "login", onLogin );
+    webmakerLogin.on( "logout", onLogout );
+    webmakerLogin.on( "verified", onLogin );
 
-    loginEl.click( webmakerAuthClient.login );
-    logoutEl.click( webmakerAuthClient.logout );
-
-    webmakerAuthClient.verify();
+    signupEl.click(function() {
+      webmakerLogin.create();
+    });
+    loginEl.click(function() {
+      webmakerLogin.login();
+    });
+    logoutEl.click(function() {
+      webmakerLogin.logout();
+    });
 
     $( "#delete-account" ).click(function( e ){
       e.preventDefault();
@@ -90,19 +149,19 @@
       if ( $( "#email-check" ).val() === $( ".wm-email" ).text() ) {
         $.post( "/account/delete", function( data ) {
           if ( !data.error ) {
-            webmakerAuthClient.off( "logout", onLogout );
-            webmakerAuthClient.on( "logout", function onDelete() {
+            webmakerLogin.off( "logout", onLogout );
+            webmakerLogin.on( "logout", function onDelete() {
               setTimeout(function() {
                 window.location.href = "{{ WEBMAKERORG }}?userDel=1";
               }, 2000);
             });
-            webmakerAuthClient.on( "error", function onError( error ) {
-              webmakerAuthClient.off( "error", onError );
-              webmakerAuthClient.off( "logout", onDelete );
-              webmakerAuthClient.on( "logout", onLogout );
+            webmakerLogin.on( "error", function onError( error ) {
+              webmakerLogin.off( "error", onError );
+              webmakerLogin.off( "logout", onDelete );
+              webmakerLogin.on( "logout", onLogout );
               alert( error );
             });
-            webmakerAuthClient.logout();
+            webmakerLogin.logout();
           }
         });
       } else {
@@ -173,6 +232,115 @@
           $( ".email-prefs.prefs-error" ).fadeIn().delay( 1000 ).fadeOut();
         }
       });
+    });
+
+    $( ".set-password" ).click(function(e) {
+      e.preventDefault();
+      $( ".create-password-form" ).fadeIn();
+    });
+
+    var passInput = $( ".password-input-main" ),
+        confirmInput = $( ".password-input-confirm" ),
+        eightChars = $("#eight-chars"),
+        oneEachCase = $("#one-each-case"),
+        oneNumber = $("#one-number")
+        setPasswordBtn = $( ".set-password-button" );
+
+    function validatePassword(blurEvent) {
+      var val = passInput.val();
+
+      valid = true;
+
+      if ( val.length < 8 ) {
+        valid = false;
+        eightChars.addClass('invalid');
+      } else {
+        eightChars.removeClass('invalid');
+        eightChars.addClass(blurEvent ? 'valid' : '');
+      }
+
+      if ( val.match(/[a-z]+/) == null || val.match(/[A-Z]+/) === null ) {
+        valid = false;
+        oneEachCase.addClass('invalid');
+      } else {
+        oneEachCase.removeClass('invalid');
+        oneEachCase.addClass(blurEvent ? 'valid' : '');
+      }
+
+      if ( val.match(/\d+/) === null ) {
+        valid = false;
+        oneNumber.addClass('invalid');
+      } else {
+        oneNumber.removeClass('invalid');
+        oneNumber.addClass(blurEvent ? 'valid' : '');
+      }
+
+      if ( !valid || confirmInput.val() !== passInput.val() ) {
+        setPasswordBtn.prop("disabled", true);
+      } else {
+        setPasswordBtn.prop("disabled", false);
+      }
+    }
+
+    passInput.on( "input", function() {
+      validatePassword(false);
+    });
+
+    passInput.blur(function() {
+      validatePassword(true);
+    });
+
+    confirmInput.on( "input", function() {
+      validatePassword(true);
+    });
+
+    setPasswordBtn.click(function(e) {
+      var password = $( ".password-input-main" ).val();
+
+      // use localized confirmation message
+      var confirm = window.confirm($( "input[name=confirmSetPassword]" ).val());
+
+      if ( confirm ) {
+        $.ajax({
+          type: "POST",
+          url: "/auth/v2/enable-passwords",
+          data: JSON.stringify({
+            password: password
+          }),
+          contentType: "application/json",
+          success: function() {
+            $( ".set-password-failed" ).hide();
+            showPasswordLoginUI();
+          },
+          error: function() {
+            $( ".set-password-failed" ).fadeIn();
+          }
+        });
+      } else {
+        showWebmakerLoginUI();
+      }
+    });
+
+    $( ".disable-password" ).click(function(e) {
+      // use localized confirmation message
+      var confirm = window.confirm($( "input[name=confirmDeletePassword]" ).attr("value"));
+
+      if ( confirm ) {
+        $.ajax({
+          type: "POST",
+          url: "/auth/v2/remove-password",
+          contentType: "application/json",
+          success: function() {
+            $( ".remove-password-failed" ).hide();
+            showPasswordLoginUI();
+          },
+          error: function() {
+            $( ".remove-password-failed" ).fadeIn();
+          }
+        });
+      } else {
+        showPasswordLoginUI();
+      }
     });
 
     $("#languagePref").selectize({

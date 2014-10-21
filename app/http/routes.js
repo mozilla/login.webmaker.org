@@ -101,12 +101,24 @@ module.exports = function( http, modelsController, webmakerAuth ){
   http.post('/auth/v2/request-reset-code', cors, webmakerAuth.handlers.requestResetCode);
   http.post('/auth/v2/reset-password', cors, webmakerAuth.handlers.resetPassword);
 
+  http.post('/auth/v2/enable-passwords', csrf, checkPersona, webmakerAuth.handlers.enablePasswords);
+  http.post('/auth/v2/remove-password', csrf, checkPersona, webmakerAuth.handlers.removePassword);
+
   // Needed for all options requests via CORS
   http.options('/verify', cors);
   http.options('/authenticate', cors);
   http.options('/logout', cors);
   http.options('/create', cors);
   http.options('/check-username', cors);
+  http.options('/auth/v2/create', cors);
+  http.options('/auth/v2/uid-exists', cors);
+  http.options('/auth/v2/request', cors);
+  http.options('/auth/v2/authenticateToken', cors);
+  http.options('/auth/v2/verify-password', cors);
+  http.options('/auth/v2/request-reset-code', cors);
+  http.options('/auth/v2/reset-password', cors);
+  http.options('/auth/v2/enable-passwords', cors);
+  http.options('/auth/v2/remove-password', cors);
 
   http.options('/auth/v2/create', cors);
   http.options('/auth/v2/uid-exists', cors);

@@ -88,11 +88,6 @@ http.configure(function(){
     translation_directory: path.resolve( __dirname, "../../locale" )
   }));
 
-  var authLocaleJSON = require("../../bower_components/webmaker-auth-client/locale/en_US/create-user-form.json");
-  i18n.addLocaleObject({
-    "en-US": authLocaleJSON
-  }, function (result) {});
-
   http.locals({
     // audience and webmakerorg are duplicated because of i18n
     AUDIENCE: env.get("WEBMAKERORG"),

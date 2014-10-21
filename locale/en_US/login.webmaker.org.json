@@ -23,5 +23,19 @@
   "Login above to access your account information": "Login above to access your account information",
   "Your preferences failed to save": "Your preferences failed to save",
   "Your preferences have been saved": "Your preferences have been saved",
-  "Your user account was deleted!": "Your user account was deleted!"
+  "Your user account was deleted!": "Your user account was deleted!",
+  "Security": "Security",
+  "Using Webmaker Login": "You are currently using Webmaker Login",
+  "About Webmaker Login": "When you sign in, we will send you an email token to verify your identity, no password needed!",
+  "Set a Permanent Password": "Set a permanent password instead",
+  "Set Password": "Set Password",
+  "Enter Password": "Enter Password",
+  "Confirm Password": "Confirm Password",
+  "Using Custom Password": "You have set a custom password",
+  "Use Webmaker Login": "Switch to Webmaker Login",
+  "About Password Login": "Switch to Webmaker Login and forget the hassle of having to remember your password!",
+  "Switch to Webmaker Login": "Switch to Webmaker Login?",
+  "Switch to custom password": "Switch to a custom password?",
+  "Failed to set password": "There was an error setting your password, please try again.",
+  "Failed to remove password": "There was an error removing your password, please try again"
 }
