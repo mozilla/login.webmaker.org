@@ -308,6 +308,7 @@ module.exports = function (sequelize) {
       loginToken.find({
         where: {
           UserId: userObj.id,
+          token: token,
           used: false,
           createdAt: {
             gte: moment(Date.now() - TOKEN_EXPIRY_TIME).utc().format("YYYY-MM-DD HH:mm:ss Z")
@@ -315,7 +316,7 @@ module.exports = function (sequelize) {
         }
       })
       .then(function(loginToken) {
-        if (!loginToken || loginToken.token !== token) {
+        if (!loginToken) {
           return bPromise.reject({
             error:"unauthorized"
           });
