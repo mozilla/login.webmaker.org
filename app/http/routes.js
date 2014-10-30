@@ -93,12 +93,28 @@ module.exports = function( http, modelsController, webmakerAuth ){
   http.post('/create', cors, webmakerAuth.handlers.create);
   http.post('/check-username', cors, webmakerAuth.handlers.exists);
 
+  http.post('/auth/v2/create', cors, webmakerAuth.handlers.createUser);
+  http.post('/auth/v2/uid-exists', cors, webmakerAuth.handlers.uidExists);
+  http.post('/auth/v2/request', cors, webmakerAuth.handlers.request);
+  http.post('/auth/v2/authenticateToken', cors, webmakerAuth.handlers.authenticateToken);
+  http.post('/auth/v2/verify-password', cors, webmakerAuth.handlers.verifyPassword);
+  http.post('/auth/v2/request-reset-code', cors, webmakerAuth.handlers.requestResetCode);
+  http.post('/auth/v2/reset-password', cors, webmakerAuth.handlers.resetPassword);
+
   // Needed for all options requests via CORS
   http.options('/verify', cors);
   http.options('/authenticate', cors);
   http.options('/logout', cors);
   http.options('/create', cors);
   http.options('/check-username', cors);
+
+  http.options('/auth/v2/create', cors);
+  http.options('/auth/v2/uid-exists', cors);
+  http.options('/auth/v2/request', cors);
+  http.options('/auth/v2/authenticateToken', cors);
+  http.options('/auth/v2/verify-password', cors);
+  http.options('/auth/v2/request-reset-code', cors);
+  http.options('/auth/v2/reset-password', cors);
 
   http.post('/auth/v2/enable-passwords', csrf, checkPersona, webmakerAuth.handlers.enablePasswords);
   http.post('/auth/v2/remove-password', csrf, checkPersona, webmakerAuth.handlers.removePassword);
