@@ -21,7 +21,7 @@ module.exports = function( http, modelsController, webmakerAuth ){
         }
         return false;
       }),
-      allowedCorsDomains = env.get('ALLOWED_CORS_DOMAINS').split(' '),
+      allowedCorsDomains = env.get('ALLOWED_CORS_DOMAINS') ? env.get('ALLOWED_CORS_DOMAINS').split(' ') : [],
       cors = require('./cors')(allowedCorsDomains);
 
   if ( env.get("ENABLE_RATE_LIMITING") ) {
