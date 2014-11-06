@@ -149,17 +149,10 @@
       if ( $( "#email-check" ).val() === $( ".wm-email" ).text() ) {
         $.post( "/account/delete", function( data ) {
           if ( !data.error ) {
-            webmakerLogin.off( "logout", onLogout );
             webmakerLogin.on( "logout", function onDelete() {
               setTimeout(function() {
                 window.location.href = "{{ WEBMAKERORG }}?userDel=1";
-              }, 2000);
-            });
-            webmakerLogin.on( "error", function onError( error ) {
-              webmakerLogin.off( "error", onError );
-              webmakerLogin.off( "logout", onDelete );
-              webmakerLogin.on( "logout", onLogout );
-              alert( error );
+              }, 1000);
             });
             webmakerLogin.logout();
           }
