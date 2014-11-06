@@ -26,7 +26,7 @@ module.exports = function( app ) {
   var limiter = require( "express-limiter" )( app, redisClient );
 
   // key requests on the client IP and user uid
-  var lookupKeys = ["headers.x-forwarded-for", "body.uid"];
+  var lookupKeys = ["headers.x-ratelimit-ip", "body.uid"];
 
   // Due to: https://github.com/ded/express-limiter/issues/3 you have to add 1
   // to the total requests you want to allow. upstream patch filed.
@@ -35,7 +35,7 @@ module.exports = function( app ) {
   // Throttle create-account requests to 250 per hour / IP
     path: "/api/v2/user/create",
     method: "post",
-    lookup: "headers.x-forwarded-for",
+    lookup: "headers.x-ratelimit-ip",
     total: 251,
     expire: 1000 * 60 * 60
   });
@@ -69,7 +69,7 @@ module.exports = function( app ) {
 
   // Throttle reset requests to one per hour
   limiter({
-    path: "/api/v2/user/reset-request-code",
+    path: "/api/v2/user/request-reset-code",
     method: "post",
     lookup: lookupKeys,
     total: 2,
@@ -84,14 +84,4 @@ module.exports = function( app ) {
     total: 11,
     expire: 1000 * 10
   });
-
-  // Throttle remove password attempts to 10 per 10 seconds
-  limiter({
-    path: "/api/v2/user/reset-password",
-    method: "post",
-    lookup: lookupKeys,
-    total: 11,
-    expire: 1000 * 10
-  });
-
 };
