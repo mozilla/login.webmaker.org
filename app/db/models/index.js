@@ -296,7 +296,7 @@ module.exports = function (sequelize) {
           username: userObj.getDataValue("username"),
           verified: userObj.getDataValue("verified"),
           email: userObj.getDataValue("email"),
-          loginUrl: appURL + "/?uid=" + userObj.getDataValue("username") + "&token=" + savedToken.token,
+          loginUrl: appURL + "?uid=" + userObj.getDataValue("username") + "&token=" + savedToken.token,
           token: savedToken.token
         });
 
