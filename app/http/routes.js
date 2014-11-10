@@ -266,6 +266,16 @@ module.exports = function( http, modelsController, webmakerAuth ){
   http.param("id", middleware.fetchUserBy( "Id", modelsController ));
   http.param("username", middleware.fetchUserBy( "Username", modelsController ));
 
+  http.post(
+    "/api/user/username",
+    routes.user2.getUserByUsername( userHandle )
+  );
+
+  http.post(
+    "/api/user/email",
+    routes.user2.getUserByEmail( userHandle )
+  );
+
   // Devops
   http.get( "/healthcheck", routes.site.healthcheck );
 };
