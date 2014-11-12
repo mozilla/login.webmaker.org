@@ -84,7 +84,7 @@
       signupEl.hide();
       loginEl.hide();
       userInfoEl.show();
-      logoutEl.show();
+      logoutEl.removeClass('hidden');
 
       $( "#logout-message" ).hide();
       $( ".wm-logged-out-panel" ).hide();
@@ -121,7 +121,7 @@
       signupEl.show();
       loginEl.show();
       userInfoEl.hide();
-      logoutEl.hide();
+      logoutEl.addClass('hidden');
       $( ".wm-user-panel" ).hide();
       $( ".wm-logged-out-panel" ).fadeIn();
       $( "#confirm-delete" ).hide();

@@ -90,8 +90,6 @@ module.exports = function( http, modelsController, webmakerAuth ){
   http.post('/verify', cors, webmakerAuth.handlers.verify);
   http.post('/authenticate', cors, webmakerAuth.handlers.authenticate);
   http.post('/logout', cors, webmakerAuth.handlers.logout);
-  http.post('/create', cors, webmakerAuth.handlers.create);
-  http.post('/check-username', cors, webmakerAuth.handlers.exists);
 
   http.post('/auth/v2/create', cors, webmakerAuth.handlers.createUser);
   http.post('/auth/v2/uid-exists', cors, webmakerAuth.handlers.uidExists);
