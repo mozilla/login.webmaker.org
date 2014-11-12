@@ -41,7 +41,8 @@ var webmakerAuth = new WebmakerAuth({
   loginHost: env.get("APP_HOSTNAME"),
   secretKey: env.get("SESSION_SECRET"),
   forceSSL: env.get("FORCE_SSL"),
-  domain: env.get("COOKIE_DOMAIN")
+  domain: env.get("COOKIE_DOMAIN"),
+  allowCors: env.get("ALLOWED_CORS_DOMAINS") && env.get("ALLOWED_CORS_DOMAINS").split(" ")
 });
 
 nunjucksEnv.addFilter("instantiate", function(input) {
