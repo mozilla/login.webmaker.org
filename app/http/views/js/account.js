@@ -78,7 +78,7 @@
 
     showPasswordLoginUI();
 
-    function onLogin( user, verified ) {
+    function onLogin( user ) {
       $('#webmaker-nav').addClass('loggedin');
       toggleUserData(user);
       signupEl.hide();
@@ -129,7 +129,13 @@
 
     webmakerLogin.on( "login", onLogin );
     webmakerLogin.on( "logout", onLogout );
-    webmakerLogin.on( "verified", onLogin );
+    webmakerLogin.on( "verified", function(user) {
+      if (user) {
+        onLogin(user);
+      } else {
+        onLogout();
+      }
+    });
 
     signupEl.click(function() {
       webmakerLogin.create();
