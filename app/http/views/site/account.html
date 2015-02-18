@@ -112,7 +112,7 @@
                   <select name="languagePref" id="languagePref" data-supported="{{languages}}">
                   {% for locale in languages %}<option value="{{ locale }}"{%
                   if locale == localeInfo.lang %} selected="selected"{% endif
-                  %}>{{ languageEnglishName(locale) }} - {{ languageNameFor(locale) }}</option>{% endfor %}
+                  %}>{{ languageNameFor(locale) }}</option>{% endfor %}
                  </select>
                 </span>
               </li>
