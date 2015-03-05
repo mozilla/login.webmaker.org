@@ -52,7 +52,7 @@
     "sqlite3": "2.2.0"
   },
   "scripts": {
-    "test": "grunt travis --verbose && mocha --timeout 60000 --reporter spec",
+    "test": "grunt --verbose && mocha --timeout 60000 --reporter spec",
     "postinstall": "bower install",
     "download-locales": "webmaker-download-locales login"
   }
