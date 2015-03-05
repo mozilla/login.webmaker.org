@@ -1,13 +1,13 @@
-var badword = require( "badword" ),
-    defaultGravatar = encodeURIComponent("https://stuff.webmaker.org/avatars/webmaker-avatar-200x200.png"),
-    md5 = require( "MD5" ),
-    isNotBlacklisted;
+var badword = require("badword"),
+  defaultGravatar = encodeURIComponent("https://stuff.webmaker.org/avatars/webmaker-avatar-200x200.png"),
+  md5 = require("MD5"),
+  isNotBlacklisted;
 
 /**
  * Custom Validation
  */
-isNotBlacklisted = function( str ) {
-  if ( badword( str ) ) {
+isNotBlacklisted = function (str) {
+  if (badword(str)) {
     throw new Error("Contains a bad word!");
   }
 };
@@ -15,8 +15,8 @@ isNotBlacklisted = function( str ) {
 /**
  * Exports
  */
-module.exports = function( sequelize, DataTypes ) {
-  return sequelize.define( "User", {
+module.exports = function (sequelize, DataTypes) {
+  return sequelize.define("User", {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -140,7 +140,7 @@ module.exports = function( sequelize, DataTypes ) {
           msg: "`links` length must be 0-255 characters"
         }
       },
-      get: function() {
+      get: function () {
         var val = this.getDataValue("links");
 
         if (!val) {
@@ -149,7 +149,7 @@ module.exports = function( sequelize, DataTypes ) {
 
         return JSON.parse(val);
       },
-      set: function(val) {
+      set: function (val) {
         this.setDataValue("links", JSON.stringify(val));
       }
     }
@@ -157,20 +157,20 @@ module.exports = function( sequelize, DataTypes ) {
     charset: 'utf8',
     collate: 'utf8_general_ci',
     getterMethods: {
-      avatar: function() {
+      avatar: function () {
         return "https://secure.gravatar.com/avatar/" +
-                md5(this.getDataValue("email")) +
-                "?d=" + defaultGravatar;
+          md5(this.getDataValue("email")) +
+          "?d=" + defaultGravatar;
       },
-      emailHash: function() {
+      emailHash: function () {
         return md5(this.getDataValue("email"));
       },
-      displayName: function() {
+      displayName: function () {
         return this.getDataValue("fullName");
       }
     },
     instanceMethods: {
-      serializeForSession: function() {
+      serializeForSession: function () {
         return {
           avatar: this.avatar,
           // bio: this.bio,
@@ -198,8 +198,8 @@ module.exports = function( sequelize, DataTypes ) {
           // subscribeToWebmakerList: this.subscribeToWebmakerList,
           // updatedAt: this.updatedAt,
           username: this.username
-          // usePasswordLogin: this.usePasswordLogin
-          // wasMigrated: this.wasMigrated
+            // usePasswordLogin: this.usePasswordLogin
+            // wasMigrated: this.wasMigrated
         };
       }
     }

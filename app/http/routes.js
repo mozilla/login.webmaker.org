@@ -1,48 +1,48 @@
-module.exports = function( http, modelsController, webmakerAuth ){
-  var qs = require( "querystring" ),
-      express = require( "express" ),
-      basicAuth = express.basicAuth,
-      csrf = express.csrf(),
-      env = require( "../../config/environment" ),
-      routes = {
-        site: require( "./controllers/site" ),
-        user: require( "./controllers/user" )( modelsController ),
-        user2: require( "./controllers/user2" ),
-        user3: require( "./controllers/user3" )
-      },
-      userList = env.get( "ALLOWED_USERS" ),
-      authMiddleware = basicAuth( function( user, pass ) {
-        for ( var username in userList ) {
-          if ( userList.hasOwnProperty( username ) ) {
-            if ( user === username && pass === userList[ username ] ) {
-              return true;
-            }
+module.exports = function (http, modelsController, webmakerAuth) {
+  var qs = require("querystring"),
+    express = require("express"),
+    basicAuth = express.basicAuth,
+    csrf = express.csrf(),
+    env = require("../../config/environment"),
+    routes = {
+      site: require("./controllers/site"),
+      user: require("./controllers/user")(modelsController),
+      user2: require("./controllers/user2"),
+      user3: require("./controllers/user3")
+    },
+    userList = env.get("ALLOWED_USERS"),
+    authMiddleware = basicAuth(function (user, pass) {
+      for (var username in userList) {
+        if (userList.hasOwnProperty(username)) {
+          if (user === username && pass === userList[username]) {
+            return true;
           }
         }
-        return false;
-      }),
-      allowedCorsDomains = env.get('ALLOWED_CORS_DOMAINS') ? env.get('ALLOWED_CORS_DOMAINS').split(' ') : [],
-      cors = require('./cors')(allowedCorsDomains);
+      }
+      return false;
+    }),
+    allowedCorsDomains = env.get('ALLOWED_CORS_DOMAINS') ? env.get('ALLOWED_CORS_DOMAINS').split(' ') : [],
+    cors = require('./cors')(allowedCorsDomains);
 
-  if ( env.get("ENABLE_RATE_LIMITING") ) {
-    require( "./limiter" )( http );
+  if (env.get("ENABLE_RATE_LIMITING")) {
+    require("./limiter")(http);
   }
 
-  userList = qs.parse( userList, ",", ":" );
+  userList = qs.parse(userList, ",", ":");
 
   // Persona authentication (non-admin users)
-  var checkPersona = function( req, res, next ) {
-    if ( req.session.user ) {
+  var checkPersona = function (req, res, next) {
+    if (req.session.user) {
       req.params[0] = req.session.user.email;
       next();
     } else {
-      res.send( "You are not signed in :(" );
+      res.send("You are not signed in :(");
     }
   };
 
-  var filterAccountUpdates = function( req, res, next ) {
+  var filterAccountUpdates = function (req, res, next) {
     var filtered = {},
-        input = req.body;
+      input = req.body;
 
     // Only allow attributes that users should be able to set on their own account
     filtered.sendEventCreationEmails = input.sendEventCreationEmails;
@@ -59,31 +59,31 @@ module.exports = function( http, modelsController, webmakerAuth ){
    */
 
   // Static pages
-  http.get( "/",  routes.site.index );
+  http.get("/", routes.site.index);
 
   // Account
-  http.get( "/account", csrf, routes.site.account );
-  http.post( "/account/delete", csrf, checkPersona, routes.user.del );
-  http.put( "/account/update", csrf, checkPersona, filterAccountUpdates, routes.user.update );
+  http.get("/account", csrf, routes.site.account);
+  http.post("/account/delete", csrf, checkPersona, routes.user.del);
+  http.put("/account/update", csrf, checkPersona, filterAccountUpdates, routes.user.update);
 
   // Resources
-  http.get( "/js/account.js", routes.site.js( "account" ) );
+  http.get("/js/account.js", routes.site.js("account"));
 
   // Used by webmaker-user-client with basicAuth
-  http.get( "/user/id/*", authMiddleware, routes.user.getById );
-  http.get( "/user/username/*", authMiddleware, routes.user.getByUsername );
-  http.get( "/user/email/*", authMiddleware, routes.user.getByEmail );
-  http.post( "/user/ids", authMiddleware, routes.user.getByIds );
-  http.post( "/user/usernames", authMiddleware, routes.user.getByUsernames );
-  http.post( "/user/emails", authMiddleware, routes.user.getByEmails );
-  http.put( "/user/*", authMiddleware, routes.user.update );
+  http.get("/user/id/*", authMiddleware, routes.user.getById);
+  http.get("/user/username/*", authMiddleware, routes.user.getByUsername);
+  http.get("/user/email/*", authMiddleware, routes.user.getByEmail);
+  http.post("/user/ids", authMiddleware, routes.user.getByIds);
+  http.post("/user/usernames", authMiddleware, routes.user.getByUsernames);
+  http.post("/user/emails", authMiddleware, routes.user.getByEmails);
+  http.put("/user/*", authMiddleware, routes.user.update);
 
-  http.get( "/usernames", authMiddleware, routes.user.hydrate );
+  http.get("/usernames", authMiddleware, routes.user.hydrate);
   // Support for clients that refuse to send request bodies with POST requests
-  http.post( "/usernames", authMiddleware, routes.user.hydrate );
+  http.post("/usernames", authMiddleware, routes.user.hydrate);
 
   // The new hotness
-  var audience_whitelist = env.get( "ALLOWED_DOMAINS" ).split( " " );
+  var audience_whitelist = env.get("ALLOWED_DOMAINS").split(" ");
   var middleware = require("./middleware");
 
   // Client-side Webmaker Auth support
@@ -131,21 +131,25 @@ module.exports = function( http, modelsController, webmakerAuth ){
 
   http.post(
     "/api/user/authenticate",
-    middleware.personaFilter( audience_whitelist ),
+    middleware.personaFilter(audience_whitelist),
     middleware.personaVerifier,
-    routes.user2.authenticateUser( modelsController ),
-    middleware.updateUser( modelsController ),
-    middleware.engagedWithReferrerCode( modelsController, {"userStatus": "existing"} ),
+    routes.user2.authenticateUser(modelsController),
+    middleware.updateUser(modelsController),
+    middleware.engagedWithReferrerCode(modelsController, {
+      "userStatus": "existing"
+    }),
     middleware.filterUserAttributesForSession,
     routes.user2.outputUser
   );
   http.post(
     "/api/user/create",
-    middleware.audienceFilter( audience_whitelist ),
+    middleware.audienceFilter(audience_whitelist),
     middleware.personaFilter(),
     middleware.personaVerifier,
-    routes.user2.createUser( modelsController ),
-    middleware.engagedWithReferrerCode( modelsController, {"userStatus": "new"} ),
+    routes.user2.createUser(modelsController),
+    middleware.engagedWithReferrerCode(modelsController, {
+      "userStatus": "new"
+    }),
     middleware.filterUserAttributesForSession,
     routes.user2.outputUser
   );
@@ -153,117 +157,123 @@ module.exports = function( http, modelsController, webmakerAuth ){
   http.put(
     "/api/user/email/:email",
     authMiddleware,
-    routes.user2.updateUserWithBody( modelsController ),
+    routes.user2.updateUserWithBody(modelsController),
     routes.user2.outputUser
   );
   http.patch(
     "/api/user/email/:email",
     authMiddleware,
-    routes.user2.updateUserWithBody( modelsController ),
+    routes.user2.updateUserWithBody(modelsController),
     routes.user2.outputUser
   );
   http.patch(
     "/api/user/id/:id",
     authMiddleware,
-    routes.user2.updateUserWithBody( modelsController ),
+    routes.user2.updateUserWithBody(modelsController),
     routes.user2.outputUser
   );
   http.patch(
     "/api/user/username/:username",
     authMiddleware,
-    routes.user2.updateUserWithBody( modelsController ),
+    routes.user2.updateUserWithBody(modelsController),
     routes.user2.outputUser
   );
   http.post(
     "/api/user/exists",
-    routes.user2.exists( modelsController )
+    routes.user2.exists(modelsController)
   );
   http.post(
     "/api/v2/user/create",
-    middleware.audienceFilter( audience_whitelist ),
-    routes.user2.createUser( modelsController ),
-    middleware.engagedWithReferrerCode( modelsController, {"userStatus": "new"} ),
+    middleware.audienceFilter(audience_whitelist),
+    routes.user2.createUser(modelsController),
+    middleware.engagedWithReferrerCode(modelsController, {
+      "userStatus": "new"
+    }),
     middleware.verifyPasswordStrength(true),
-    routes.user3.setPassword( modelsController ),
+    routes.user3.setPassword(modelsController),
     middleware.filterUserAttributesForSession,
     routes.user2.outputUser
   );
   http.post(
     "/api/v2/user/request",
     authMiddleware,
-    routes.user3.setUser( modelsController ),
-    routes.user3.doesUserHavePassword( false ),
-    routes.user3.generateLoginTokenForUser( modelsController )
+    routes.user3.setUser(modelsController),
+    routes.user3.doesUserHavePassword(false),
+    routes.user3.generateLoginTokenForUser(modelsController)
   );
   http.post(
     "/api/v2/user/authenticateToken",
     authMiddleware,
-    routes.user3.setUser( modelsController ),
-    routes.user3.verifyTokenForUser( modelsController ),
-    routes.user3.updateUser( modelsController ),
-    middleware.engagedWithReferrerCode( modelsController, {"userStatus": "existing"} ),
+    routes.user3.setUser(modelsController),
+    routes.user3.verifyTokenForUser(modelsController),
+    routes.user3.updateUser(modelsController),
+    middleware.engagedWithReferrerCode(modelsController, {
+      "userStatus": "existing"
+    }),
     middleware.filterUserAttributesForSession,
     routes.user2.outputUser
   );
   http.post(
     "/api/v2/user/verify-password",
     authMiddleware,
-    routes.user3.setUser( modelsController ),
-    routes.user3.doesUserHavePassword( true ),
-    routes.user3.verifyPassword( modelsController ),
-    routes.user3.updateUser( modelsController ),
-    middleware.engagedWithReferrerCode( modelsController, {"userStatus": "existing"} ),
+    routes.user3.setUser(modelsController),
+    routes.user3.doesUserHavePassword(true),
+    routes.user3.verifyPassword(modelsController),
+    routes.user3.updateUser(modelsController),
+    middleware.engagedWithReferrerCode(modelsController, {
+      "userStatus": "existing"
+    }),
     middleware.filterUserAttributesForSession,
     routes.user2.outputUser
   );
   http.post(
     "/api/v2/user/reset-password",
     authMiddleware,
-    routes.user3.setUser( modelsController ),
-    routes.user3.doesUserHavePassword( true ),
+    routes.user3.setUser(modelsController),
+    routes.user3.doesUserHavePassword(true),
     middleware.verifyPasswordStrength(false),
-    routes.user3.verifyResetCode( modelsController ),
-    routes.user3.resetPassword( modelsController )
+    routes.user3.verifyResetCode(modelsController),
+    routes.user3.resetPassword(modelsController)
   );
   http.post(
     "/api/v2/user/request-reset-code",
     authMiddleware,
-    routes.user3.setUser( modelsController ),
-    routes.user3.doesUserHavePassword( true ),
-    routes.user3.invalidateActiveResets( modelsController ),
-    routes.user3.createResetCode( modelsController)
+    routes.user3.setUser(modelsController),
+    routes.user3.doesUserHavePassword(true),
+    routes.user3.invalidateActiveResets(modelsController),
+    routes.user3.createResetCode(modelsController)
   );
   http.post(
     "/api/v2/user/enable-passwords",
     authMiddleware,
-    routes.user3.setUser( modelsController ),
-    routes.user3.doesUserHavePassword( false ),
-    middleware.verifyPasswordStrength( false ),
-    routes.user3.setPassword( modelsController ),
+    routes.user3.setUser(modelsController),
+    routes.user3.doesUserHavePassword(false),
+    middleware.verifyPasswordStrength(false),
+    routes.user3.setPassword(modelsController),
     middleware.filterUserAttributesForSession,
     routes.user2.outputUser
   );
   http.post(
     "/api/v2/user/remove-password",
     authMiddleware,
-    routes.user3.setUser( modelsController ),
-    routes.user3.doesUserHavePassword( true ),
-    routes.user3.removePassword( modelsController ),
+    routes.user3.setUser(modelsController),
+    routes.user3.doesUserHavePassword(true),
+    routes.user3.removePassword(modelsController),
     middleware.filterUserAttributesForSession,
     routes.user2.outputUser
   );
   http.post(
     '/api/v2/user/exists',
     authMiddleware,
-    routes.user3.setUser( modelsController ),
+    routes.user3.setUser(modelsController),
     routes.user3.outputUser
   );
 
   // Parameters
-  http.param("email", middleware.fetchUserBy( "Email", modelsController ));
-  http.param("id", middleware.fetchUserBy( "Id", modelsController ));
-  http.param("username", middleware.fetchUserBy( "Username", modelsController ));
+  http.param("email", middleware.fetchUserBy("Email", modelsController));
+  http.param("id", middleware.fetchUserBy("Id", modelsController));
+  http.param("username", middleware.fetchUserBy("Username", modelsController));
 
   // Devops
-  http.get( "/healthcheck", routes.site.healthcheck );
+  http.get("/healthcheck", routes.site.healthcheck);
 };

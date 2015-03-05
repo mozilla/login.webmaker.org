@@ -1,8 +1,8 @@
 /**
  * Exports
  */
-module.exports = function( sequelize, DataTypes ) {
-  return sequelize.define( "ReferrerCode", {
+module.exports = function (sequelize, DataTypes) {
+  return sequelize.define("ReferrerCode", {
     referrer: {
       type: DataTypes.STRING
     },

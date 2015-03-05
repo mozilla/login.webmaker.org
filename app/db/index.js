@@ -1,6 +1,6 @@
 var Sequelize = require('sequelize');
 
-module.exports = function(env) {
+module.exports = function (env) {
 
   var sequelize;
   var health = {
@@ -22,7 +22,7 @@ module.exports = function(env) {
   var modelControllers = require('./models')(sequelize);
 
   // Sync
-  sequelize.sync().complete(function(err) {
+  sequelize.sync().complete(function (err) {
     if (err) {
       handlers.dbErrorHandling(err, handlers.forkErrorHandling);
     } else {

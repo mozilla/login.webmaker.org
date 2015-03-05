@@ -1,16 +1,16 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-* License, v. 2.0. If a copy of the MPL was not distributed with this file,
-* You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 var usernameRegex = /^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\-]{1,20}$/;
 
-function isInvalidUsername( str ) {
-  return typeof str !== "string" || !usernameRegex.test( str );
+function isInvalidUsername(str) {
+  return typeof str !== "string" || !usernameRegex.test(str);
 }
 
-module.exports.authenticateUser = function(User) {
-  return function(req, res, next) {
-    User.getUserByEmail(res.locals.email, function(err, user) {
+module.exports.authenticateUser = function (User) {
+  return function (req, res, next) {
+    User.getUserByEmail(res.locals.email, function (err, user) {
       if (err) {
         return res.json({
           "error": "Login database error",
@@ -30,15 +30,15 @@ module.exports.authenticateUser = function(User) {
   };
 };
 
-module.exports.createUser = function(User) {
-  return function(req, res, next) {
+module.exports.createUser = function (User) {
+  return function (req, res, next) {
     if (req.body.user && !req.body.user.username) {
       return res.json({
         "error": "Missing username"
       });
     }
 
-    if (isInvalidUsername( req.body.user.username )) {
+    if (isInvalidUsername(req.body.user.username)) {
       return res.json({
         "error": "Invalid username. All usernames must be between 1-20 characters, and only include \"-\" and alphanumeric characters"
       });
@@ -53,7 +53,7 @@ module.exports.createUser = function(User) {
       lastLoggedIn: new Date()
     };
 
-    User.createUser(userInfo, function(err, user) {
+    User.createUser(userInfo, function (err, user) {
       if (err) {
         return res.json({
           "error": "Login database error",
@@ -74,15 +74,15 @@ module.exports.createUser = function(User) {
   };
 };
 
-module.exports.exists = function(User) {
-  return function(req, res, next) {
+module.exports.exists = function (User) {
+  return function (req, res, next) {
     if (!req.body.username) {
       return res.json({
         "error": "Missing username"
       });
     }
 
-    User.getUserByUsername(req.body.username, function(err, user) {
+    User.getUserByUsername(req.body.username, function (err, user) {
       if (err) {
         return res.json({
           "error": "Login database error",
@@ -98,7 +98,7 @@ module.exports.exists = function(User) {
   };
 };
 
-module.exports.outputUser = function(req, res, next) {
+module.exports.outputUser = function (req, res, next) {
   res.json({
     email: res.locals.email,
     user: res.locals.user
@@ -106,8 +106,8 @@ module.exports.outputUser = function(req, res, next) {
 };
 
 module.exports.updateUserWithBody = function (User) {
-  return function(req, res, next) {
-    User.updateUser(res.locals.user.email, req.body, function(err, user) {
+  return function (req, res, next) {
+    User.updateUser(res.locals.user.email, req.body, function (err, user) {
       if (err) {
         return res.json({
           "error": "Login database error",

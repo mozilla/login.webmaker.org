@@ -1,6 +1,5 @@
-
-module.exports = function( sequelize, DataTypes ) {
-  return sequelize.define( "ResetCode", {
+module.exports = function (sequelize, DataTypes) {
+  return sequelize.define("ResetCode", {
     code: {
       type: DataTypes.STRING(64),
       allowNull: false

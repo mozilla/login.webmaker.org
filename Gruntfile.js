@@ -1,4 +1,4 @@
-module.exports = function( grunt ) {
+module.exports = function (grunt) {
   var jsbeautifyrc = grunt.file.readJSON("node_modules/mofo-style/linters/.jsbeautifyrc");
   var jscsrc = grunt.file.readJSON("node_modules/mofo-style/linters/.jscsrc");
   var jshintrc = grunt.file.readJSON("node_modules/mofo-style/linters/.jshintrc");
@@ -18,7 +18,7 @@ module.exports = function( grunt ) {
   ];
 
   grunt.initConfig({
-    pkg: grunt.file.readJSON( "package.json" ),
+    pkg: grunt.file.readJSON("package.json"),
 
     jshint: {
       options: jshintrc,
@@ -32,7 +32,7 @@ module.exports = function( grunt ) {
         src: javaScriptFiles
       },
       verify: {
-        src:javaScriptFiles,
+        src: javaScriptFiles,
         options: {
           mode: "VERIFY_ONLY"
         }

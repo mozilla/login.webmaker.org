@@ -1,9 +1,8 @@
-
-module.exports.fetchUserBy = function(name, User) {
+module.exports.fetchUserBy = function (name, User) {
   var fetch = User["getUserBy" + name];
 
-  return function(req, res, next, param) {
-    fetch(param, function(err, user) {
+  return function (req, res, next, param) {
+    fetch(param, function (err, user) {
       if (err) {
         return res.json({
           "error": "Login database error",
@@ -23,14 +22,14 @@ module.exports.fetchUserBy = function(name, User) {
   };
 };
 
-module.exports.filterUserAttributesForSession = function(req, res, next) {
+module.exports.filterUserAttributesForSession = function (req, res, next) {
   res.locals.user = res.locals.user.serializeForSession();
 
   process.nextTick(next);
 };
 
-module.exports.audienceFilter = function(audience_whitelist) {
-  return function(req, res, next) {
+module.exports.audienceFilter = function (audience_whitelist) {
+  return function (req, res, next) {
     if (!req.body.audience) {
       return res.json({
         "error": "Missing audience"
@@ -38,7 +37,7 @@ module.exports.audienceFilter = function(audience_whitelist) {
     }
 
     if (audience_whitelist.indexOf(req.body.audience) === -1 &&
-        audience_whitelist.indexOf("*") === -1) {
+      audience_whitelist.indexOf("*") === -1) {
       return res.json({
         "error": "Audience parameter not allowed"
       });
@@ -47,8 +46,8 @@ module.exports.audienceFilter = function(audience_whitelist) {
   };
 };
 
-module.exports.personaFilter = function() {
-  return function(req, res, next) {
+module.exports.personaFilter = function () {
+  return function (req, res, next) {
     if (!req.body.assertion) {
       return res.json({
         "error": "Missing assertion"
@@ -58,15 +57,15 @@ module.exports.personaFilter = function() {
   };
 };
 
-var browserIdVerify = require( "browserid-verify" );
+var browserIdVerify = require("browserid-verify");
 var verifyPersona = browserIdVerify();
 var verifyFxa = browserIdVerify({
   url: "https://verifier.accounts.firefox.com/v2"
 });
 
-module.exports.personaVerifier = function(req, res, next) {
+module.exports.personaVerifier = function (req, res, next) {
   var verify = req.body.fxa ? verifyFxa : verifyPersona;
-  verify(req.body.assertion, req.body.audience, function(err, email, response) {
+  verify(req.body.assertion, req.body.audience, function (err, email, response) {
     if (err) {
       return res.json({
         "error": "Persona verifier error",
@@ -86,36 +85,36 @@ module.exports.personaVerifier = function(req, res, next) {
   });
 };
 
-module.exports.updateUser = function(User) {
-  return function(req, res, next) {
-    User.updateUser( res.locals.email, {
+module.exports.updateUser = function (User) {
+  return function (req, res, next) {
+    User.updateUser(res.locals.email, {
       lastLoggedIn: new Date(),
       verified: true
-    }, function( err ) {
+    }, function (err) {
       //TODO do something useful if this error happens
       process.nextTick(next);
     });
   };
 };
 
-module.exports.engagedWithReferrerCode = function(User, options) {
-  return function(req, res, next) {
+module.exports.engagedWithReferrerCode = function (User, options) {
+  return function (req, res, next) {
 
     // the referrer value is only passed in if the cookie exists client-side
     if (req.body.user && req.body.user.referrer) {
 
-      return User.engagedWithReferrerCode( res.locals.user.email, req.body.user.referrer, options.userStatus,
-        function( err ) {
-        //TODO do something useful if this error happens
-        process.nextTick(next);
-      });
+      return User.engagedWithReferrerCode(res.locals.user.email, req.body.user.referrer, options.userStatus,
+        function (err) {
+          //TODO do something useful if this error happens
+          process.nextTick(next);
+        });
     }
 
     process.nextTick(next);
   };
 };
 
-module.exports.verifyPasswordStrength = function(nextIfNone) {
+module.exports.verifyPasswordStrength = function (nextIfNone) {
   var PassTest = require("pass-test");
 
   var passTest = new PassTest({
@@ -127,12 +126,12 @@ module.exports.verifyPasswordStrength = function(nextIfNone) {
     }
   });
 
-  return function(req, res, next) {
+  return function (req, res, next) {
     var password = req.body.password || req.body.newPassword;
     var user = res.locals.user;
 
-    if ( !password ) {
-      if ( nextIfNone ) {
+    if (!password) {
+      if (nextIfNone) {
         return process.nextTick(next);
       }
 
@@ -141,9 +140,9 @@ module.exports.verifyPasswordStrength = function(nextIfNone) {
       });
     }
 
-    var testResults = passTest.test(password, [ user.username, user.email ]);
+    var testResults = passTest.test(password, [user.username, user.email]);
 
-    if ( testResults.passed ) {
+    if (testResults.passed) {
       return process.nextTick(next);
     }
 

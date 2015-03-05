@@ -1,12 +1,12 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-* License, v. 2.0. If a copy of the MPL was not distributed with this file,
-* You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 module.exports.generateLoginTokenForUser = function (modelsController) {
-  return function(req, res, next) {
-    modelsController.createToken(res.locals.user, req.body.appURL, function(err) {
-      if ( err ) {
-        if ( err.error && err.error === 'User not found' ) {
+  return function (req, res, next) {
+    modelsController.createToken(res.locals.user, req.body.appURL, function (err) {
+      if (err) {
+        if (err.error && err.error === 'User not found') {
           return res.json(404, err);
         }
         return res.json(500, {
@@ -21,10 +21,10 @@ module.exports.generateLoginTokenForUser = function (modelsController) {
 };
 
 module.exports.verifyTokenForUser = function (modelsController) {
-  return function(req, res, next) {
-    modelsController.lookupToken(res.locals.user, req.body.token, function(err) {
-      if ( err ) {
-        if ( err.error && err.error === "unauthorized" ) {
+  return function (req, res, next) {
+    modelsController.lookupToken(res.locals.user, req.body.token, function (err) {
+      if (err) {
+        if (err.error && err.error === "unauthorized") {
           return res.json(401, {
             status: 'unauthorized'
           });
@@ -39,12 +39,12 @@ module.exports.verifyTokenForUser = function (modelsController) {
 };
 
 module.exports.updateUser = function (modelsController) {
-  return function(req, res, next) {
+  return function (req, res, next) {
     res.locals.user.updateAttributes({
       verified: true,
       lastLoggedIn: new Date()
-    }, ["verified", "lastLoggedIn"]).done(function(err) {
-      if ( err ) {
+    }, ["verified", "lastLoggedIn"]).done(function (err) {
+      if (err) {
         return res.json({
           error: "Login database error"
         });
@@ -54,59 +54,59 @@ module.exports.updateUser = function (modelsController) {
   };
 };
 
-module.exports.setUser = function(modelsController) {
+module.exports.setUser = function (modelsController) {
   var usernameRegex = /^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\-]{1,20}$/;
 
   function getUIDType(uid) {
-    if ( usernameRegex.test(uid) ) {
+    if (usernameRegex.test(uid)) {
       return "username";
     }
     return "email";
   }
 
-  return function(req, res, next) {
+  return function (req, res, next) {
     var uid = req.body.uid;
     var lookup = getUIDType(uid);
     var where = {};
 
-    if ( !uid || !lookup ) {
-      return res.json( 400, {
+    if (!uid || !lookup) {
+      return res.json(400, {
         "error": "Invalid Email or Username Provided"
       });
     }
 
-    where[ lookup ] = uid;
+    where[lookup] = uid;
 
     modelsController.user.find({
-      where: where,
-      include: [
-        modelsController.password
-      ]
-    })
-    .then(function(user){
+        where: where,
+        include: [
+          modelsController.password
+        ]
+      })
+      .then(function (user) {
 
-      if ( !user ) {
-        return res.send(404);
-      }
-      res.locals.user = user;
-      process.nextTick(next);
-    })
-    .error(function() {
-      return res.json(500, {
-        "error": "Error finding user"
+        if (!user) {
+          return res.send(404);
+        }
+        res.locals.user = user;
+        process.nextTick(next);
+      })
+      .error(function () {
+        return res.json(500, {
+          "error": "Error finding user"
+        });
       });
-    });
   };
 };
 
-module.exports.resetPassword = function(modelsController) {
-  return function(req, res, next) {
+module.exports.resetPassword = function (modelsController) {
+  return function (req, res, next) {
     var newPass = req.body.newPassword;
     var user = res.locals.user;
 
-    modelsController.changePassword(newPass, user, function(err) {
-      if ( err ) {
-        console.error( err );
+    modelsController.changePassword(newPass, user, function (err) {
+      if (err) {
+        console.error(err);
         return res.json(500, {
           error: "Error setting password"
         });
@@ -118,13 +118,13 @@ module.exports.resetPassword = function(modelsController) {
   };
 };
 
-module.exports.verifyResetCode = function(modelsController) {
-  return function(req, res, next) {
+module.exports.verifyResetCode = function (modelsController) {
+  return function (req, res, next) {
     var code = req.body.resetCode;
     var user = res.locals.user;
 
-    modelsController.validateReset(code, user, function( err, valid ) {
-      if ( err || !valid ) {
+    modelsController.validateReset(code, user, function (err, valid) {
+      if (err || !valid) {
         return res.json(401, {
           "error": "unauthorized"
         });
@@ -134,20 +134,20 @@ module.exports.verifyResetCode = function(modelsController) {
   };
 };
 
-module.exports.verifyPassword = function(modelsController) {
-  return function(req, res, next) {
+module.exports.verifyPassword = function (modelsController) {
+  return function (req, res, next) {
 
     var pass = req.body.password;
     var user = res.locals.user;
 
-    if ( !pass ) {
+    if (!pass) {
       return res.json(401, {
         "error": "unauthorized"
       });
     }
 
-    modelsController.compare(pass, user, function(err, result) {
-      if ( err || !result ) {
+    modelsController.compare(pass, user, function (err, result) {
+      if (err || !result) {
         return res.json(401, {
           "error": "unauthorized"
         });
@@ -157,9 +157,9 @@ module.exports.verifyPassword = function(modelsController) {
   };
 };
 
-module.exports.doesUserHavePassword = function( expected ) {
-  return function(req, res, next) {
-    if ( res.locals.user.usePasswordLogin !== expected ) {
+module.exports.doesUserHavePassword = function (expected) {
+  return function (req, res, next) {
+    if (res.locals.user.usePasswordLogin !== expected) {
       return res.json(401, {
         "error": "unauthorized"
       });
@@ -168,10 +168,10 @@ module.exports.doesUserHavePassword = function( expected ) {
   };
 };
 
-module.exports.invalidateActiveResets = function(modelsController) {
-  return function(req, res, next) {
-    modelsController.invalidateActiveResets(res.locals.user, function(err) {
-      if ( err ) {
+module.exports.invalidateActiveResets = function (modelsController) {
+  return function (req, res, next) {
+    modelsController.invalidateActiveResets(res.locals.user, function (err) {
+      if (err) {
         return res.json(500, {
           error: "Failed while updating active reset codes"
         });
@@ -181,10 +181,10 @@ module.exports.invalidateActiveResets = function(modelsController) {
   };
 };
 
-module.exports.createResetCode = function(modelsController) {
-  return function(req, res) {
-    modelsController.createResetCode(res.locals.user, function(err) {
-      if ( err ) {
+module.exports.createResetCode = function (modelsController) {
+  return function (req, res) {
+    modelsController.createResetCode(res.locals.user, function (err) {
+      if (err) {
         return res.json(500, {
           error: "Failed to create reset code"
         });
@@ -196,15 +196,15 @@ module.exports.createResetCode = function(modelsController) {
   };
 };
 
-module.exports.setPassword = function(modelsController) {
+module.exports.setPassword = function (modelsController) {
   return function (req, res, next) {
-    if ( !req.body.password ) {
+    if (!req.body.password) {
       return process.nextTick(next);
     }
 
-    modelsController.changePassword(req.body.password, res.locals.user, function(err) {
-      if ( err ) {
-        console.error( err );
+    modelsController.changePassword(req.body.password, res.locals.user, function (err) {
+      if (err) {
+        console.error(err);
         return res.json(500, {
           error: "Error setting password"
         });
@@ -214,11 +214,11 @@ module.exports.setPassword = function(modelsController) {
   };
 };
 
-module.exports.removePassword = function(modelsController) {
+module.exports.removePassword = function (modelsController) {
   return function (req, res, next) {
-    modelsController.removePassword(res.locals.user, function(err) {
-      if ( err ) {
-        console.error( err );
+    modelsController.removePassword(res.locals.user, function (err) {
+      if (err) {
+        console.error(err);
         return res.json(500, {
           error: "Error removing password"
         });
@@ -228,7 +228,7 @@ module.exports.removePassword = function(modelsController) {
   };
 };
 
-module.exports.outputUser = function(req, res) {
+module.exports.outputUser = function (req, res) {
   return res.json(200, {
     exists: true,
     usePasswordLogin: res.locals.user.usePasswordLogin,
