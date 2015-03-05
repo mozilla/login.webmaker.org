@@ -1,14 +1,13 @@
-var moment = require('moment');
-var bPromise = require('bluebird');
-var crypto = require('crypto');
-var proquint = require('proquint');
-var hat = require('hat');
-var env = require('../../../config/environment');
-var hatchet = require('hatchet');
-var bcrypt = require('bcrypt');
+var moment = require("moment");
+var bPromise = require("bluebird");
+var crypto = require("crypto");
+var proquint = require("proquint");
+var hat = require("hat");
+var env = require("../../../config/environment");
+var hatchet = require("hatchet");
+var bcrypt = require("bcrypt");
 
 module.exports = function (sequelize) {
-
   var TOKEN_EXPIRY_TIME = 1000 * 60 * 30;
 
   var RESET_CODE_BIT_LENGTH = 256;
@@ -16,11 +15,11 @@ module.exports = function (sequelize) {
   var RESET_EXPIRY_TIME = 1000 * 60 * 60 * 24;
   var BCRYPT_ROUNDS = 12;
 
-  var user = sequelize.import(__dirname + '/user.js');
-  var modelReferrerCode = sequelize.import(__dirname + '/modelreferrercode.js');
-  var loginToken = sequelize.import(__dirname + '/loginToken.js');
-  var password = sequelize.import(__dirname + '/password.js');
-  var resetCode = sequelize.import(__dirname + '/resetCode.js');
+  var user = sequelize.import(__dirname + "/user.js");
+  var modelReferrerCode = sequelize.import(__dirname + "/modelreferrercode.js");
+  var loginToken = sequelize.import(__dirname + "/loginToken.js");
+  var password = sequelize.import(__dirname + "/password.js");
+  var resetCode = sequelize.import(__dirname + "/resetCode.js");
 
   user.hasMany(modelReferrerCode);
   modelReferrerCode.belongsTo(user);
@@ -386,19 +385,22 @@ module.exports = function (sequelize) {
       userResetCode
         .save()
         .success(function () {
+          var resetUrl = env.get("WEBMAKERORG") +
+            "/?uid=" +
+            user.getDataValue("username") +
+            "&resetCode=" +
+            userResetCode.getDataValue("code");
 
-          var resetUrl = env.get('WEBMAKERORG') + '/?uid=' + user.getDataValue('username') + '&resetCode=' + userResetCode.getDataValue('code');
-
-          hatchet.send('reset_code_created', {
-            email: user.getDataValue('email'),
-            username: user.getDataValue('username'),
+          hatchet.send("reset_code_created", {
+            email: user.getDataValue("email"),
+            username: user.getDataValue("username"),
             resetUrl: resetUrl
           });
           callback();
         })
         .error(function (err) {
           console.error(err);
-          callback('Error Creating Reset Authorization');
+          callback("Error Creating Reset Authorization");
         });
     },
 
@@ -410,7 +412,7 @@ module.exports = function (sequelize) {
             used: false,
             invalid: false,
             createdAt: {
-              gte: moment(Date.now() - RESET_EXPIRY_TIME).utc().format('YYYY-MM-DD HH:mm:ss Z')
+              gte: moment(Date.now() - RESET_EXPIRY_TIME).utc().format("YYYY-MM-DD HH:mm:ss Z")
             }
           }
         })
@@ -422,7 +424,7 @@ module.exports = function (sequelize) {
           rc
             .updateAttributes({
               used: true
-            }, ['used'])
+            }, ["used"])
             .success(function () {
               callback(null, true);
             })
@@ -440,14 +442,14 @@ module.exports = function (sequelize) {
           user
             .updateAttributes({
               usePasswordLogin: true
-            }, ['usePasswordLogin'])
+            }, ["usePasswordLogin"])
             .then(function () {
               return user.setPassword(pass);
             })
             .then(function () {
-              hatchet.send('user-password-changed', {
-                email: user.getDataValue('email'),
-                username: user.getDataValue('username')
+              hatchet.send("user-password-changed", {
+                email: user.getDataValue("email"),
+                username: user.getDataValue("username")
               });
               callback(null);
             })

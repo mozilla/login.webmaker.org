@@ -1,7 +1,6 @@
 var Sequelize = require('sequelize');
 
 module.exports = function (env) {
-
   var sequelize;
   var health = {
     connected: false,
@@ -35,5 +34,4 @@ module.exports = function (env) {
   return {
     Models: modelControllers
   };
-
 };

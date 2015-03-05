@@ -8,10 +8,10 @@ module.exports = function (sequelize, DataTypes) {
     },
     userStatus: {
       type: DataTypes.ENUM,
-      values: ['new', 'existing']
+      values: ["new", "existing"]
     }
   }, {
-    charset: 'utf8',
-    collate: 'utf8_general_ci'
+    charset: "utf8",
+    collate: "utf8_general_ci"
   });
 };

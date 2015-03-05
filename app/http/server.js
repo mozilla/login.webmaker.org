@@ -54,7 +54,6 @@ nunjucksEnv.addFilter("instantiate", function (input) {
 
 // Express Configuration
 http.configure(function () {
-
   nunjucksEnv.express(http);
 
   http.disable("x-powered-by");

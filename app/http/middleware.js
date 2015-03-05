@@ -28,7 +28,7 @@ module.exports.filterUserAttributesForSession = function (req, res, next) {
   process.nextTick(next);
 };
 
-module.exports.audienceFilter = function (audience_whitelist) {
+module.exports.audienceFilter = function (audienceWhitelist) {
   return function (req, res, next) {
     if (!req.body.audience) {
       return res.json({
@@ -36,8 +36,8 @@ module.exports.audienceFilter = function (audience_whitelist) {
       });
     }
 
-    if (audience_whitelist.indexOf(req.body.audience) === -1 &&
-      audience_whitelist.indexOf("*") === -1) {
+    if (audienceWhitelist.indexOf(req.body.audience) === -1 &&
+      audienceWhitelist.indexOf("*") === -1) {
       return res.json({
         "error": "Audience parameter not allowed"
       });
@@ -91,7 +91,6 @@ module.exports.updateUser = function (User) {
       lastLoggedIn: new Date(),
       verified: true
     }, function (err) {
-      //TODO do something useful if this error happens
       process.nextTick(next);
     });
   };
@@ -99,13 +98,10 @@ module.exports.updateUser = function (User) {
 
 module.exports.engagedWithReferrerCode = function (User, options) {
   return function (req, res, next) {
-
-    // the referrer value is only passed in if the cookie exists client-side
     if (req.body.user && req.body.user.referrer) {
-
+      // the referrer value is only passed in if the cookie exists client-side
       return User.engagedWithReferrerCode(res.locals.user.email, req.body.user.referrer, options.userStatus,
         function (err) {
-          //TODO do something useful if this error happens
           process.nextTick(next);
         });
     }

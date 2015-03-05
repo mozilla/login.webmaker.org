@@ -6,7 +6,6 @@ var env = require("../../../config/environment"),
   metrics = require("../../../lib/metrics")(env);
 
 module.exports = function (UserHandle) {
-
   function userCallback(err, user, query, res) {
     if (err) {
       metrics.increment("user.get.error");

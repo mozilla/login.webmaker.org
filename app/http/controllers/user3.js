@@ -6,7 +6,7 @@ module.exports.generateLoginTokenForUser = function (modelsController) {
   return function (req, res, next) {
     modelsController.createToken(res.locals.user, req.body.appURL, function (err) {
       if (err) {
-        if (err.error && err.error === 'User not found') {
+        if (err.error && err.error === "User not found") {
           return res.json(404, err);
         }
         return res.json(500, {
@@ -26,7 +26,7 @@ module.exports.verifyTokenForUser = function (modelsController) {
       if (err) {
         if (err.error && err.error === "unauthorized") {
           return res.json(401, {
-            status: 'unauthorized'
+            status: "unauthorized"
           });
         }
         return res.json(500, {
@@ -84,7 +84,6 @@ module.exports.setUser = function (modelsController) {
         ]
       })
       .then(function (user) {
-
         if (!user) {
           return res.send(404);
         }
@@ -136,7 +135,6 @@ module.exports.verifyResetCode = function (modelsController) {
 
 module.exports.verifyPassword = function (modelsController) {
   return function (req, res, next) {
-
     var pass = req.body.password;
     var user = res.locals.user;
 

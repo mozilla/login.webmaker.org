@@ -1,5 +1,4 @@
 module.exports = function (health) {
-
   var handlers = {};
 
   // FOR MOCHA TESTING:
@@ -44,5 +43,4 @@ module.exports = function (health) {
   };
 
   return handlers;
-
 };

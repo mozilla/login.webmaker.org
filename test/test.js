@@ -8,8 +8,7 @@ var assert = require("assert"),
   env = require("../config/environment"),
   ModelController = require("../app/db")(env).Models,
   child,
-  hostAuth = 'http://' + env.get("ALLOWED_USERS").split(",")[0] + "@" + env.get("APP_HOSTNAME").split("//")[1];
-
+  hostAuth = "http://" + env.get("ALLOWED_USERS").split(",")[0] + "@" + env.get("APP_HOSTNAME").split("//")[1];
 
 /**
  * [userTracer helper object]
@@ -73,11 +72,11 @@ function startServer(done) {
   child = fork("app.js", null, {});
 
   // Listen for success, or error with the DB
-  child.on('message', function (msg) {
-    if (msg === 'sqlStarted') {
+  child.on("message", function (msg) {
+    if (msg === "sqlStarted") {
       sqlDbCheck = true;
     }
-    if (msg === 'sqlNoConnection') {
+    if (msg === "sqlNoConnection") {
       console.log("MySQL database not connected! Tests will fail.");
       child.kill();
       process.exit(1);
@@ -86,7 +85,7 @@ function startServer(done) {
       done();
     }
   });
-  child.on('error', function (err) {
+  child.on("error", function (err) {
     console.error(err);
     child.kill();
   });
@@ -148,7 +147,7 @@ function apiHelper(verb, uri, httpCode, data, callback, customAssertions) {
 function unique() {
   var u = (++now).toString(36);
   return {
-    email: u + '@email.com',
+    email: u + "@email.com",
     username: u
   };
 }
@@ -157,7 +156,7 @@ function unique() {
  * Unit tests
  */
 
-describe('PUT /user/:id (update)', function () {
+describe("PUT /user/:id (update)", function () {
   before(function (done) {
     startServer(done);
   });
@@ -174,15 +173,15 @@ describe('PUT /user/:id (update)', function () {
       userTracer.watchUser(user.email);
 
       user.username = unique().username;
-      apiHelper('put', hostAuth + "/user/" + user.email, 200, user, done);
+      apiHelper("put", hostAuth + "/user/" + user.email, 200, user, done);
     });
   });
 
-  it('should error when updating a user that does not exist', function (done) {
-    apiHelper('put', hostAuth + "/user/" + unique().email, 404, {}, done);
+  it("should error when updating a user that does not exist", function (done) {
+    apiHelper("put", hostAuth + "/user/" + unique().email, 404, {}, done);
   });
 
-  it('should error when updating a user with an invalid username', function (done) {
+  it("should error when updating a user with an invalid username", function (done) {
     var user = unique();
 
     // Create user
@@ -192,11 +191,11 @@ describe('PUT /user/:id (update)', function () {
       user.username = "damn";
 
       // Update user
-      apiHelper('put', hostAuth + "/user/" + user.email, 404, user, done);
+      apiHelper("put", hostAuth + "/user/" + user.email, 404, user, done);
     });
   });
 
-  it('should error when updating a user with an invalid email', function (done) {
+  it("should error when updating a user with an invalid email", function (done) {
     var user = unique();
 
     // Create user
@@ -206,7 +205,7 @@ describe('PUT /user/:id (update)', function () {
       var invalidEmail = "invalid";
 
       // Update user
-      apiHelper('put', hostAuth + "/user/" + user.email, 404, {
+      apiHelper("put", hostAuth + "/user/" + user.email, 404, {
         email: invalidEmail,
         id: invalidEmail
       }, done);
@@ -260,7 +259,7 @@ function getAssertions(err, res, body, callback) {
   callback(err, res, body);
 }
 
-describe('GET /user/email/*', function () {
+describe("GET /user/email/*", function () {
   before(function (done) {
     startServer(done);
   });
@@ -269,27 +268,27 @@ describe('GET /user/email/*', function () {
     stopServer(done);
   });
 
-  it('should successfully return an account when attempting the retrieve an existing user by email', function (done) {
+  it("should successfully return an account when attempting the retrieve an existing user by email", function (done) {
     var user = unique();
 
     // Create a user, then attempt to retrieve it
     ModelController.createUser(user, function (err) {
       assert.ok(!err);
       userTracer.watchUser(user.email);
-      apiHelper('get', hostAuth + "/user/email/" + user.email, 200, {}, done, getAssertions);
+      apiHelper("get", hostAuth + "/user/email/" + user.email, 200, {}, done, getAssertions);
     });
   });
 
-  it('should error on attempting to retrieve a non-existent email', function (done) {
-    apiHelper('get', hostAuth + "/user/email/" + unique().email, 404, {}, done);
+  it("should error on attempting to retrieve a non-existent email", function (done) {
+    apiHelper("get", hostAuth + "/user/email/" + unique().email, 404, {}, done);
   });
 
-  it('should deal with bogus usernames that look like routes', function (done) {
-    apiHelper('get', hostAuth + "/user/email//../../../../../../../../../../../etc/passwd", 404, {}, done);
+  it("should deal with bogus usernames that look like routes", function (done) {
+    apiHelper("get", hostAuth + "/user/email//../../../../../../../../../../../etc/passwd", 404, {}, done);
   });
 });
 
-describe('GET /user/id/*', function () {
+describe("GET /user/id/*", function () {
   before(function (done) {
     startServer(done);
   });
@@ -298,27 +297,27 @@ describe('GET /user/id/*', function () {
     stopServer(done);
   });
 
-  it('should successfully return an account when attempting the retrieve an existing user by id', function (done) {
+  it("should successfully return an account when attempting the retrieve an existing user by id", function (done) {
     var user = unique();
 
     // Create a user, then attempt to retrieve it
     ModelController.createUser(user, function (err, newUser) {
       assert.ok(!err);
       userTracer.watchUser(user.email);
-      apiHelper('get', hostAuth + "/user/id/" + newUser.id, 200, {}, done, getAssertions);
+      apiHelper("get", hostAuth + "/user/id/" + newUser.id, 200, {}, done, getAssertions);
     });
   });
 
-  it('should error on attempting to retrieve a non-existent id', function (done) {
-    apiHelper('get', hostAuth + "/user/id/" + unique().id, 404, {}, done);
+  it("should error on attempting to retrieve a non-existent id", function (done) {
+    apiHelper("get", hostAuth + "/user/id/" + unique().id, 404, {}, done);
   });
 
-  it('should deal with bogus usernames that look like routes', function (done) {
-    apiHelper('get', hostAuth + "/user/id//../../../../../../../../../../../etc/passwd", 404, {}, done);
+  it("should deal with bogus usernames that look like routes", function (done) {
+    apiHelper("get", hostAuth + "/user/id//../../../../../../../../../../../etc/passwd", 404, {}, done);
   });
 });
 
-describe('GET /user/username/*', function () {
+describe("GET /user/username/*", function () {
   before(function (done) {
     startServer(done);
   });
@@ -327,29 +326,38 @@ describe('GET /user/username/*', function () {
     stopServer(done);
   });
 
-  it('should successfully return an account when attempting the retrieve an existing user by username', function (done) {
-    var user = unique();
+  it("should successfully return an account when attempting the retrieve an existing user by username",
+    function (done) {
+      var user = unique();
 
-    // Create a user, then attempt to retrieve it
-    ModelController.createUser(user, function (err) {
-      assert.ok(!err);
-      userTracer.watchUser(user.email);
-      apiHelper('get', hostAuth + "/user/username/" + user.username, 200, {}, done, getAssertions);
-    });
+      // Create a user, then attempt to retrieve it
+      ModelController.createUser(user, function (err) {
+        assert.ok(!err);
+        userTracer.watchUser(user.email);
+        apiHelper("get", hostAuth + "/user/username/" + user.username, 200, {}, done, getAssertions);
+      });
+    }
+  );
+
+  it("should error on attempting to retrieve a non-existent account", function (done) {
+    apiHelper("get", hostAuth + "/user/username/" + unique().username, 404, {}, done);
   });
 
-  it('should error on attempting to retrieve a non-existent account', function (done) {
-    apiHelper('get', hostAuth + "/user/username/" + unique().username, 404, {}, done);
-  });
-
-  it('should deal with bogus usernames that look like routes', function (done) {
-    apiHelper('get', hostAuth + "/user/username//../../../../../../../../../../../etc/passwd", 404, {}, done);
+  it("should deal with bogus usernames that look like routes", function (done) {
+    apiHelper("get",
+      hostAuth + "/user/username//../../../../../../../../../../../etc/passwd",
+      404, {},
+      done
+    );
   });
 });
 
-describe('basicauth', function () {
+describe("basicauth", function () {
   // Rather complicated way of stripping correct auth and replacing with bad values
-  var invalidAuthAPI = hostAuth.replace(new RegExp(env.get("ALLOWED_USERS").split(",")[0]), "wrong:string") + "/user/email/";
+  var invalidAuthAPI = hostAuth.replace(
+    new RegExp(env.get("ALLOWED_USERS").split(",")[0]),
+    "wrong:string"
+  ) + "/user/email/";
 
   before(function (done) {
     startServer(done);
@@ -359,20 +367,19 @@ describe('basicauth', function () {
     stopServer(done);
   });
 
-  it('should error when auth is incorrect', function (done) {
+  it("should error when auth is incorrect", function (done) {
     var user = unique();
 
     // Create a user, then attempt to check it
     ModelController.createUser(user, function (err) {
       assert.ok(!err);
       userTracer.watchUser(user.email);
-      apiHelper('get', invalidAuthAPI + user.email, 401, {}, done);
+      apiHelper("get", invalidAuthAPI + user.email, 401, {}, done);
     });
   });
 });
 
-describe('GET /usernames', function () {
-
+describe("GET /usernames", function () {
   var createUsersArray = [];
 
   function createUniqueUser(callback) {
@@ -414,7 +421,7 @@ describe('GET /usernames', function () {
 
     async.parallel(createUsersArray, function (err, users) {
       var requestArray = randomizeUsernameRequest(users);
-      apiHelper('get', hostAuth + '/usernames', 200, requestArray, function (err, res, body) {
+      apiHelper("get", hostAuth + "/usernames", 200, requestArray, function (err, res, body) {
         var keys = Object.keys(body);
         assert.equal(keys.length, requestArray.length);
         keys.forEach(function (email) {

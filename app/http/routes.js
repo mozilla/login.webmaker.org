@@ -21,8 +21,8 @@ module.exports = function (http, modelsController, webmakerAuth) {
       }
       return false;
     }),
-    allowedCorsDomains = env.get('ALLOWED_CORS_DOMAINS') ? env.get('ALLOWED_CORS_DOMAINS').split(' ') : [],
-    cors = require('./cors')(allowedCorsDomains);
+    allowedCorsDomains = env.get("ALLOWED_CORS_DOMAINS") ? env.get("ALLOWED_CORS_DOMAINS").split(" ") : [],
+    cors = require("./cors")(allowedCorsDomains);
 
   if (env.get("ENABLE_RATE_LIMITING")) {
     require("./limiter")(http);
@@ -83,55 +83,55 @@ module.exports = function (http, modelsController, webmakerAuth) {
   http.post("/usernames", authMiddleware, routes.user.hydrate);
 
   // The new hotness
-  var audience_whitelist = env.get("ALLOWED_DOMAINS").split(" ");
+  var AUDIENCE_WHITELIST = env.get("ALLOWED_DOMAINS").split(" ");
   var middleware = require("./middleware");
 
   // Client-side Webmaker Auth support
-  http.post('/verify', cors, webmakerAuth.handlers.verify);
-  http.post('/authenticate', cors, webmakerAuth.handlers.authenticate);
-  http.post('/logout', cors, webmakerAuth.handlers.logout);
+  http.post("/verify", cors, webmakerAuth.handlers.verify);
+  http.post("/authenticate", cors, webmakerAuth.handlers.authenticate);
+  http.post("/logout", cors, webmakerAuth.handlers.logout);
 
-  http.post('/auth/v2/create', cors, webmakerAuth.handlers.createUser);
-  http.post('/auth/v2/uid-exists', cors, webmakerAuth.handlers.uidExists);
-  http.post('/auth/v2/request', cors, webmakerAuth.handlers.request);
-  http.post('/auth/v2/authenticateToken', cors, webmakerAuth.handlers.authenticateToken);
-  http.post('/auth/v2/verify-password', cors, webmakerAuth.handlers.verifyPassword);
-  http.post('/auth/v2/request-reset-code', cors, webmakerAuth.handlers.requestResetCode);
-  http.post('/auth/v2/reset-password', cors, webmakerAuth.handlers.resetPassword);
+  http.post("/auth/v2/create", cors, webmakerAuth.handlers.createUser);
+  http.post("/auth/v2/uid-exists", cors, webmakerAuth.handlers.uidExists);
+  http.post("/auth/v2/request", cors, webmakerAuth.handlers.request);
+  http.post("/auth/v2/authenticateToken", cors, webmakerAuth.handlers.authenticateToken);
+  http.post("/auth/v2/verify-password", cors, webmakerAuth.handlers.verifyPassword);
+  http.post("/auth/v2/request-reset-code", cors, webmakerAuth.handlers.requestResetCode);
+  http.post("/auth/v2/reset-password", cors, webmakerAuth.handlers.resetPassword);
 
-  http.post('/auth/v2/enable-passwords', csrf, checkPersona, webmakerAuth.handlers.enablePasswords);
-  http.post('/auth/v2/remove-password', csrf, checkPersona, webmakerAuth.handlers.removePassword);
+  http.post("/auth/v2/enable-passwords", csrf, checkPersona, webmakerAuth.handlers.enablePasswords);
+  http.post("/auth/v2/remove-password", csrf, checkPersona, webmakerAuth.handlers.removePassword);
 
   // Needed for all options requests via CORS
-  http.options('/verify', cors);
-  http.options('/authenticate', cors);
-  http.options('/logout', cors);
-  http.options('/create', cors);
-  http.options('/check-username', cors);
-  http.options('/auth/v2/create', cors);
-  http.options('/auth/v2/uid-exists', cors);
-  http.options('/auth/v2/request', cors);
-  http.options('/auth/v2/authenticateToken', cors);
-  http.options('/auth/v2/verify-password', cors);
-  http.options('/auth/v2/request-reset-code', cors);
-  http.options('/auth/v2/reset-password', cors);
-  http.options('/auth/v2/enable-passwords', cors);
-  http.options('/auth/v2/remove-password', cors);
+  http.options("/verify", cors);
+  http.options("/authenticate", cors);
+  http.options("/logout", cors);
+  http.options("/create", cors);
+  http.options("/check-username", cors);
+  http.options("/auth/v2/create", cors);
+  http.options("/auth/v2/uid-exists", cors);
+  http.options("/auth/v2/request", cors);
+  http.options("/auth/v2/authenticateToken", cors);
+  http.options("/auth/v2/verify-password", cors);
+  http.options("/auth/v2/request-reset-code", cors);
+  http.options("/auth/v2/reset-password", cors);
+  http.options("/auth/v2/enable-passwords", cors);
+  http.options("/auth/v2/remove-password", cors);
 
-  http.options('/auth/v2/create', cors);
-  http.options('/auth/v2/uid-exists', cors);
-  http.options('/auth/v2/request', cors);
-  http.options('/auth/v2/authenticateToken', cors);
-  http.options('/auth/v2/verify-password', cors);
-  http.options('/auth/v2/request-reset-code', cors);
-  http.options('/auth/v2/reset-password', cors);
+  http.options("/auth/v2/create", cors);
+  http.options("/auth/v2/uid-exists", cors);
+  http.options("/auth/v2/request", cors);
+  http.options("/auth/v2/authenticateToken", cors);
+  http.options("/auth/v2/verify-password", cors);
+  http.options("/auth/v2/request-reset-code", cors);
+  http.options("/auth/v2/reset-password", cors);
 
-  http.post('/auth/v2/enable-passwords', csrf, checkPersona, webmakerAuth.handlers.enablePasswords);
-  http.post('/auth/v2/remove-password', csrf, checkPersona, webmakerAuth.handlers.removePassword);
+  http.post("/auth/v2/enable-passwords", csrf, checkPersona, webmakerAuth.handlers.enablePasswords);
+  http.post("/auth/v2/remove-password", csrf, checkPersona, webmakerAuth.handlers.removePassword);
 
   http.post(
     "/api/user/authenticate",
-    middleware.personaFilter(audience_whitelist),
+    middleware.personaFilter(AUDIENCE_WHITELIST),
     middleware.personaVerifier,
     routes.user2.authenticateUser(modelsController),
     middleware.updateUser(modelsController),
@@ -143,7 +143,7 @@ module.exports = function (http, modelsController, webmakerAuth) {
   );
   http.post(
     "/api/user/create",
-    middleware.audienceFilter(audience_whitelist),
+    middleware.audienceFilter(AUDIENCE_WHITELIST),
     middleware.personaFilter(),
     middleware.personaVerifier,
     routes.user2.createUser(modelsController),
@@ -184,7 +184,7 @@ module.exports = function (http, modelsController, webmakerAuth) {
   );
   http.post(
     "/api/v2/user/create",
-    middleware.audienceFilter(audience_whitelist),
+    middleware.audienceFilter(AUDIENCE_WHITELIST),
     routes.user2.createUser(modelsController),
     middleware.engagedWithReferrerCode(modelsController, {
       "userStatus": "new"
@@ -263,7 +263,7 @@ module.exports = function (http, modelsController, webmakerAuth) {
     routes.user2.outputUser
   );
   http.post(
-    '/api/v2/user/exists',
+    "/api/v2/user/exists",
     authMiddleware,
     routes.user3.setUser(modelsController),
     routes.user3.outputUser
