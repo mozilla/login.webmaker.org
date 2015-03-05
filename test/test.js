@@ -1,3 +1,5 @@
+/* jshint mocha: true */
+
 var assert = require("assert"),
   async = require("async"),
   fork = require("child_process").fork,
@@ -7,6 +9,58 @@ var assert = require("assert"),
   ModelController = require("../app/db")(env).Models,
   child,
   hostAuth = 'http://' + env.get("ALLOWED_USERS").split(",")[0] + "@" + env.get("APP_HOSTNAME").split("//")[1];
+
+
+/**
+ * [userTracer helper object]
+ * -
+ * obj.watchUser: Track the passed user
+ * obj.unwatchUser: Stop tracking the passed user
+ * obj.userCleanup: Deletes all tracked users from database backend
+ */
+var userTracer = (function () {
+  var newUsers = [];
+
+  return {
+    watchUser: function (email) {
+      // Prevent duplicate entries
+      if (newUsers.indexOf(email) === -1) {
+        newUsers.push(email);
+      }
+    },
+    unwatchUser: function (email) {
+      var index = newUsers.indexOf(email);
+
+      if (index !== -1) {
+        // Remove user from list
+        newUsers.splice(index, 1);
+      }
+    },
+    userCleanup: function (callback) {
+      var userCount = newUsers.length;
+
+      callback = callback || function () {};
+
+      // Ensure process is killed
+      if (!userCount) {
+        return callback();
+      }
+
+      newUsers.forEach(function (email) {
+        // Delete each user in turn, then kill the process and
+        // run the callback (if present)
+        ModelController.deleteUser(email, function (err) {
+          if (!--userCount) {
+            callback();
+          }
+        });
+      });
+
+      // Reset tracking array
+      newUsers = [];
+    }
+  };
+})();
 
 /**
  * Server functions
@@ -91,57 +145,6 @@ function apiHelper(verb, uri, httpCode, data, callback, customAssertions) {
   });
 }
 
-/**
- * [userTracer helper object]
- * -
- * obj.watchUser: Track the passed user
- * obj.unwatchUser: Stop tracking the passed user
- * obj.userCleanup: Deletes all tracked users from database backend
- */
-var userTracer = (function () {
-  var newUsers = [];
-
-  return {
-    watchUser: function (email) {
-      // Prevent duplicate entries
-      if (newUsers.indexOf(email) === -1) {
-        newUsers.push(email);
-      }
-    },
-    unwatchUser: function (email) {
-      var index = newUsers.indexOf(email);
-
-      if (index !== -1) {
-        // Remove user from list
-        newUsers.splice(index, 1);
-      }
-    },
-    userCleanup: function (callback) {
-      var userCount = newUsers.length;
-
-      callback = callback || function () {};
-
-      // Ensure process is killed
-      if (!userCount) {
-        return callback();
-      }
-
-      newUsers.forEach(function (email) {
-        // Delete each user in turn, then kill the process and
-        // run the callback (if present)
-        ModelController.deleteUser(email, function (err) {
-          if (!--userCount) {
-            callback();
-          }
-        });
-      });
-
-      // Reset tracking array
-      newUsers = [];
-    }
-  };
-})();
-
 function unique() {
   var u = (++now).toString(36);
   return {
@@ -155,8 +158,6 @@ function unique() {
  */
 
 describe('PUT /user/:id (update)', function () {
-  var api = hostAuth + '/user';
-
   before(function (done) {
     startServer(done);
   });
@@ -260,8 +261,6 @@ function getAssertions(err, res, body, callback) {
 }
 
 describe('GET /user/email/*', function () {
-  var api = hostAuth + '/user';
-
   before(function (done) {
     startServer(done);
   });
@@ -291,8 +290,6 @@ describe('GET /user/email/*', function () {
 });
 
 describe('GET /user/id/*', function () {
-  var api = hostAuth + '/user';
-
   before(function (done) {
     startServer(done);
   });
@@ -322,8 +319,6 @@ describe('GET /user/id/*', function () {
 });
 
 describe('GET /user/username/*', function () {
-  var api = hostAuth + '/user';
-
   before(function (done) {
     startServer(done);
   });

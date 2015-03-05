@@ -432,8 +432,7 @@ module.exports = function (sequelize) {
     },
 
     changePassword: function (newPass, user, callback) {
-      var pass = user.password || password.build(),
-        firstPassword = !!user.password;
+      var pass = user.password || password.build();
 
       bcrypt.genSalt(BCRYPT_ROUNDS, function (err, salt) {
         bcrypt.hash(newPass, salt, function (err, hash) {

@@ -2,6 +2,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/* jshint node: true */
+
 var newrelic;
 if (process.env.NEW_RELIC_ENABLED) {
   newrelic = require("newrelic");
@@ -13,8 +15,8 @@ if (process.env.NEW_RELIC_ENABLED) {
   };
 }
 
-var env = require("../../config/environment");
-express = require("express"),
+var env = require("../../config/environment"),
+  express = require("express"),
   helmet = require("helmet"),
   i18n = require("webmaker-i18n"),
   lessMiddleWare = require("less-middleware"),
