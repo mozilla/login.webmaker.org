@@ -1,6 +1,5 @@
-
-module.exports = function( sequelize, DataTypes ) {
-  return sequelize.define( "LoginToken", {
+module.exports = function (sequelize, DataTypes) {
+  return sequelize.define("LoginToken", {
     token: {
       type: DataTypes.STRING(11),
       allowNull: false

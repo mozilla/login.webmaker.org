@@ -1,29 +1,29 @@
-module.exports = function( app ) {
-  var env = require( "../../config/environment" );
+module.exports = function (app) {
+  var env = require("../../config/environment");
   var url = require("url");
 
-  if ( !env.get( "REDIS_CONNECTION_STRING" ) ) {
+  if (!env.get("REDIS_CONNECTION_STRING")) {
     throw new Error("Rate limiting enabled, but no REDIS_CONNECTION_STRING is defined.");
   }
 
-  var redisUrl = url.parse( env.get( "REDIS_CONNECTION_STRING" ) );
+  var redisUrl = url.parse(env.get("REDIS_CONNECTION_STRING"));
   var redisConfig = {
     port: redisUrl.port,
     host: redisUrl.hostname,
     auth: redisUrl.auth,
-    db: redisUrl.path.substring( 1 )
+    db: redisUrl.path.substring(1)
   };
 
-  var redisClient = require( "redis" ).createClient( redisConfig.port, redisConfig.host);
+  var redisClient = require("redis").createClient(redisConfig.port, redisConfig.host);
 
-  if ( redisConfig.auth ) {
-    redisClient.auth( redisConfig.auth );
+  if (redisConfig.auth) {
+    redisClient.auth(redisConfig.auth);
   }
-  if ( redisConfig.db ) {
-    redisClient.select( redisConfig.db );
+  if (redisConfig.db) {
+    redisClient.select(redisConfig.db);
   }
 
-  var limiter = require( "express-limiter" )( app, redisClient );
+  var limiter = require("express-limiter")(app, redisClient);
 
   // key requests on the client IP and user uid
   var lookupKeys = ["headers.x-ratelimit-ip", "body.uid"];
@@ -32,7 +32,7 @@ module.exports = function( app ) {
   // to the total requests you want to allow. upstream patch filed.
 
   limiter({
-  // Throttle create-account requests to 250 per hour / IP
+    // Throttle create-account requests to 250 per hour / IP
     path: "/api/v2/user/create",
     method: "post",
     lookup: "headers.x-ratelimit-ip",
