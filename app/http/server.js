@@ -15,7 +15,7 @@ if (process.env.NEW_RELIC_ENABLED) {
   };
 }
 
-module.exports = function(env) {
+module.exports = function (env) {
   var express = require("express"),
     helmet = require("helmet"),
     i18n = require("webmaker-i18n"),
@@ -63,7 +63,7 @@ module.exports = function(env) {
       logger = messina("login.webmaker.org-" + env.get("NODE_ENV") || "development");
       logger.init();
       http.use(logger.middleware());
-    } else {
+    } else if (!env.get("DISABLE_HTTP_LOGGING")) {
       http.use(express.logger());
     }
 
@@ -126,9 +126,7 @@ module.exports = function(env) {
   http.use(express.static(path.join(__dirname, "public")));
   http.use("/bower", express.static(path.join(__dirname, "../../bower_components")));
 
-  http.listen(env.get("PORT"), function () {
+  return http.listen(env.get("PORT"), function () {
     console.log("HTTP server listening on port " + env.get("PORT") + ".");
   });
-
-  return http;
 };

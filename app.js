@@ -4,5 +4,4 @@
 
 var env = require("./config/environment");
 
-
 require("./app/http/server.js")(env);
