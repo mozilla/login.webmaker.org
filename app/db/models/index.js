@@ -3,11 +3,10 @@ var bPromise = require("bluebird");
 var crypto = require("crypto");
 var proquint = require("proquint");
 var hat = require("hat");
-var env = require("../../../config/environment");
 var hatchet = require("hatchet");
 var bcrypt = require("bcrypt");
 
-module.exports = function (sequelize) {
+module.exports = function (sequelize, env) {
   var TOKEN_EXPIRY_TIME = 1000 * 60 * 30;
 
   var RESET_CODE_BIT_LENGTH = 256;

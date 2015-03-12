@@ -18,7 +18,7 @@ module.exports = function (env) {
   }
 
   // Controllers
-  var modelControllers = require('./models')(sequelize);
+  var modelControllers = require('./models')(sequelize, env);
 
   // Sync
   sequelize.sync().complete(function (err) {
