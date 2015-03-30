@@ -374,7 +374,7 @@ module.exports = function (sequelize, env) {
         .error(callback);
     },
 
-    createResetCode: function (user, callback) {
+    createResetCode: function (user, appURL, callback) {
       var code = hat(RESET_CODE_BIT_LENGTH, RESET_CODE_BASE);
       var userResetCode = resetCode.build({
         code: code,
@@ -384,7 +384,7 @@ module.exports = function (sequelize, env) {
       userResetCode
         .save()
         .success(function () {
-          var resetUrl = env.get("WEBMAKERORG") +
+          var resetUrl = (appURL || env.get("WEBMAKERORG")) +
             "/?uid=" +
             user.getDataValue("username") +
             "&resetCode=" +
