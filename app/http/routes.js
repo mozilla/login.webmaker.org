@@ -230,7 +230,6 @@ module.exports = function (http, modelsController, webmakerAuth) {
     "/api/v2/user/reset-password",
     authMiddleware,
     routes.user3.setUser(modelsController),
-    routes.user3.doesUserHavePassword(true),
     middleware.verifyPasswordStrength(false),
     routes.user3.verifyResetCode(modelsController),
     routes.user3.resetPassword(modelsController)
@@ -239,7 +238,6 @@ module.exports = function (http, modelsController, webmakerAuth) {
     "/api/v2/user/request-reset-code",
     authMiddleware,
     routes.user3.setUser(modelsController),
-    routes.user3.doesUserHavePassword(true),
     routes.user3.invalidateActiveResets(modelsController),
     routes.user3.createResetCode(modelsController)
   );

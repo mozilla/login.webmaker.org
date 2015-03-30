@@ -181,7 +181,7 @@ module.exports.invalidateActiveResets = function (modelsController) {
 
 module.exports.createResetCode = function (modelsController) {
   return function (req, res) {
-    modelsController.createResetCode(res.locals.user, function (err) {
+    modelsController.createResetCode(res.locals.user, req.body.appURL, function (err) {
       if (err) {
         return res.json(500, {
           error: "Failed to create reset code"
