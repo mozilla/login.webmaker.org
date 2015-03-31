@@ -375,7 +375,7 @@ module.exports = function (sequelize, env) {
         .error(callback);
     },
 
-    createResetCode: function (user, appURL, oauthParams, callback) {
+    createResetCode: function (user, appURL, callback) {
 
       var code = hat(RESET_CODE_BIT_LENGTH, RESET_CODE_BASE);
       var userResetCode = resetCode.build({
@@ -384,16 +384,9 @@ module.exports = function (sequelize, env) {
       });
 
       var resetUrlObj = url.parse(appURL || env.get("WEBMAKERORG"), true);
+      resetUrlObj.search = null;
       resetUrlObj.query.uid = user.getDataValue("username");
       resetUrlObj.query.resetCode = userResetCode.getDataValue("code");
-
-      if ( oauthParams ) {
-        // pass through id.wmo oauth2 params
-        resetUrlObj.query.client_id = oauthParams.client_id || null;
-        resetUrlObj.query.state = oauthParams.state || null;
-        resetUrlObj.query.scopes = oauthParams.scopes || null;
-        resetUrlObj.query.response_type = oauthParams.response_type || null;
-      }
 
       userResetCode
         .save()
