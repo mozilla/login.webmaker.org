@@ -5,6 +5,7 @@ var proquint = require("proquint");
 var hat = require("hat");
 var hatchet = require("hatchet");
 var bcrypt = require("bcrypt");
+var url = require("url");
 
 module.exports = function (sequelize, env) {
   var TOKEN_EXPIRY_TIME = 1000 * 60 * 30;
@@ -381,19 +382,18 @@ module.exports = function (sequelize, env) {
         UserId: user.id
       });
 
+      var resetUrlObj = url.parse(appURL || env.get("WEBMAKERORG"), true);
+      resetUrlObj.search = null;
+      resetUrlObj.query.uid = user.getDataValue("username");
+      resetUrlObj.query.resetCode = userResetCode.getDataValue("code");
+
       userResetCode
         .save()
         .success(function () {
-          var resetUrl = (appURL || env.get("WEBMAKERORG")) +
-            "/?uid=" +
-            user.getDataValue("username") +
-            "&resetCode=" +
-            userResetCode.getDataValue("code");
-
           hatchet.send("reset_code_created", {
             email: user.getDataValue("email"),
             username: user.getDataValue("username"),
-            resetUrl: resetUrl
+            resetUrl: url.format(resetUrlObj)
           });
           callback();
         })
