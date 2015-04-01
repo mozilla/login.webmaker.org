@@ -376,7 +376,6 @@ module.exports = function (sequelize, env) {
     },
 
     createResetCode: function (user, appURL, callback) {
-
       var code = hat(RESET_CODE_BIT_LENGTH, RESET_CODE_BASE);
       var userResetCode = resetCode.build({
         code: code,
