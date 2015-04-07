@@ -304,7 +304,7 @@ module.exports = function (sequelize, env) {
       });
     },
 
-    createToken: function (userObj, appURL, callback) {
+    createToken: function (userObj, appURL, migrateUser, callback) {
       var token = loginToken.build({
         token: proquint.encode(crypto.randomBytes(4)),
         UserId: userObj.id
@@ -322,7 +322,8 @@ module.exports = function (sequelize, env) {
           verified: userObj.getDataValue("verified"),
           email: userObj.getDataValue("email"),
           loginUrl: appURL + "?uid=" + userObj.getDataValue("username") + "&token=" + savedToken.token,
-          token: savedToken.token
+          token: savedToken.token,
+          migrateUser: migrateUser
         });
 
         callback();

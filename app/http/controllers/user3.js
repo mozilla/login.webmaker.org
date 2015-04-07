@@ -4,7 +4,7 @@
 
 module.exports.generateLoginTokenForUser = function (modelsController) {
   return function (req, res, next) {
-    modelsController.createToken(res.locals.user, req.body.appURL, function (err) {
+    modelsController.createToken(res.locals.user, req.body.appURL, !!req.body.migrateUser, function (err) {
       if (err) {
         if (err.error && err.error === "User not found") {
           return res.json(404, err);
