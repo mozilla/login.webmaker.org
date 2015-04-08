@@ -304,7 +304,7 @@ module.exports = function (sequelize, env) {
       });
     },
 
-    createToken: function (userObj, appURL, callback) {
+    createToken: function (userObj, appURL, migrateUser, callback) {
       var token = loginToken.build({
         token: proquint.encode(crypto.randomBytes(4)),
         UserId: userObj.id
@@ -315,14 +315,20 @@ module.exports = function (sequelize, env) {
           return callback(err);
         }
 
+        var loginUrlObj = url.parse(appURL, true);
+        loginUrlObj.search = null;
+        loginUrlObj.query.uid = userObj.getDataValue("username");
+        loginUrlObj.query.token = savedToken.token;
+
         // To log loginUrl to console, do not define "HATCHET_QUEUE_URL" in your environment
         hatchet.send("login_token_email", {
           userId: userObj.getDataValue("id"),
           username: userObj.getDataValue("username"),
           verified: userObj.getDataValue("verified"),
           email: userObj.getDataValue("email"),
-          loginUrl: appURL + "?uid=" + userObj.getDataValue("username") + "&token=" + savedToken.token,
-          token: savedToken.token
+          loginUrl: url.format(loginUrlObj),
+          token: savedToken.token,
+          migrateUser: migrateUser
         });
 
         callback();
