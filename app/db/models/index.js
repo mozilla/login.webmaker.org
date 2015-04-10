@@ -503,14 +503,11 @@ module.exports = function (sequelize, env) {
     },
 
     createOauthLogin: function (userId, clientId, callback) {
-      oauthClient.findOrCreate(
-        {
-          client: clientId
-        },
-        {
-          client: clientId
-        }
-      ).then(function (client) {
+      oauthClient.findOrCreate({
+        client: clientId
+      }, {
+        client: clientId
+      }).then(function (client) {
         return oauthLogin.create({
           OAuthClientId: client.id,
           UserId: userId
