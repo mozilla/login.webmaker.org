@@ -135,7 +135,6 @@ module.exports = function (http, modelsController, webmakerAuth) {
     middleware.personaVerifier,
     routes.user2.authenticateUser(modelsController),
     middleware.updateUser(modelsController),
-    middleware.createOauthLogin(modelsController),
     middleware.engagedWithReferrerCode(modelsController, {
       "userStatus": "existing"
     }),
@@ -148,7 +147,6 @@ module.exports = function (http, modelsController, webmakerAuth) {
     middleware.personaFilter(),
     middleware.personaVerifier,
     routes.user2.createUser(modelsController),
-    middleware.createOauthLogin(modelsController),
     middleware.engagedWithReferrerCode(modelsController, {
       "userStatus": "new"
     }),
@@ -210,7 +208,6 @@ module.exports = function (http, modelsController, webmakerAuth) {
     routes.user3.setUser(modelsController),
     routes.user3.verifyTokenForUser(modelsController),
     routes.user3.updateUser(modelsController),
-    middleware.createOauthLogin(modelsController),
     middleware.engagedWithReferrerCode(modelsController, {
       "userStatus": "existing"
     }),
@@ -237,6 +234,7 @@ module.exports = function (http, modelsController, webmakerAuth) {
     routes.user3.setUser(modelsController),
     middleware.verifyPasswordStrength(false),
     routes.user3.verifyResetCode(modelsController),
+    middleware.createOauthLogin(modelsController),
     routes.user3.resetPassword(modelsController)
   );
   http.post(
