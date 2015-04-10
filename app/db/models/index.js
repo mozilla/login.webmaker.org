@@ -20,6 +20,8 @@ module.exports = function (sequelize, env) {
   var loginToken = sequelize.import(__dirname + "/loginToken.js");
   var password = sequelize.import(__dirname + "/password.js");
   var resetCode = sequelize.import(__dirname + "/resetCode.js");
+  var oauthClient = sequelize.import(__dirname + "/oauthClient.js");
+  var oauthLogin = sequelize.import(__dirname + "/oauthLogin.js");
 
   user.hasMany(modelReferrerCode);
   modelReferrerCode.belongsTo(user);
@@ -33,12 +35,20 @@ module.exports = function (sequelize, env) {
   user.hasMany(resetCode);
   resetCode.belongsTo(user);
 
+  user.hasMany(oauthLogin);
+  oauthLogin.belongsTo(user);
+
+  oauthClient.hasMany(oauthLogin);
+  oauthLogin.belongsTo(oauthClient);
+
   return {
 
     user: user,
     loginToken: loginToken,
     password: password,
     resetCode: resetCode,
+    oauthClient: oauthClient,
+    oauthLogin: oauthLogin,
 
     /**
      * getUserById( id, callback )
@@ -490,6 +500,24 @@ module.exports = function (sequelize, env) {
       bcrypt.compare(pass, user.password.saltedHash, function (err, res) {
         callback(err, res);
       });
+    },
+
+    createOauthLogin: function (userId, clientId, callback) {
+      oauthClient.findOrCreate(
+        {
+          client: clientId
+        },
+        {
+          client: clientId
+        }
+      ).then(function (client) {
+        return oauthLogin.create({
+          OAuthClientId: client.id,
+          UserId: userId
+        });
+      }).then(function (login) {
+        callback();
+      }).error(callback);
     }
   };
 };
