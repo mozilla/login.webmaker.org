@@ -98,7 +98,6 @@ module.exports.updateUser = function (User) {
 
 module.exports.createOauthLogin = function (User) {
   return function (req, res, next) {
-    console.log(req.body);
     if (req.body.oauth && req.body.oauth.client_id) {
       return User.createOauthLogin(res.locals.user.id, req.body.oauth.client_id, function (err) {
         next(err);
