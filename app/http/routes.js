@@ -185,12 +185,12 @@ module.exports = function (http, modelsController, webmakerAuth) {
   http.post(
     "/api/v2/user/create",
     middleware.audienceFilter(AUDIENCE_WHITELIST),
+    middleware.verifyPasswordStrength(true),
     routes.user2.createUser(modelsController),
     middleware.createOauthLogin(modelsController),
     middleware.engagedWithReferrerCode(modelsController, {
       "userStatus": "new"
     }),
-    middleware.verifyPasswordStrength(true),
     routes.user3.setPassword(modelsController),
     middleware.filterUserAttributesForSession,
     routes.user2.outputUser
