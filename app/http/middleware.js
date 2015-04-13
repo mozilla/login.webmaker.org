@@ -137,6 +137,15 @@ module.exports.verifyPasswordStrength = function (nextIfNone) {
   return function (req, res, next) {
     var password = req.body.password || req.body.newPassword;
     var user = res.locals.user;
+    var userValues = [];
+
+    if (user) {
+      userValues.push(user.username);
+      userValues.push(user.email);
+    } else if (req.body.username && req.body.email) {
+      userValues.push(req.body.username);
+      userValues.push(req.body.email);
+    }
 
     if (!password) {
       if (nextIfNone) {
@@ -148,7 +157,7 @@ module.exports.verifyPasswordStrength = function (nextIfNone) {
       });
     }
 
-    var testResults = passTest.test(password, [user.username, user.email]);
+    var testResults = passTest.test(password, userValues);
 
     if (testResults.passed) {
       return process.nextTick(next);
