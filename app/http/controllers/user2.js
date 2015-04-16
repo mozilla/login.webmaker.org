@@ -51,7 +51,8 @@ module.exports.createUser = function (User) {
       username: req.body.user.username,
       prefLocale: req.body.user.prefLocale,
       referrer: req.body.user.referrer,
-      lastLoggedIn: new Date()
+      lastLoggedIn: new Date(),
+      teach: req.body.teach
     };
 
     User.createUser(userInfo, function (err, user) {

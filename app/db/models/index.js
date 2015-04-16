@@ -172,7 +172,7 @@ module.exports = function (sequelize, env) {
       }
 
       // Delegates all server-side validation to sequelize during this step
-      userObj.save().complete(function (err, data) {
+      userObj.save().complete(function (err, saveData) {
         if (err) {
           return callback(err);
         }
@@ -182,10 +182,11 @@ module.exports = function (sequelize, env) {
           username: userObj.getDataValue("username"),
           email: userObj.getDataValue("email"),
           locale: userObj.getDataValue("prefLocale"),
-          subscribeToWebmakerList: userObj.getDataValue("subscribeToWebmakerList")
+          subscribeToWebmakerList: userObj.getDataValue("subscribeToWebmakerList"),
+          teach: data.teach
         });
 
-        callback(null, data);
+        callback(null, saveData);
       });
     },
 
