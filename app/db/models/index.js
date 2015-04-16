@@ -329,6 +329,7 @@ module.exports = function (sequelize, env) {
         var loginUrlObj = url.parse(appURL, true);
         loginUrlObj.search = null;
         loginUrlObj.query.uid = userObj.getDataValue("username");
+        loginUrlObj.query.email = userObj.getDataValue("email");
         loginUrlObj.query.token = savedToken.token;
 
         // To log loginUrl to console, do not define "HATCHET_QUEUE_URL" in your environment
