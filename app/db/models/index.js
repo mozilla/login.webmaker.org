@@ -172,7 +172,7 @@ module.exports = function (sequelize, env) {
       }
 
       // Delegates all server-side validation to sequelize during this step
-      userObj.save().complete(function (err, data) {
+      userObj.save().complete(function (err, saveData) {
         if (err) {
           return callback(err);
         }
@@ -186,7 +186,7 @@ module.exports = function (sequelize, env) {
           teach: data.teach
         });
 
-        callback(null, data);
+        callback(null, saveData);
       });
     },
 
