@@ -52,7 +52,7 @@ module.exports.createUser = function (User) {
       prefLocale: req.body.user.prefLocale,
       referrer: req.body.user.referrer,
       lastLoggedIn: new Date(),
-      teach: req.body.teach
+      client_id: req.body.oauth ? req.body.oauth.client_id : ""
     };
 
     User.createUser(userInfo, function (err, user) {
