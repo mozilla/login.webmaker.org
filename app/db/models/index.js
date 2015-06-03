@@ -183,7 +183,7 @@ module.exports = function (sequelize, env) {
           email: userObj.getDataValue("email"),
           locale: userObj.getDataValue("prefLocale"),
           subscribeToWebmakerList: userObj.getDataValue("subscribeToWebmakerList"),
-          teach: data.teach
+          client_id: data.client_id
         });
 
         callback(null, saveData);
