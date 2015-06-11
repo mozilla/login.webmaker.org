@@ -126,26 +126,15 @@ module.exports.verifyPasswordStrength = function (nextIfNone) {
   var PassTest = require("pass-test");
 
   var passTest = new PassTest({
-    specialChars: {
-      enabled: false
-    },
-    userValues: {
-      enabled: true
-    }
+    minLength: 8,
+    maxLength: 256,
+    minPhraseLength: 20,
+    minOptionalTestsToPass: 2,
+    allowPassphrases: true
   });
 
   return function (req, res, next) {
     var password = req.body.password || req.body.newPassword;
-    var user = res.locals.user;
-    var userValues = [];
-
-    if (user) {
-      userValues.push(user.username);
-      userValues.push(user.email);
-    } else if (req.body.username && req.body.email) {
-      userValues.push(req.body.username);
-      userValues.push(req.body.email);
-    }
 
     if (!password) {
       if (nextIfNone) {
@@ -157,9 +146,8 @@ module.exports.verifyPasswordStrength = function (nextIfNone) {
       });
     }
 
-    var testResults = passTest.test(password, userValues);
-
-    if (testResults.passed) {
+    var testResults = passTest.test(password);
+    if (testResults.strong) {
       return process.nextTick(next);
     }
 
