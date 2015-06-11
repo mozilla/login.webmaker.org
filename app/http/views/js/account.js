@@ -240,58 +240,59 @@
 
     var passInput = $( ".password-input-main" ),
         confirmInput = $( ".password-input-confirm" ),
-        eightChars = $("#eight-chars"),
-        oneEachCase = $("#one-each-case"),
-        oneNumber = $("#one-number")
         setPasswordBtn = $( ".set-password-button" );
 
     function validatePassword(blurEvent) {
-      var val = passInput.val();
-
-      valid = true;
-
-      if ( val.length < 8 ) {
-        valid = false;
-        eightChars.addClass('invalid');
-      } else {
-        eightChars.removeClass('invalid');
-        eightChars.addClass(blurEvent ? 'valid' : '');
-      }
-
-      if ( val.match(/[a-z]+/) == null || val.match(/[A-Z]+/) === null ) {
-        valid = false;
-        oneEachCase.addClass('invalid');
-      } else {
-        oneEachCase.removeClass('invalid');
-        oneEachCase.addClass(blurEvent ? 'valid' : '');
-      }
-
-      if ( val.match(/\d+/) === null ) {
-        valid = false;
-        oneNumber.addClass('invalid');
-      } else {
-        oneNumber.removeClass('invalid');
-        oneNumber.addClass(blurEvent ? 'valid' : '');
-      }
-
-      if ( !valid || confirmInput.val() !== passInput.val() ) {
+      if ( confirmInput.val() !== passInput.val() ) {
         setPasswordBtn.prop("disabled", true);
       } else {
         setPasswordBtn.prop("disabled", false);
       }
     }
 
-    passInput.on( "input", function() {
-      validatePassword(false);
-    });
-
-    passInput.blur(function() {
-      validatePassword(true);
-    });
-
     confirmInput.on( "input", function() {
       validatePassword(true);
     });
+
+    var tooShort = $( "#too-short" ),
+        tooLong = $( "#too-long" ),
+        charClasses = $( "#char-classes" ),
+        repeating = $( "repeating-chars" ),
+        commonPassword = $( "#common-password" );
+
+    function processPasswordStrengthFailedTests(results) {
+      var failedTests = results.failedTests;
+
+      if ( failedTests.indexOf(0) !== -1 ) {
+        tooShort.show();
+      } else {
+        tooShort.hide();
+      }
+
+      if ( failedTests.indexOf(1) !== -1 ) {
+        tooLong.show();
+      } else {
+        tooLong.hide();
+      }
+
+      if ( failedTests.indexOf(2) !== -1 ) {
+        repeating.show();
+      } else {
+        repeating.hide();
+      }
+
+      if ( failedTests.indexOf(3) !== -1 ) {
+        commonPassword.show();
+      } else {
+        commonPassword.hide();
+      }
+
+      if ( results.optionalTestsPassed < 2 ) {
+        charClasses.show();
+      } else {
+        charClasses.hide();
+      }
+    }
 
     setPasswordBtn.click(function(e) {
       var password = $( ".password-input-main" ).val();
@@ -311,8 +312,12 @@
             $( ".set-password-failed" ).hide();
             showPasswordLoginUI();
           },
-          error: function() {
-            $( ".set-password-failed" ).fadeIn();
+          error: function(resp) {
+            if ( resp.responseJSON && resp.responseJSON.strong === false ) {
+              processPasswordStrengthFailedTests(resp.responseJSON);
+              $( ".set-password-failed" ).fadeIn();
+            }
+            setPasswordBtn.prop("disabled", false);
           }
         });
       } else {

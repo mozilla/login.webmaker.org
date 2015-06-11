@@ -68,23 +68,24 @@
                   <!-- Show/hide this ul to display password fields and submit -->
                   <li>
                     <ul class="create-password-form no-list-styling" style="display: none" class="no-list-styling">
-                      <li>
-                        <div class="form-group">
-                          <p class="password-label">{{ gettext('Minimum password requirements') }}</p>
-                          <ul class="list-unstyled password-strength">
-                            <li id="eight-chars">{{ gettext('At least 8 characters') }}</li>
-                            <li id="one-each-case">{{ gettext('At least 1 upper and lower case character') }}</li>
-                            <li id="one-number">{{ gettext('At least 1 number') }}</li>
-                          </ul>
-                        </div>
-                      </li>
                       <li><input class="password-input-main" type="password" class="form-control account-form" placeholder="{{ gettext('Enter Password') }}"/></li>
                       <li><input class="password-input-confirm" type="password" class="form-control account-form" placeholder="{{ gettext('Confirm Password') }}"/></li>
                       <li>
                         <button class="btn btn-primary set-password-button">{{ gettext('Set Password') }}</button>
                         <input type="hidden" name="confirmSetPassword" value="{{ gettext('Switch to custom password') }}">
                       </li>
-                      <li class="set-password-failed"><span>{{ gettext("Failed to set password") }}</span></li>
+                      <li class="set-password-failed">
+                        <span>
+                          {{ gettext("Failed to set password") }}
+                          <ul>
+                            <li id="too-short">{{ gettext('At least 8') }}</li>
+                            <li id="too-long">{{ gettext('At most 256') }}</li>
+                            <li id="char-classes">{{ gettext('At least 2 character classes') }}</li>
+                            <li id="repeating-chars">{{ gettext('repeating chars') }}</li>
+                            <li id="common-password">{{ gettext('common password') }}</li>
+                          </ul>
+                        </span>
+                      </li>
                     </ul>
                   </li>
                   <!--  -->
