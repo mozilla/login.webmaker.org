@@ -126,12 +126,12 @@ module.exports.verifyPasswordStrength = function (nextIfNone) {
   var PassTest = require("pass-test");
 
   var passTest = new PassTest({
-      minLength: 8,
-      maxLength: 256,
-      minPhraseLength: 20,
-      minOptionalTestsToPass: 2,
-      allowPassphrases: true
-    });
+    minLength: 8,
+    maxLength: 256,
+    minPhraseLength: 20,
+    minOptionalTestsToPass: 2,
+    allowPassphrases: true
+  });
 
   return function (req, res, next) {
     var password = req.body.password || req.body.newPassword;

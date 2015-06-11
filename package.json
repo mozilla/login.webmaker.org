@@ -28,7 +28,7 @@
     "newrelic": "1.8.0",
     "node-statsd": "0.0.7",
     "nunjucks": "0.1.10",
-    "pass-test": "0.0.5",
+    "pass-test": "1.0.2",
     "proquint": "0.0.1",
     "redis": "0.12.1",
     "rtltr-for-less": "0.0.7",
