@@ -40,7 +40,6 @@
   "Failed to remove password": "There was an error removing your password, please try again",
   "At least 2 character classes": "Must contain at least 2 character classes (Upper Case, Lower case, Number, and Special Characters)",
   "Passphrases": "Using passphrases is more secure than passwords. We consider passwords longer than 20 characters to be passphrases, and don't subject them to the above rules",
-  "repeating chars": "You must not repeat a character three or more times in a row",
   "common password": "Your password must not be on the 10,000 most commonly used passwords list",
   "At least 8": "Your password must be at least 8 characters long",
   "At most 256": "Your password cannot exceed 256 characters in length"

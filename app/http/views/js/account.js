@@ -257,7 +257,6 @@
     var tooShort = $( "#too-short" ),
         tooLong = $( "#too-long" ),
         charClasses = $( "#char-classes" ),
-        repeating = $( "repeating-chars" ),
         commonPassword = $( "#common-password" );
 
     function processPasswordStrengthFailedTests(results) {
@@ -273,12 +272,6 @@
         tooLong.show();
       } else {
         tooLong.hide();
-      }
-
-      if ( failedTests.indexOf(2) !== -1 ) {
-        repeating.show();
-      } else {
-        repeating.hide();
       }
 
       if ( failedTests.indexOf(3) !== -1 ) {
