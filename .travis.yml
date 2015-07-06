@@ -4,3 +4,9 @@ before_script:
 language: node_js
 node_js:
   - "0.10"
+  - '0.12'
+  - iojs
+sudo: false
+cache:
+  directories:
+  - node_modules
