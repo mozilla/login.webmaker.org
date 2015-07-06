@@ -13,7 +13,7 @@ Once you have those you can get things up and running by:
 
 1. Install npm modules - `npm install`
 2. Use the default configeration - `cp env.sample .env`
-3. Run the server - `node app.js`
+3. Run the server - `npm start`
 
 ### Tests
 
