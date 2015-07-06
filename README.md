@@ -24,10 +24,6 @@ If you want to check your code passes before sending in a pull request (and ensu
 * ensure that grunt is installed globally on your system - `npm install -g grunt`
 * run `grunt --travis test`
 
-## Bugs
-
-Bugs can be found in Bugzilla - this is what <a href="https://bugzilla.mozilla.org/buglist.cgi?quicksearch=c%3Dlogin&list_id=6396195">bugs we have now</a>, if you notice anything else please <a href="https://bugzilla.mozilla.org/enter_bug.cgi?product=Webmaker&component=Login">file a new bug</a> for us.
-
 ## New Relic
 
 To enable New Relic, set the `NEW_RELIC_ENABLED` environment variable and add a config file, or set the relevant environment variables.
