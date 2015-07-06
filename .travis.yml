@@ -1,6 +1,10 @@
----
-before_script:
-  - "npm install -g grunt-cli"
 language: node_js
 node_js:
-  - "0.10"
+- '0.10'
+sudo: false
+cache:
+  directories:
+  - node_modules
+before_script:
+  - "npm install -g grunt-cli"
+

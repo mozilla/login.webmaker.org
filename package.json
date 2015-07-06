@@ -8,6 +8,9 @@
     "url": "git@github.com:mozilla/login.webmaker.org.git"
   },
   "license": "MPL-2.0",
+  "engines": {
+    "node": "^0.10.x"
+  },
   "dependencies": {
     "MD5": "1.0.3",
     "async": "0.2.9",
