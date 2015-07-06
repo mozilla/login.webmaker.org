@@ -7,6 +7,7 @@
     "type": "git",
     "url": "git@github.com:mozilla/login.webmaker.org.git"
   },
+  "license": "MPL-2.0",
   "dependencies": {
     "MD5": "1.0.3",
     "async": "0.2.9",
