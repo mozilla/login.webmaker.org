@@ -400,7 +400,7 @@ module.exports = function (sequelize, env) {
         UserId: user.id
       });
 
-      var resetUrlObj = url.parse(appURL || env.get("WEBMAKERORG"), true);
+      var resetUrlObj = url.parse(appURL || env.get("RESET_URL"), true);
       resetUrlObj.search = null;
       resetUrlObj.query.uid = user.getDataValue("username");
       resetUrlObj.query.resetCode = userResetCode.getDataValue("code");
