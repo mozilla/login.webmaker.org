@@ -7,7 +7,7 @@ var hatchet = require("hatchet");
 var bcrypt = require("bcrypt");
 var url = require("url");
 
-module.exports = function (sequelize, env) {
+module.exports = function (sequelize, env, newrelic) {
   var TOKEN_EXPIRY_TIME = 1000 * 60 * 30;
 
   var RESET_CODE_BIT_LENGTH = 256;
@@ -453,8 +453,8 @@ module.exports = function (sequelize, env) {
     changePassword: function (newPass, user, callback) {
       var pass = user.password || password.build();
 
-      bcrypt.genSalt(BCRYPT_ROUNDS, function (err, salt) {
-        bcrypt.hash(newPass, salt, function (err, hash) {
+      bcrypt.genSalt(BCRYPT_ROUNDS, newrelic.createTracer("bcrypt:genSalt", function (err, salt) {
+        bcrypt.hash(newPass, salt, newrelic.createTracer("bcrypt:hash", function (err, hash) {
           pass.saltedHash = hash;
           user
             .updateAttributes({
@@ -476,8 +476,8 @@ module.exports = function (sequelize, env) {
                 error: "Login Database Error"
               });
             });
-        });
-      });
+        }));
+      }));
     },
 
     removePassword: function (user, callback) {
@@ -499,9 +499,9 @@ module.exports = function (sequelize, env) {
     },
 
     compare: function (pass, user, callback) {
-      bcrypt.compare(pass, user.password.saltedHash, function (err, res) {
+      bcrypt.compare(pass, user.password.saltedHash, newrelic.createTracer("bcrypt:compare", function (err, res) {
         callback(err, res);
-      });
+      }));
     },
 
     createOauthLogin: function (userId, clientId, callback) {

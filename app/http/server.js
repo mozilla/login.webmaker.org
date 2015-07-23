@@ -11,6 +11,9 @@ if (process.env.NEW_RELIC_ENABLED) {
   newrelic = {
     getBrowserTimingHeader: function () {
       return "<!-- New Relic RUM disabled -->";
+    },
+    createTracer: function (name, handler) {
+      return handler;
     }
   };
 }
@@ -25,7 +28,7 @@ module.exports = function (env) {
     nunjucks = require("nunjucks"),
     path = require("path"),
     route = require("./routes"),
-    Models = require("../db")(env).Models;
+    Models = require("../db")(env, newrelic).Models;
 
   var http = express(),
     nunjucksEnv = new nunjucks.Environment([
