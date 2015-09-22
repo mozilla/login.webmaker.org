@@ -26,7 +26,6 @@
     "hatchet": "0.3.2",
     "helmet": "0.1.2",
     "less-middleware": "https://github.com/Pomax/less.js-middleware/archive/master.tar.gz",
-    "messina": "0.1.1",
     "moment": "2.8.2",
     "mysql": "2.0.1",
     "newrelic": "^1.21.1",
