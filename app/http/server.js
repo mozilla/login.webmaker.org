@@ -108,13 +108,15 @@ module.exports = function (env) {
     var optimize = env.get("NODE_ENV") !== "development",
       tmpDir = path.join(require("os").tmpDir(), "mozilla.login.webmaker.org.build");
 
-    http.use(function(req,res,next) {
-      // convert requests for ltr- or rtl-specific CSS back to the real filename,
-      // as the rtltr-for-less package was a hack that was never meant to hit production.
+    // convert requests for ltr- or rtl-specific CSS back to the real filename,
+    // as the rtltr-for-less package was a hack that was never meant to hit production.
+    http.use(function rtltrRedirect(req, res, next) {
       var path = req.path;
       if (path.match(/css\/\w+\.(ltr|rtl)\.css/)) {
-        res.redirect(path.replace(/\.(ltr|rtl)/,''));
-      } else { next(); }
+        res.redirect(path.replace(/\.(ltr|rtl)/, ""));
+      } else {
+        next();
+      }
     });
 
     http.use(lessMiddleWare({
@@ -126,6 +128,7 @@ module.exports = function (env) {
       yuicompress: optimize,
       optimization: optimize ? 0 : 2
     }));
+
     http.use(express.static(tmpDir));
   });
 
