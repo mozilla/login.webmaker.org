@@ -24,7 +24,6 @@ module.exports = function (env) {
     i18n = require("webmaker-i18n"),
     lessMiddleWare = require("less-middleware"),
     WebmakerAuth = require("webmaker-auth"),
-    rtltrForLess = require("rtltr-for-less"),
     nunjucks = require("nunjucks"),
     path = require("path"),
     route = require("./routes"),
@@ -108,7 +107,19 @@ module.exports = function (env) {
 
     var optimize = env.get("NODE_ENV") !== "development",
       tmpDir = path.join(require("os").tmpDir(), "mozilla.login.webmaker.org.build");
-    http.use(lessMiddleWare(rtltrForLess({
+
+    // convert requests for ltr- or rtl-specific CSS back to the real filename,
+    // as the rtltr-for-less package was a hack that was never meant to hit production.
+    http.use(function rtltrRedirect(req, res, next) {
+      var path = req.path;
+      if (path.match(/css\/\w+\.(ltr|rtl)\.css/)) {
+        res.redirect(path.replace(/\.(ltr|rtl)/, ""));
+      } else {
+        next();
+      }
+    });
+
+    http.use(lessMiddleWare({
       once: optimize,
       debug: !optimize,
       dest: tmpDir,
@@ -116,7 +127,8 @@ module.exports = function (env) {
       compress: optimize,
       yuicompress: optimize,
       optimization: optimize ? 0 : 2
-    })));
+    }));
+
     http.use(express.static(tmpDir));
   });
 
