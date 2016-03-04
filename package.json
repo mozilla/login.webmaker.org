@@ -37,6 +37,7 @@
     "proquint": "0.0.1",
     "redis": "0.12.1",
     "sequelize": "1.7.10",
+    "sqlite3": "3.1.1",
     "webmaker-auth": "1.0.4",
     "webmaker-download-locales": "0.2.5",
     "webmaker-i18n": "0.3.19",
@@ -52,9 +53,6 @@
     "mofo-style": "1.0.1",
     "request": "2.20.0",
     "supertest": "0.15.0"
-  },
-  "optionalDependencies": {
-    "sqlite3": "3.0.5"
   },
   "scripts": {
     "start": "node app.js",
