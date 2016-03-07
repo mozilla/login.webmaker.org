@@ -10,9 +10,12 @@ module.exports = function (app) {
   var redisConfig = {
     port: redisUrl.port,
     host: redisUrl.hostname,
-    auth: redisUrl.auth,
-    db: redisUrl.path.substring(1)
+    auth: redisUrl.auth
   };
+
+  if (redisUrl.path) {
+    redisConfig.db = redisUrl.path.substring(1);
+  }
 
   var redisClient = require("redis").createClient(redisConfig.port, redisConfig.host);
 
