@@ -2,15 +2,15 @@ module.exports = function (app) {
   var env = require("../../config/environment");
   var url = require("url");
 
-  if (!env.get("REDIS_CONNECTION_STRING")) {
-    throw new Error("Rate limiting enabled, but no REDIS_CONNECTION_STRING is defined.");
+  if (!env.get("REDIS_URL")) {
+    throw new Error("Rate limiting enabled, but no REDIS_URL is defined.");
   }
 
-  var redisUrl = url.parse(env.get("REDIS_CONNECTION_STRING"));
+  var redisUrl = url.parse(env.get("REDIS_URL"));
   var redisConfig = {
     port: redisUrl.port,
     host: redisUrl.hostname,
-    auth: redisUrl.auth
+    auth: redisUrl.auth[1]
   };
 
   if (redisUrl.path) {
