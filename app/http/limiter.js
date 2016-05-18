@@ -10,7 +10,7 @@ module.exports = function (app) {
   var redisConfig = {
     port: redisUrl.port,
     host: redisUrl.hostname,
-    auth: redisUrl.auth[1]
+    auth: redisUrl.auth.split(":")[1]
   };
 
   if (redisUrl.path) {
