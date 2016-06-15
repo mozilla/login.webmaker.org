@@ -12,7 +12,7 @@ The app is written using <a href="http://nodejs.org/">nodejs</a> and uses <a hre
 Once you have those you can get things up and running by:
 
 1. Install npm modules - `npm install`
-2. Use the default configeration - `cp env.sample .env`
+2. Use the default configuration - `cp env.sample .env`
 3. Run the server - `npm start`
 
 ### Tests
