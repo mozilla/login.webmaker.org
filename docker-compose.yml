@@ -1,0 +1,40 @@
+version: '2'
+services:
+  web:
+    tty: true
+    stdin_open: true
+    build: .
+    env_file: .env
+    ports:
+      - "3000:3000"
+    links:
+      - mysql
+    volumes:
+      - ./app:/wmlogin/app
+      - ./config:/wmlogin/config
+      - ./lib:/wmlogin/lib
+      - ./locale:/wmlogin/locale
+      - ./migrations:/wmlogin/migrations
+      - ./test:/wmlogin/test
+    environment:
+      - DBOPTIONS_HOST=mysql
+
+  mysql:
+    restart: always
+    image: mysql:5.6
+    volumes_from:
+      - data
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: local_webmakers
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+
+  data:
+    restart: always
+    image: busybox
+    volumes:
+      - /var/lib/mysql
+    command: "true"
