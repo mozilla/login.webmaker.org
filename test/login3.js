@@ -10,10 +10,9 @@ var Habitat = require("habitat"),
 
 // use default env settings
 Habitat.load("./env.sample");
+Habitat.load("./env.test");
 env = new Habitat();
 
-env.unset("DBOPTIONS_STORAGE");
-env.set("DBOPTIONS_STORAGE", "logintest.sqlite");
 env.set("HATCHET_NO_LOG");
 env.set("DISABLE_HTTP_LOGGING");
 

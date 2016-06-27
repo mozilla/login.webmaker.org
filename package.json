@@ -9,7 +9,7 @@
   },
   "license": "MPL-2.0",
   "engines": {
-    "node": "^0.12.x"
+    "node": "^4.4.x"
   },
   "dependencies": {
     "MD5": "1.0.3",
@@ -51,12 +51,13 @@
     "grunt-jscs": "1.5.0",
     "mocha": "1.9.0",
     "mofo-style": "1.0.1",
+    "nodemon": "^1.9.2",
     "request": "2.20.0",
     "sqlite3": "3.1.2",
     "supertest": "0.15.0"
   },
   "scripts": {
-    "start": "node app.js",
+    "start": "nodemon app.js",
     "test": "grunt --verbose && mocha --timeout 60000 --reporter spec",
     "postinstall": "bower install",
     "download-locales": "webmaker-download-locales login"

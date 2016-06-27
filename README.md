@@ -7,13 +7,37 @@ This is our SSO server and identity provider for webmaker.org and all our additi
 
 ## Getting the Server Up and Running Locally
 
-The app is written using <a href="http://nodejs.org/">nodejs</a> and uses <a href="https://npmjs.org/doc/">npm</a> for package management.
+The app is written using <a href="http://nodejs.org/">nodejs</a> and uses <a href="https://npmjs.org/doc/">npm</a> for package management, but all you require to run the server is [Docker](https://www.docker.com/). Check out the instructions on how to set Docker up for [Mac](https://docs.docker.com/docker-for-mac/), [Windows](https://docs.docker.com/docker-for-windows/) and [Linux](https://docs.docker.com/engine/getstarted/step_one/).
 
-Once you have those you can get things up and running by:
+Once you have Docker installed, you can get things up and running by:
 
-1. Install npm modules - `npm install`
-2. Use the default configeration - `cp env.sample .env`
-3. Run the server - `npm start`
+1. Using the default environment configuration:
+
+**On Linux or OSX**
+```
+$ sh ./run.sh env
+```
+**On Windows**
+```
+$ run.bat env
+```
+
+2. Starting the server:
+
+**On Linux or OSX**
+```
+$ sh ./run.sh
+```
+**On Windows**
+```
+$ run.bat
+```
+
+Any changes you make to the source code will automatically restart the server in the Docker container. The following files are exceptions to this, i.e. they will require you to re-run step 2:
+* package.json
+* bower.json
+* Gruntfile.js
+* app.js
 
 ### Tests
 
@@ -21,8 +45,14 @@ We use <a href="http://gruntjs.com/">Grunt</a> to lint our CSS and JS and these 
 
 If you want to check your code passes before sending in a pull request (and ensure no breaking builds) then:
 
-* ensure that grunt is installed globally on your system - `npm install -g grunt`
-* run `grunt --travis test`
+**On Linux or OSX**
+```
+$ sh ./run.sh test
+```
+**On Windows**
+```
+$ run.bat test
+```
 
 ## New Relic
 
