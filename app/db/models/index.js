@@ -4,7 +4,7 @@ var crypto = require("crypto");
 var proquint = require("proquint");
 var hat = require("hat");
 var hatchet = require("hatchet");
-var bcrypt = require("bcrypt");
+var bcrypt = require("bcryptjs");
 var url = require("url");
 
 module.exports = function (sequelize, env, newrelic) {
