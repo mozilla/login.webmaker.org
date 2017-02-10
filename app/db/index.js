@@ -1,6 +1,6 @@
 var Sequelize = require('sequelize');
 
-module.exports = function (env, newrelic) {
+module.exports = function (env) {
   var sequelize;
   var health = {
     connected: false,
@@ -18,7 +18,7 @@ module.exports = function (env, newrelic) {
   }
 
   // Controllers
-  var modelControllers = require('./models')(sequelize, env, newrelic);
+  var modelControllers = require('./models')(sequelize, env);
 
   // Sync
   sequelize.sync().complete(function (err) {

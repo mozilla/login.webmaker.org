@@ -29,7 +29,6 @@
     "less-middleware": "0.1.15",
     "moment": "2.8.2",
     "mysql": "2.0.1",
-    "newrelic": "^1.21.1",
     "node-statsd": "0.0.7",
     "nunjucks": "0.1.10",
     "pass-test": "1.0.2",

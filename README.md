@@ -23,9 +23,3 @@ If you want to check your code passes before sending in a pull request (and ensu
 
 * ensure that grunt is installed globally on your system - `npm install -g grunt`
 * run `grunt --travis test`
-
-## New Relic
-
-To enable New Relic, set the `NEW_RELIC_ENABLED` environment variable and add a config file, or set the relevant environment variables.
-
-For more information on configuring New Relic, see: https://github.com/newrelic/node-newrelic/#configuring-the-agent
