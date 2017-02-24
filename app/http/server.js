@@ -4,20 +4,6 @@
 
 /* jshint node: true */
 
-var newrelic;
-if (process.env.NEW_RELIC_ENABLED) {
-  newrelic = require("newrelic");
-} else {
-  newrelic = {
-    getBrowserTimingHeader: function () {
-      return "<!-- New Relic RUM disabled -->";
-    },
-    createTracer: function (name, handler) {
-      return handler;
-    }
-  };
-}
-
 module.exports = function (env) {
   var express = require("express"),
     helmet = require("helmet"),
@@ -27,7 +13,7 @@ module.exports = function (env) {
     nunjucks = require("nunjucks"),
     path = require("path"),
     route = require("./routes"),
-    Models = require("../db")(env, newrelic).Models;
+    Models = require("../db")(env).Models;
 
   var http = express(),
     nunjucksEnv = new nunjucks.Environment([
@@ -88,7 +74,6 @@ module.exports = function (env) {
       // audience and webmakerorg are duplicated because of i18n
       AUDIENCE: env.get("WEBMAKERORG"),
       WEBMAKERORG: env.get("WEBMAKERORG"),
-      newrelic: newrelic,
       profile: env.get("PROFILE"),
       bower_path: "bower_components",
       personaHostname: env.get("PERSONA_HOSTNAME", "https://login.persona.org"),
