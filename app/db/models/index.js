@@ -9,7 +9,7 @@ var bcrypt;
 
 try {
   bcrypt = require("bcrypt");
-} catch(e) {
+} catch (e) {
   console.info("Falling back to JavaScript implementation of bcrypt");
   bcrypt = require("bcryptjs");
 }
