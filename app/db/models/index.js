@@ -4,8 +4,15 @@ var crypto = require("crypto");
 var proquint = require("proquint");
 var hat = require("hat");
 var hatchet = require("hatchet");
-var bcrypt = require("bcryptjs");
 var url = require("url");
+var bcrypt;
+
+try {
+  bcrypt = require("bcrypt");
+} catch(e) {
+  console.info("Falling back to JavaScript implementation of bcrypt");
+  bcrypt = require("bcryptjs");
+}
 
 module.exports = function (sequelize, env) {
   var TOKEN_EXPIRY_TIME = 1000 * 60 * 30;

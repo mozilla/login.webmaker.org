@@ -9,7 +9,7 @@
   },
   "license": "MPL-2.0",
   "engines": {
-    "node": "^4.6"
+    "node": "^4.8"
   },
   "dependencies": {
     "MD5": "1.0.3",
@@ -40,6 +40,9 @@
     "webmaker-i18n": "0.3.19",
     "webmaker-locale-mapping": "0.0.5",
     "webmaker-translation-stats": "0.0.1"
+  },
+  "optionalDependencies": {
+    "bcrypt": "1.0.2"
   },
   "devDependencies": {
     "grunt": "0.4.5",
