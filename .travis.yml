@@ -2,7 +2,7 @@ env:
   - CXX=g++-4.8
 language: node_js
 node_js:
-- '6.11'
+- '4'
 sudo: false
 addons:
   apt:
