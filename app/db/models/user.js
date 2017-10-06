@@ -131,6 +131,11 @@ module.exports = function (sequelize, DataTypes) {
         }
       }
     },
+    bgColor: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 175
+    },
     links: {
       type: DataTypes.STRING,
       validate: {
