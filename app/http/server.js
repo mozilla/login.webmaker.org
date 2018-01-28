@@ -84,7 +84,7 @@ module.exports = function (env) {
     http.use(http.router);
 
     var optimize = env.get("NODE_ENV") !== "development",
-      tmpDir = path.join(require("os").tmpDir(), "mozilla.login.webmaker.org.build");
+      tmpDir = path.join(require("os").tmpdir(), "mozilla.login.webmaker.org.build");
 
     // convert requests for ltr- or rtl-specific CSS back to the real filename,
     // as the rtltr-for-less package was a hack that was never meant to hit production.

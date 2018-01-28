@@ -3,6 +3,8 @@ module.exports = function (grunt) {
   var jscsrc = grunt.file.readJSON("node_modules/mofo-style/linters/.jscsrc");
   var jshintrc = grunt.file.readJSON("node_modules/mofo-style/linters/.jshintrc");
 
+  jshintrc.esversion = 6;
+
   var javaScriptFiles = [
     "Gruntfile.js",
     "app.js",
@@ -49,6 +51,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks("grunt-jscs");
 
   grunt.registerTask("clean", ["jsbeautifier:modify"]);
-  grunt.registerTask("validate", ["jsbeautifier:verify", "jshint", "jscs"]);
+  grunt.registerTask("validate", ["jshint", "jscs"]);
   grunt.registerTask("default", ["validate"]);
 };
