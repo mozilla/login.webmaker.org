@@ -54,7 +54,7 @@
     "mocha": "1.9.0",
     "mofo-style": "1.0.1",
     "request": "2.20.0",
-    "sqlite3": "3.1.4",
+    "sqlite3": "^4.0.0",
     "supertest": "0.15.0"
   },
   "scripts": {

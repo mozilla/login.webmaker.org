@@ -1,6 +1,6 @@
 var Sequelize = require('sequelize');
 
-module.exports = function (env) {
+module.exports = function (env, callback) {
   var sequelize;
   var health = {
     connected: false,
@@ -25,6 +25,9 @@ module.exports = function (env) {
     .then(() => {
       health.connected = true;
       handlers.forkSuccessHandling();
+      if (callback) {
+        callback();
+      }
     })
     .catch(err => handlers.dbErrorHandling(err, handlers.forkErrorHandling));
 
