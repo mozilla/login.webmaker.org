@@ -1,6 +1,6 @@
 var Sequelize = require('sequelize');
 
-module.exports = function (env) {
+module.exports = function (env, callback) {
   var sequelize;
   var health = {
     connected: false,
@@ -21,14 +21,15 @@ module.exports = function (env) {
   var modelControllers = require('./models')(sequelize, env);
 
   // Sync
-  sequelize.sync().complete(function (err) {
-    if (err) {
-      handlers.dbErrorHandling(err, handlers.forkErrorHandling);
-    } else {
+  sequelize.sync()
+    .then(() => {
       health.connected = true;
       handlers.forkSuccessHandling();
-    }
-  });
+      if (callback) {
+        callback();
+      }
+    })
+    .catch(err => handlers.dbErrorHandling(err, handlers.forkErrorHandling));
 
   // Export models
   return {

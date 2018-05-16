@@ -4,7 +4,7 @@
 
 /* jshint node: true */
 
-module.exports = function (env) {
+module.exports = function (env, callback) {
   var express = require("express"),
     helmet = require("helmet"),
     i18n = require("webmaker-i18n"),
@@ -13,10 +13,23 @@ module.exports = function (env) {
     nunjucks = require("nunjucks"),
     path = require("path"),
     route = require("./routes"),
-    Models = require("../db")(env).Models;
+    http = express();
 
-  var http = express(),
-    nunjucksEnv = new nunjucks.Environment([
+  function startServer() {
+    const port = env.get("PORT");
+    const server = http.listen(port, function () {
+      console.log("HTTP server listening on port " + port + ".");
+    });
+
+    if (callback) {
+      callback(server);
+    }
+  }
+
+  // Wait until the database syncs to start the server
+  var Models = require("../db")(env, startServer).Models;
+
+  var nunjucksEnv = new nunjucks.Environment([
       new nunjucks.FileSystemLoader(path.join(__dirname, "views")),
       new nunjucks.FileSystemLoader(path.resolve(__dirname, "../../bower_components"))
     ], {
@@ -84,7 +97,7 @@ module.exports = function (env) {
     http.use(http.router);
 
     var optimize = env.get("NODE_ENV") !== "development",
-      tmpDir = path.join(require("os").tmpDir(), "mozilla.login.webmaker.org.build");
+      tmpDir = path.join(require("os").tmpdir(), "mozilla.login.webmaker.org.build");
 
     // convert requests for ltr- or rtl-specific CSS back to the real filename,
     // as the rtltr-for-less package was a hack that was never meant to hit production.
@@ -118,8 +131,4 @@ module.exports = function (env) {
 
   http.use(express.static(path.join(__dirname, "public")));
   http.use("/bower", express.static(path.join(__dirname, "../../bower_components")));
-
-  return http.listen(env.get("PORT"), function () {
-    console.log("HTTP server listening on port " + env.get("PORT") + ".");
-  });
 };
