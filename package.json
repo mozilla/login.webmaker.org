@@ -9,10 +9,10 @@
   },
   "license": "MPL-2.0",
   "engines": {
-    "node": "^8.9.0",
-    "npm": "^5.5.1"
+    "node": "^4.8.4"
   },
   "dependencies": {
+    "MD5": "1.0.3",
     "async": "0.2.9",
     "badword": "0.0.1",
     "bcryptjs": "2.4.3",
@@ -27,15 +27,14 @@
     "helmet": "0.1.2",
     "less": "1.7.5",
     "less-middleware": "0.1.15",
-    "md5": "^2.2.1",
-    "moment": "^2.20.1",
-    "mysql2": "^1.5.1",
+    "moment": "2.8.2",
+    "mysql": "2.0.1",
     "node-statsd": "0.0.7",
     "nunjucks": "0.1.10",
     "pass-test": "1.0.2",
     "proquint": "0.0.1",
     "redis": "0.12.1",
-    "sequelize": "^4.32.1",
+    "sequelize": "1.7.10",
     "webmaker-auth": "1.0.4",
     "webmaker-download-locales": "0.2.5",
     "webmaker-i18n": "0.3.19",
@@ -49,12 +48,12 @@
     "grunt": "0.4.5",
     "grunt-cli": "1.0.1",
     "grunt-contrib-jshint": "^1.0.0",
-    "grunt-jsbeautifier": "^0.2.13",
+    "grunt-jsbeautifier": "0.2.8",
     "grunt-jscs": "1.5.0",
     "mocha": "1.9.0",
     "mofo-style": "1.0.1",
     "request": "2.20.0",
-    "sqlite3": "^4.0.0",
+    "sqlite3": "3.1.4",
     "supertest": "0.15.0"
   },
   "scripts": {

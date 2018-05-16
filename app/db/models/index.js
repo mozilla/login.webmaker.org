@@ -1,13 +1,11 @@
-var Sequelize = require("sequelize");
 var moment = require("moment");
+var bPromise = require("bluebird");
 var crypto = require("crypto");
 var proquint = require("proquint");
 var hat = require("hat");
 var hatchet = require("hatchet");
 var url = require("url");
 var bcrypt;
-
-var Op = Sequelize.Op;
 
 try {
   bcrypt = require("bcrypt");
@@ -66,9 +64,11 @@ module.exports = function (sequelize, env) {
      * callback: function( err, user )
      */
     getUserById: function (id, callback) {
-      user.findById(id)
-        .then(user => callback(null, user))
-        .catch(callback);
+      user.find({
+        where: {
+          id: id
+        }
+      }).complete(callback);
     },
 
     /**
@@ -78,13 +78,11 @@ module.exports = function (sequelize, env) {
      * callback: function( err, user )
      */
     getUserByUsername: function (username, callback) {
-      user.findOne({
+      user.find({
         where: {
           username: username
         }
-      })
-        .then(user => callback(null, user))
-        .catch(callback);
+      }).complete(callback);
     },
 
     /**
@@ -94,13 +92,11 @@ module.exports = function (sequelize, env) {
      * callback: function( err, user )
      */
     getUserByEmail: function (email, callback) {
-      user.findOne({
+      user.find({
         where: {
           email: email
         }
-      })
-        .then(user => callback(null, user))
-        .catch(callback);
+      }).complete(callback);
     },
 
     /**
@@ -114,9 +110,7 @@ module.exports = function (sequelize, env) {
         where: {
           id: ids
         }
-      })
-        .then(users => callback(null, users))
-        .catch(callback);
+      }).complete(callback);
     },
 
     /**
@@ -130,9 +124,7 @@ module.exports = function (sequelize, env) {
         where: {
           username: usernames
         }
-      })
-        .then(users => callback(null, users))
-        .catch(callback);
+      }).complete(callback);
     },
 
     /**
@@ -146,9 +138,7 @@ module.exports = function (sequelize, env) {
         where: {
           email: emails
         }
-      })
-        .then(users => callback(null, users))
-        .catch(callback);
+      }).complete(callback);
     },
 
     /**
@@ -158,7 +148,8 @@ module.exports = function (sequelize, env) {
      * callback: function( err, thisUser )
      */
     createUser: function (data, callback) {
-      var userObj;
+      var userObj,
+        err;
 
       if (!data) {
         return callback("No data passed!");
@@ -182,24 +173,28 @@ module.exports = function (sequelize, env) {
       });
 
       // Validate
-      userObj.validate()
-        .then(() => {
-          // Delegates all server-side validation to sequelize during this step
-          return userObj.save()
-            .then(saveData => {
-              hatchet.send("create_user", {
-                userId: userObj.getDataValue("id"),
-                username: userObj.getDataValue("username"),
-                email: userObj.getDataValue("email"),
-                locale: userObj.getDataValue("prefLocale"),
-                subscribeToWebmakerList: userObj.getDataValue("subscribeToWebmakerList"),
-                client_id: data.client_id
-              });
+      err = userObj.validate();
+      if (err) {
+        return callback(err);
+      }
 
-              callback(null, saveData);
-            });
-        })
-        .catch(callback);
+      // Delegates all server-side validation to sequelize during this step
+      userObj.save().complete(function (err, saveData) {
+        if (err) {
+          return callback(err);
+        }
+
+        hatchet.send("create_user", {
+          userId: userObj.getDataValue("id"),
+          username: userObj.getDataValue("username"),
+          email: userObj.getDataValue("email"),
+          locale: userObj.getDataValue("prefLocale"),
+          subscribeToWebmakerList: userObj.getDataValue("subscribeToWebmakerList"),
+          client_id: data.client_id
+        });
+
+        callback(null, saveData);
+      });
     },
 
     /**
@@ -210,7 +205,9 @@ module.exports = function (sequelize, env) {
      * callback: function( err, user )
      */
     updateUser: function (email, data, callback) {
-      this.getUserByEmail(email, (err, user) => {
+      this.getUserByEmail(email, function (err, user) {
+        var error;
+
         if (err) {
           return callback(err);
         }
@@ -224,10 +221,12 @@ module.exports = function (sequelize, env) {
           user[key] = data[key];
         });
 
-        user.validate()
-          .then(() => user.save())
-          .then(user => callback(null, user))
-          .catch(callback);
+        error = user.validate();
+        if (error) {
+          return callback(error);
+        }
+
+        user.save().complete(callback);
       });
     },
 
@@ -240,7 +239,7 @@ module.exports = function (sequelize, env) {
     deleteUser: function (email, callback) {
       // Check user exists (sequelize happily deletes
       // non existant-users)
-      this.getUserByEmail(email, (err, user) => {
+      this.getUserByEmail(email, function (err, user) {
         if (err) {
           return callback(err);
         }
@@ -249,20 +248,21 @@ module.exports = function (sequelize, env) {
           return callback("User not found!");
         }
 
-        const data = {
-          userId: user.getDataValue("id"),
-          username: user.getDataValue("username"),
-          locale: user.getDataValue("prefLocale"),
-          email: user.getDataValue("email")
-        };
-
         // Delete user
-        user.destroy()
-          .then(() => {
-            hatchet.send("delete_user", data);
-            return callback();
-          })
-          .catch(callback);
+        user.destroy().complete(function (err) {
+          if (err) {
+            return callback(err);
+          }
+
+          hatchet.send("delete_user", {
+            userId: user.getDataValue("id"),
+            username: user.getDataValue("username"),
+            locale: user.getDataValue("prefLocale"),
+            email: user.getDataValue("email")
+          });
+
+          callback();
+        });
       });
     },
 
@@ -277,9 +277,7 @@ module.exports = function (sequelize, env) {
         where: {
           "email": emails
         }
-      })
-        .then(users => callback(null, users))
-        .catch(callback);
+      }).complete(callback);
     },
 
     /**
@@ -295,7 +293,7 @@ module.exports = function (sequelize, env) {
         return callback();
       }
 
-      this.getUserByEmail(email, (err, user) => {
+      this.getUserByEmail(email, function (err, user) {
         if (err) {
           return callback(err);
         }
@@ -311,19 +309,16 @@ module.exports = function (sequelize, env) {
 
         // Using findOrCreate() so we only have one record per campaign + user
         // but the updatedAt field can change with multiple interactions
-        modelReferrerCode.findOrCreate(desiredRecord, desiredRecord)
-          .spread((referrercode, created) => {
-            if (created) {
-              // this was new and has now been saved
-              referrercode.userStatus = userStatus;
-              return referrercode.save();
-            }
-
+        modelReferrerCode.findOrCreate(desiredRecord, desiredRecord).success(function (referrercode, created) {
+          if (created) {
+            // this was new and has now been saved
+            referrercode.userStatus = userStatus;
+            referrercode.save().complete(callback);
+          } else {
             // save this again to update the autogenerated updatedAt field
-            return referrercode.save();
-          })
-          .then(referrercode => callback(null, referrercode))
-          .catch(callback);
+            referrercode.save().complete(callback);
+          }
+        });
       });
     },
 
@@ -333,69 +328,76 @@ module.exports = function (sequelize, env) {
         UserId: userObj.id
       });
 
-      token.save()
-        .then(savedToken => {
-          var loginUrlObj = url.parse(appURL, true);
-          loginUrlObj.search = null;
-          loginUrlObj.query.uid = userObj.getDataValue("username");
-          loginUrlObj.query.email = userObj.getDataValue("email");
-          loginUrlObj.query.token = savedToken.token;
+      token.save().complete(function (err, savedToken) {
+        if (err) {
+          return callback(err);
+        }
 
-          // To log loginUrl to console, do not define "HATCHET_QUEUE_URL" in your environment
-          hatchet.send("login_token_email", {
-            userId: userObj.getDataValue("id"),
-            username: userObj.getDataValue("username"),
-            verified: userObj.getDataValue("verified"),
-            email: userObj.getDataValue("email"),
-            loginUrl: url.format(loginUrlObj),
-            token: savedToken.token,
-            migrateUser: migrateUser
-          });
+        var loginUrlObj = url.parse(appURL, true);
+        loginUrlObj.search = null;
+        loginUrlObj.query.uid = userObj.getDataValue("username");
+        loginUrlObj.query.email = userObj.getDataValue("email");
+        loginUrlObj.query.token = savedToken.token;
 
-          return callback();
-        })
-        .catch(callback);
+        // To log loginUrl to console, do not define "HATCHET_QUEUE_URL" in your environment
+        hatchet.send("login_token_email", {
+          userId: userObj.getDataValue("id"),
+          username: userObj.getDataValue("username"),
+          verified: userObj.getDataValue("verified"),
+          email: userObj.getDataValue("email"),
+          loginUrl: url.format(loginUrlObj),
+          token: savedToken.token,
+          migrateUser: migrateUser
+        });
+
+        callback();
+      });
     },
 
     lookupToken: function (userObj, token, callback) {
-      loginToken.findOne({
+      loginToken.find({
           where: {
             UserId: userObj.id,
             token: token,
             used: false,
             createdAt: {
-              [Op.gte]: moment(Date.now() - TOKEN_EXPIRY_TIME).utc().format("YYYY-MM-DD HH:mm:ss Z")
+              gte: moment(Date.now() - TOKEN_EXPIRY_TIME).utc().format("YYYY-MM-DD HH:mm:ss Z")
             }
           }
-      })
+        })
         .then(function (loginToken) {
           if (!loginToken) {
-            throw {
+            return bPromise.reject({
               error: "unauthorized"
-            };
+            });
           }
 
-          return loginToken.update({ used: true }, { fields: ["used"] });
+          return loginToken.updateAttributes({
+            used: true
+          }, ["used"]);
         })
-        .then(() => callback()) // .then gets passed a bunch of params that we don't want to pass back to callback
-        .catch(callback);
+        .then(function () {
+          callback();
+        })
+        .error(callback)
+        .caught(callback);
     },
 
     invalidateActiveResets: function (user, callback) {
       resetCode.update({
-        invalid: true
-      }, {
-        where: {
+          invalid: true
+        }, {
           UserId: user.id,
           used: false,
           invalid: false,
           createdAt: {
-            [Op.gte]: moment(Date.now() - RESET_EXPIRY_TIME).utc().format("YYYY-MM-DD HH:mm:ss Z")
+            gte: moment(Date.now() - RESET_EXPIRY_TIME).utc().format("YYYY-MM-DD HH:mm:ss Z")
           }
-        }
-      })
-        .then(affectedRows => callback(null, affectedRows))
-        .catch(callback);
+        })
+        .then(function (affectedRows) {
+          callback(null, affectedRows);
+        })
+        .error(callback);
     },
 
     createResetCode: function (user, appURL, callback) {
@@ -412,7 +414,7 @@ module.exports = function (sequelize, env) {
 
       userResetCode
         .save()
-        .then(function () {
+        .success(function () {
           hatchet.send("reset_code_created", {
             email: user.getDataValue("email"),
             username: user.getDataValue("username"),
@@ -420,37 +422,39 @@ module.exports = function (sequelize, env) {
           });
           callback();
         })
-        .catch(function (err) {
+        .error(function (err) {
           console.error(err);
           callback("Error Creating Reset Authorization");
         });
     },
 
     validateReset: function (code, user, callback) {
-      resetCode.findOne({
-        where: {
-          code,
-          UserId: user.id,
-          used: false,
-          invalid: false,
-          createdAt: {
-            [Op.gte]: moment(Date.now() - RESET_EXPIRY_TIME).utc().format("YYYY-MM-DD HH:mm:ss Z")
+      resetCode.find({
+          where: {
+            code: code,
+            UserId: user.id,
+            used: false,
+            invalid: false,
+            createdAt: {
+              gte: moment(Date.now() - RESET_EXPIRY_TIME).utc().format("YYYY-MM-DD HH:mm:ss Z")
+            }
           }
-        }
-      })
+        })
         .then(function (rc) {
           if (!rc) {
             return callback(null, false);
           }
 
-          return rc.update({
-            used: true
-          }, {
-            fields: ["used"]
-          })
-            .then(() => callback(null, true));
+          rc
+            .updateAttributes({
+              used: true
+            }, ["used"])
+            .success(function () {
+              callback(null, true);
+            })
+            .error(callback);
         })
-        .catch(callback);
+        .error(callback);
     },
 
     changePassword: function (newPass, user, callback) {
@@ -459,20 +463,21 @@ module.exports = function (sequelize, env) {
       bcrypt.genSalt(BCRYPT_ROUNDS, function (err, salt) {
         bcrypt.hash(newPass, salt, function (err, hash) {
           pass.saltedHash = hash;
-          user.update({
-            usePasswordLogin: true
-          }, {
-            fields: ["usePasswordLogin"]
-          })
-            .then(() => user.setPassword(pass))
-            .then(() => {
+          user
+            .updateAttributes({
+              usePasswordLogin: true
+            }, ["usePasswordLogin"])
+            .then(function () {
+              return user.setPassword(pass);
+            })
+            .then(function () {
               hatchet.send("user-password-changed", {
                 email: user.getDataValue("email"),
                 username: user.getDataValue("username")
               });
               callback(null);
             })
-            .catch(function (err) {
+            .error(function (err) {
               console.error(err);
               callback({
                 error: "Login Database Error"
@@ -484,15 +489,15 @@ module.exports = function (sequelize, env) {
 
     removePassword: function (user, callback) {
       user.password.destroy()
-        .then(() =>
-          user.update({
+        .then(function () {
+          return user.updateAttributes({
             usePasswordLogin: false
-          }, {
-            fields: ["usePasswordLogin"]
-          })
-        )
-        .then(() => callback()) // .then gets passed a bunch of params that we don't want to pass back to callback
-        .catch(function (err) {
+          }, ["usePasswordLogin"]);
+        })
+        .then(function () {
+          callback();
+        })
+        .error(function (err) {
           console.error(err);
           callback({
             error: "Error removing password"
@@ -508,21 +513,17 @@ module.exports = function (sequelize, env) {
 
     createOauthLogin: function (userId, clientId, callback) {
       oauthClient.findOrCreate({
-        where: {
-          client: clientId
-        },
-        defaults: {
-          client: clientId
-        }
-      })
-        .spread(client => {
-          return oauthLogin.create({
-            OAuthClientId: client.id,
-            UserId: userId
-          });
-        })
-        .then(() => callback()) // .then gets passed a bunch of params that we don't want to pass back to callback
-        .catch(callback);
+        client: clientId
+      }, {
+        client: clientId
+      }).then(function (client) {
+        return oauthLogin.create({
+          OAuthClientId: client.id,
+          UserId: userId
+        });
+      }).then(function (login) {
+        callback();
+      }).error(callback);
     }
   };
 };
