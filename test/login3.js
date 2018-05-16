@@ -23,7 +23,7 @@ var auth = env.get("ALLOWED_USERS").split(":"),
   authUsername = auth[0],
   authPassword = auth[1];
 
-var server;
+var server = appServer(env);
 
 var testUser = {
   username: "webmaker",
@@ -31,13 +31,6 @@ var testUser = {
 };
 
 describe("Login 3", function () {
-  before(function (done) {
-    appServer(env, function(s) {
-      server = s;
-      done();
-    });
-  });
-
   after(function (done) {
     server.close(function () {
       modelControllers.deleteUser(testUser.email, function (err) {
