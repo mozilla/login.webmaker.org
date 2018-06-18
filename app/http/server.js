@@ -11,6 +11,8 @@ module.exports = function (env) {
     lessMiddleWare = require("less-middleware"),
     WebmakerAuth = require("webmaker-auth"),
     nunjucks = require("nunjucks"),
+    morgan = require("morgan"),
+    errorHandler = require("errorhandler"),
     path = require("path"),
     route = require("./routes"),
     Models = require("../db")(env).Models;
@@ -39,80 +41,87 @@ module.exports = function (env) {
   });
 
   // Express Configuration
-  http.configure(function () {
-    nunjucksEnv.express(http);
+  nunjucksEnv.express(http);
 
-    http.disable("x-powered-by");
+  http.disable("x-powered-by");
 
-    if (!env.get("DISABLE_HTTP_LOGGING")) {
-      http.use(express.logger());
+  if (!env.get("DISABLE_HTTP_LOGGING")) {
+    http.use(morgan("combined"));
+  }
+
+  http.use(helmet.iexss());
+  http.use(helmet.contentTypeOptions());
+  http.use(helmet.xframe());
+
+  if (!!env.get("FORCE_SSL")) {
+    http.use(helmet.hsts());
+    http.enable("trust proxy");
+  }
+
+  http.use(express.json());
+  http.use(express.urlencoded({extended: false}));
+  http.use(webmakerAuth.cookieParser());
+  http.use(webmakerAuth.cookieSession());
+
+  // Setup locales with i18n
+  http.use(i18n.middleware({
+    supported_languages: env.get("SUPPORTED_LANGS"),
+    default_lang: "en-US",
+    mappings: require("webmaker-locale-mapping"),
+    translation_directory: path.resolve(__dirname, "../../locale")
+  }));
+
+ // audience and webmakerorg are duplicated because of i18n
+  http.locals.AUDIENCE = env.get("WEBMAKERORG");
+  http.locals.WEBMAKERORG = env.get("WEBMAKERORG");
+  http.locals.profile = env.get("PROFILE");
+  http.locals.bower_path = "bower_components";
+  http.locals.personaHostname = env.get("PERSONA_HOSTNAME", "https://login.persona.org");
+  http.locals.languages = i18n.getSupportLanguages();
+
+  var optimize = env.get("NODE_ENV") !== "development",
+    tmpDir = path.join(require("os").tmpdir(), "mozilla.login.webmaker.org.build");
+
+  // convert requests for ltr- or rtl-specific CSS back to the real filename,
+  // as the rtltr-for-less package was a hack that was never meant to hit production.
+  http.use(function rtltrRedirect(req, res, next) {
+    var path = req.path;
+    if (path.match(/css\/\w+\.(ltr|rtl)\.css/)) {
+      res.redirect(path.replace(/\.(ltr|rtl)/, ""));
+    } else {
+      next();
     }
-
-    http.use(helmet.iexss());
-    http.use(helmet.contentTypeOptions());
-    http.use(helmet.xframe());
-
-    if (!!env.get("FORCE_SSL")) {
-      http.use(helmet.hsts());
-      http.enable("trust proxy");
-    }
-
-    http.use(express.json());
-    http.use(express.urlencoded());
-    http.use(webmakerAuth.cookieParser());
-    http.use(webmakerAuth.cookieSession());
-
-    // Setup locales with i18n
-    http.use(i18n.middleware({
-      supported_languages: env.get("SUPPORTED_LANGS"),
-      default_lang: "en-US",
-      mappings: require("webmaker-locale-mapping"),
-      translation_directory: path.resolve(__dirname, "../../locale")
-    }));
-
-    http.locals({
-      // audience and webmakerorg are duplicated because of i18n
-      AUDIENCE: env.get("WEBMAKERORG"),
-      WEBMAKERORG: env.get("WEBMAKERORG"),
-      profile: env.get("PROFILE"),
-      bower_path: "bower_components",
-      personaHostname: env.get("PERSONA_HOSTNAME", "https://login.persona.org"),
-      languages: i18n.getSupportLanguages()
-    });
-
-    // need to make sure router is after i18n.middleware
-    http.use(http.router);
-
-    var optimize = env.get("NODE_ENV") !== "development",
-      tmpDir = path.join(require("os").tmpDir(), "mozilla.login.webmaker.org.build");
-
-    // convert requests for ltr- or rtl-specific CSS back to the real filename,
-    // as the rtltr-for-less package was a hack that was never meant to hit production.
-    http.use(function rtltrRedirect(req, res, next) {
-      var path = req.path;
-      if (path.match(/css\/\w+\.(ltr|rtl)\.css/)) {
-        res.redirect(path.replace(/\.(ltr|rtl)/, ""));
-      } else {
-        next();
-      }
-    });
-
-    http.use(lessMiddleWare({
-      once: optimize,
-      debug: !optimize,
-      dest: tmpDir,
-      src: path.resolve(__dirname, "public"),
-      compress: optimize,
-      yuicompress: optimize,
-      optimization: optimize ? 0 : 2
-    }));
-
-    http.use(express.static(tmpDir));
   });
 
-  http.configure("development", function () {
-    http.use(express.errorHandler());
+  http.use(lessMiddleWare(path.resolve(__dirname, "public"), {
+    once: optimize,
+    debug: !optimize,
+    dest: tmpDir,
+    compress: optimize,
+    yuicompress: optimize,
+    optimization: optimize ? 0 : 2
+  }));
+
+
+  var optimize = env.get("NODE_ENV") !== "development",
+    tmpDir = path.join(require("os").tmpDir(), "mozilla.login.webmaker.org.build");
+
+  // convert requests for ltr- or rtl-specific CSS back to the real filename,
+  // as the rtltr-for-less package was a hack that was never meant to hit production.
+  http.use(function rtltrRedirect(req, res, next) {
+    var path = req.path;
+    if (path.match(/css\/\w+\.(ltr|rtl)\.css/)) {
+      res.redirect(path.replace(/\.(ltr|rtl)/, ""));
+    } else {
+      next();
+    }
   });
+
+  http.use(express.static(tmpDir));
+
+  if (env.get("NODE_ENV") === "development") {
+    http.use(errorHandler());
+  }
 
   route(http, Models, webmakerAuth);
 

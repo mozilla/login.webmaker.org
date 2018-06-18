@@ -1,8 +1,7 @@
 module.exports = function (http, modelsController, webmakerAuth) {
   var qs = require("querystring"),
-    express = require("express"),
-    basicAuth = express.basicAuth,
-    csrf = express.csrf(),
+    basicAuth = require('basic-auth-connect'),
+    csrf = require("csurf")({ cookie: true }),
     env = require("../../config/environment"),
     routes = {
       site: require("./controllers/site"),
@@ -54,10 +53,20 @@ module.exports = function (http, modelsController, webmakerAuth) {
       input = req.body;
 
     // Only allow attributes that users should be able to set on their own account
-    filtered.sendEventCreationEmails = input.sendEventCreationEmails;
-    filtered.sendMentorRequestEmails = input.sendMentorRequestEmails;
-    filtered.sendCoorganizerNotificationEmails = input.sendCoorganizerNotificationEmails;
-    filtered.prefLocale = input.prefLocale;
+    if (input.hasOwnProperty("sendEventCreationEmails")) {
+      filtered.sendEventCreationEmails = input.sendEventCreationEmails;
+    }
+    if (input.hasOwnProperty("sendMentorRequestEmails")) {
+      filtered.sendMentorRequestEmails = input.sendMentorRequestEmails;
+    }
+
+    if (input.hasOwnProperty("sendCoorganizerNotificationEmails")) {
+      filtered.sendCoorganizerNotificationEmails = input.sendCoorganizerNotificationEmails;
+    }
+
+    if (input.hasOwnProperty("prefLocale")) {
+      filtered.prefLocale = input.prefLocale;
+    }
 
     req.body = filtered;
     next();
