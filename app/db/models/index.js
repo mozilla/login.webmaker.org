@@ -458,7 +458,7 @@ module.exports = function (sequelize, env) {
     },
 
     changePassword: function (newPass, user, callback) {
-      var pass = user.password || password.build();
+      var pass = user.Password || password.build();
 
       bcrypt.genSalt(BCRYPT_ROUNDS, function (err, salt) {
         bcrypt.hash(newPass, salt, function (err, hash) {
@@ -488,9 +488,9 @@ module.exports = function (sequelize, env) {
     },
 
     removePassword: function (user, callback) {
-      user.password.destroy()
-        .then(function () {
-          return user.updateAttributes({
+      user.Password.destroy()
+        .then(() =>
+          user.update({
             usePasswordLogin: false
           }, ["usePasswordLogin"]);
         })
@@ -506,7 +506,7 @@ module.exports = function (sequelize, env) {
     },
 
     compare: function (pass, user, callback) {
-      bcrypt.compare(pass, user.password.saltedHash, function (err, res) {
+      bcrypt.compare(pass, user.Password.saltedHash, function (err, res) {
         callback(err, res);
       });
     },

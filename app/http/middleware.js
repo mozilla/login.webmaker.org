@@ -1,6 +1,5 @@
 module.exports.fetchUserBy = function (name, User) {
   var fetch = User["getUserBy" + name];
-
   return function (req, res, next, param) {
     fetch(param, function (err, user) {
       if (err) {
@@ -30,16 +29,10 @@ module.exports.filterUserAttributesForSession = function (req, res, next) {
 
 module.exports.audienceFilter = function (audienceWhitelist) {
   return function (req, res, next) {
-    if (!req.body.audience) {
-      return res.json({
-        "error": "Missing audience"
-      });
-    }
-
-    if (audienceWhitelist.indexOf(req.body.audience) === -1 &&
+    if (audienceWhitelist.indexOf(req.headers.host) === -1 &&
       audienceWhitelist.indexOf("*") === -1) {
       return res.json({
-        "error": "Audience parameter not allowed"
+        "error": "Host not allowed"
       });
     }
     process.nextTick(next);

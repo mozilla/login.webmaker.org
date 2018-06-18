@@ -40,17 +40,12 @@ module.exports.verifyTokenForUser = function (modelsController) {
 
 module.exports.updateUser = function (modelsController) {
   return function (req, res, next) {
-    res.locals.user.updateAttributes({
+    res.locals.user.update({
       verified: true,
       lastLoggedIn: new Date()
-    }, ["verified", "lastLoggedIn"]).done(function (err) {
-      if (err) {
-        return res.json({
-          error: "Login database error"
-        });
-      }
-      process.nextTick(next);
-    });
+    })
+    .then(() => process.nextTick(next))
+    .catch((error) => res.json({ error: "Login database error"}));
   };
 };
 
