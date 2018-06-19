@@ -82,7 +82,7 @@ module.exports.setUser = function (modelsController) {
       })
       .then(function (user) {
         if (!user) {
-          return res.send(404);
+          return res.sendStatus(404);
         }
         res.locals.user = user;
         process.nextTick(next);
