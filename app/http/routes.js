@@ -1,6 +1,6 @@
 module.exports = function (http, modelsController, webmakerAuth) {
   var qs = require("querystring"),
-    basicAuth = require('basic-auth-connect'),
+    basicAuth = require("basic-auth-connect"),
     csrf = require("csurf")({
       cookie: true
     }),

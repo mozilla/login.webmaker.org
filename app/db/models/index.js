@@ -160,8 +160,7 @@ module.exports = function (sequelize, env) {
      * callback: function( err, thisUser )
      */
     createUser: function (data, callback) {
-      var userObj,
-        err;
+      var userObj;
 
       if (!data) {
         return callback("No data passed!");
@@ -384,7 +383,7 @@ module.exports = function (sequelize, env) {
           }, ["used"]);
         })
         .then(() => callback())
-        .catch(callback)
+        .catch(callback);
     },
 
     invalidateActiveResets: function (user, callback) {
