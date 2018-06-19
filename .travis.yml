@@ -1,13 +1,22 @@
 env:
   - CXX=g++-4.8
 language: node_js
+services:
+  - mysql
 node_js:
-- '8'
+  - '8'
 sudo: false
+env:
+  - DB_HOST=
+  - DB_USERNAME="root"
+  - DB_PASSWORD=""
+  - DB_DATABASE="local_webmakers"
+  - DBOPTIONS_PORT=3306
+  - DBOPTIONS_DIALECT="mysql"
 addons:
   apt:
     sources:
-    - ubuntu-toolchain-r-test
+      - ubuntu-toolchain-r-test
     packages:
-    - gcc-4.8
-    - g++-4.8
+      - gcc-4.8
+      - g++-4.8
