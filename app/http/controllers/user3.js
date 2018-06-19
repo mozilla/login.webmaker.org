@@ -42,10 +42,10 @@ module.exports.updateUser = function (modelsController) {
   return function (req, res, next) {
     res.locals.user.update({
         verified: true,
-        lastLoggedIn: new Date()
+        lastLoggedIn: new Date().toISOString()
       })
       .then(() => process.nextTick(next))
-      .catch((error) => res.json({
+      .catch(() => res.json({
         error: "Login database error"
       }));
   };
