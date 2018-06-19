@@ -22,12 +22,12 @@ module.exports = function (env) {
 
   // Sync
   sequelize
-  .sync()
-  .then(() => {
+    .sync()
+    .then(() => {
       health.connected = true;
       handlers.forkSuccessHandling();
-  })
-  .catch(() => handlers.dbErrorHandling(err, handlers.forkErrorHandling));
+    })
+    .catch(err => handlers.dbErrorHandling(err, handlers.forkErrorHandling));
 
   // Export models
   return {

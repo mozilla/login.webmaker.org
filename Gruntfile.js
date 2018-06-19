@@ -17,6 +17,8 @@ module.exports = function (grunt) {
     "app/db/**/*.js"
   ];
 
+  jshintrc.esversion = 6;
+
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
 

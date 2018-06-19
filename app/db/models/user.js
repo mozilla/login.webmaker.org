@@ -156,35 +156,35 @@ module.exports = function (sequelize, DataTypes) {
     charset: "utf8",
     collate: "utf8_general_ci",
     getterMethods: {
-      avatar () {
+      avatar() {
         return "https://secure.gravatar.com/avatar/" +
           md5(this.getDataValue("email")) +
           "?d=" + defaultGravatar;
       },
-      emailHash () {
+      emailHash() {
         return md5(this.getDataValue("email"));
       },
-      displayName () {
+      displayName() {
         return this.getDataValue("fullName");
       }
     }
   });
 
   User.prototype.serializeForSession = function () {
-     return {
-        avatar: this.avatar,
-        email: this.email,
-        emailHash: this.emailHash,
-        id: this.id,
-        isAdmin: this.isAdmin,
-        isMentor: this.isMentor,
-        isSuperMentor: this.isSuperMentor,
-        prefLocale: this.prefLocale,
-        sendEventCreationEmails: this.sendEventCreationEmails,
-        sendCoorganizerNotificationEmails: this.sendCoorganizerNotificationEmails,
-        sendMentorRequestEmails: this.sendMentorRequestEmails,
-        username: this.username
-      };
+    return {
+      avatar: this.avatar,
+      email: this.email,
+      emailHash: this.emailHash,
+      id: this.id,
+      isAdmin: this.isAdmin,
+      isMentor: this.isMentor,
+      isSuperMentor: this.isSuperMentor,
+      prefLocale: this.prefLocale,
+      sendEventCreationEmails: this.sendEventCreationEmails,
+      sendCoorganizerNotificationEmails: this.sendCoorganizerNotificationEmails,
+      sendMentorRequestEmails: this.sendMentorRequestEmails,
+      username: this.username
+    };
   };
 
   return User;

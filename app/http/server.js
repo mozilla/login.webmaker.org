@@ -59,7 +59,9 @@ module.exports = function (env) {
   }
 
   http.use(express.json());
-  http.use(express.urlencoded({extended: false}));
+  http.use(express.urlencoded({
+    extended: false
+  }));
   http.use(webmakerAuth.cookieParser());
   http.use(webmakerAuth.cookieSession());
 
@@ -71,7 +73,7 @@ module.exports = function (env) {
     translation_directory: path.resolve(__dirname, "../../locale")
   }));
 
- // audience and webmakerorg are duplicated because of i18n
+  // audience and webmakerorg are duplicated because of i18n
   http.locals.AUDIENCE = env.get("WEBMAKERORG");
   http.locals.WEBMAKERORG = env.get("WEBMAKERORG");
   http.locals.profile = env.get("PROFILE");
@@ -101,7 +103,6 @@ module.exports = function (env) {
     yuicompress: optimize,
     optimization: optimize ? 0 : 2
   }));
-
 
   var optimize = env.get("NODE_ENV") !== "development",
     tmpDir = path.join(require("os").tmpDir(), "mozilla.login.webmaker.org.build");

@@ -65,12 +65,12 @@ module.exports = function (sequelize, env) {
      */
     getUserById: function (id, callback) {
       user.find({
-        where: {
-          id: id
-        }
-      })
-      .then((user) => callback(null, user))
-      .catch((err) => callback(err));
+          where: {
+            id: id
+          }
+        })
+        .then((user) => callback(null, user))
+        .catch((err) => callback(err));
     },
 
     /**
@@ -81,12 +81,12 @@ module.exports = function (sequelize, env) {
      */
     getUserByUsername: function (username, callback) {
       user.find({
-        where: {
-          username: username
-        }
-      })
-      .then((user) => callback(null, user))
-      .catch((err) => callback(err));
+          where: {
+            username: username
+          }
+        })
+        .then((user) => callback(null, user))
+        .catch((err) => callback(err));
     },
 
     /**
@@ -97,12 +97,12 @@ module.exports = function (sequelize, env) {
      */
     getUserByEmail: function (email, callback) {
       user.find({
-        where: {
-          email: email
-        }
-      })
-      .then((user) => callback(null, user))
-      .catch((err) => callback(err));
+          where: {
+            email: email
+          }
+        })
+        .then((user) => callback(null, user))
+        .catch((err) => callback(err));
     },
 
     /**
@@ -113,12 +113,12 @@ module.exports = function (sequelize, env) {
      */
     getUsersByIds: function (ids, callback) {
       user.findAll({
-        where: {
-          id: ids
-        }
-      })
-      .then((users) => callback(null, users))
-      .catch((err) => callback(err));
+          where: {
+            id: ids
+          }
+        })
+        .then((users) => callback(null, users))
+        .catch((err) => callback(err));
     },
 
     /**
@@ -129,12 +129,12 @@ module.exports = function (sequelize, env) {
      */
     getUsersByUsernames: function (usernames, callback) {
       user.findAll({
-        where: {
-          username: usernames
-        }
-      })
-      .then((users) => callback(null, users))
-      .catch((err) => callback(err));
+          where: {
+            username: usernames
+          }
+        })
+        .then((users) => callback(null, users))
+        .catch((err) => callback(err));
     },
 
     /**
@@ -145,12 +145,12 @@ module.exports = function (sequelize, env) {
      */
     getUsersByEmails: function (emails, callback) {
       user.findAll({
-        where: {
-          email: emails
-        }
-      })
-      .then((users) => callback(null, users))
-      .catch((err) => callback(err));
+          where: {
+            email: emails
+          }
+        })
+        .then((users) => callback(null, users))
+        .catch((err) => callback(err));
     },
 
     /**
@@ -192,20 +192,20 @@ module.exports = function (sequelize, env) {
 
       // Delegates all server-side validation to sequelize during this step
       userObj
-      .save()
-      .then((saveData) => {
-        hatchet.send("create_user", {
-          userId: userObj.getDataValue("id"),
-          username: userObj.getDataValue("username"),
-          email: userObj.getDataValue("email"),
-          locale: userObj.getDataValue("prefLocale"),
-          subscribeToWebmakerList: userObj.getDataValue("subscribeToWebmakerList"),
-          client_id: data.client_id
-        });
+        .save()
+        .then((saveData) => {
+          hatchet.send("create_user", {
+            userId: userObj.getDataValue("id"),
+            username: userObj.getDataValue("username"),
+            email: userObj.getDataValue("email"),
+            locale: userObj.getDataValue("prefLocale"),
+            subscribeToWebmakerList: userObj.getDataValue("subscribeToWebmakerList"),
+            client_id: data.client_id
+          });
 
-        callback(null, saveData);
-      })
-      .catch((err) => callback(err));
+          callback(null, saveData);
+        })
+        .catch((err) => callback(err));
     },
 
     /**
@@ -238,9 +238,9 @@ module.exports = function (sequelize, env) {
         }
 
         user
-        .save()
-        .then(() => callback())
-        .catch((err) => callback(err));
+          .save()
+          .then(() => callback())
+          .catch((err) => callback(err));
       });
     },
 
@@ -264,18 +264,18 @@ module.exports = function (sequelize, env) {
 
         // Delete user
         user
-        .destroy()
-        .then(function () {
-          hatchet.send("delete_user", {
-            userId: user.getDataValue("id"),
-            username: user.getDataValue("username"),
-            locale: user.getDataValue("prefLocale"),
-            email: user.getDataValue("email")
-          });
+          .destroy()
+          .then(function () {
+            hatchet.send("delete_user", {
+              userId: user.getDataValue("id"),
+              username: user.getDataValue("username"),
+              locale: user.getDataValue("prefLocale"),
+              email: user.getDataValue("email")
+            });
 
-          callback();
-        })
-        .catch((err) => callback(err));
+            callback();
+          })
+          .catch((err) => callback(err));
       });
     },
 
@@ -287,12 +287,12 @@ module.exports = function (sequelize, env) {
      */
     getAllWithEmails: function (emails, callback) {
       user.findAll({
-        where: {
-          "email": emails
-        }
-      })
-      .then((users) => callback(null, users))
-      .catch((err) => callback(err));
+          where: {
+            "email": emails
+          }
+        })
+        .then((users) => callback(null, users))
+        .catch((err) => callback(err));
     },
 
     /**
@@ -344,27 +344,27 @@ module.exports = function (sequelize, env) {
       });
 
       token.save()
-      .then((savedToken) => {
-        var loginUrlObj = url.parse(appURL, true);
-        loginUrlObj.search = null;
-        loginUrlObj.query.uid = userObj.getDataValue("username");
-        loginUrlObj.query.email = userObj.getDataValue("email");
-        loginUrlObj.query.token = savedToken.token;
+        .then((savedToken) => {
+          var loginUrlObj = url.parse(appURL, true);
+          loginUrlObj.search = null;
+          loginUrlObj.query.uid = userObj.getDataValue("username");
+          loginUrlObj.query.email = userObj.getDataValue("email");
+          loginUrlObj.query.token = savedToken.token;
 
-        // To log loginUrl to console, do not define "HATCHET_QUEUE_URL" in your environment
-        hatchet.send("login_token_email", {
-          userId: userObj.getDataValue("id"),
-          username: userObj.getDataValue("username"),
-          verified: userObj.getDataValue("verified"),
-          email: userObj.getDataValue("email"),
-          loginUrl: url.format(loginUrlObj),
-          token: savedToken.token,
-          migrateUser: migrateUser
-        });
+          // To log loginUrl to console, do not define "HATCHET_QUEUE_URL" in your environment
+          hatchet.send("login_token_email", {
+            userId: userObj.getDataValue("id"),
+            username: userObj.getDataValue("username"),
+            verified: userObj.getDataValue("verified"),
+            email: userObj.getDataValue("email"),
+            loginUrl: url.format(loginUrlObj),
+            token: savedToken.token,
+            migrateUser: migrateUser
+          });
 
-        callback();
-      })
-      .catch((err) => callback(err));
+          callback();
+        })
+        .catch((err) => callback(err));
     },
 
     lookupToken: function (userObj, token, callback) {
