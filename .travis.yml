@@ -7,12 +7,12 @@ node_js:
   - '8'
 sudo: false
 env:
-  - DB_HOST=
-  - DB_USERNAME="root"
-  - DB_PASSWORD=""
-  - DB_DATABASE="local_webmakers"
-  - DBOPTIONS_PORT=3306
-  - DBOPTIONS_DIALECT="mysql"
+  - DB_HOST=127.0.0.1
+    DB_USERNAME="root"
+    DB_PASSWORD=""
+    DB_DATABASE="local_webmakers"
+    DBOPTIONS_PORT=3306
+    DBOPTIONS_DIALECT="mysql"
 addons:
   apt:
     sources:
