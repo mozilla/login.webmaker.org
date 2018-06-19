@@ -6,6 +6,7 @@ var assert = require("assert"),
   request = require("request"),
   now = Date.now(),
   env = require("../config/environment"),
+  Sequelize = require("sequelize"),
   ModelController = require("../app/db")(env).Models,
   child,
   hostAuth = "http://" + env.get("ALLOWED_USERS").split(",")[0] + "@" + env.get("APP_HOSTNAME").split("//")[1];
@@ -155,6 +156,21 @@ function unique() {
 /**
  * Unit tests
  */
+
+before(done => {
+  let dbEnv = env.get("DB");
+  let dbOptions = env.get("DBOPTIONS");
+  try {
+    let sequelize = new Sequelize(dbEnv.database, dbEnv.username, dbEnv.password, dbOptions);
+    require("../app/db/models")(sequelize, env);
+    sequelize
+      .sync()
+      .then(() => done())
+      .catch(done);
+  } catch (error) {
+    done(error);
+  }
+});
 
 describe("PUT /user/:id (update)", function () {
   before(function (done) {
