@@ -21,14 +21,13 @@ module.exports = function (env) {
   var modelControllers = require('./models')(sequelize, env);
 
   // Sync
-  sequelize.sync().complete(function (err) {
-    if (err) {
-      handlers.dbErrorHandling(err, handlers.forkErrorHandling);
-    } else {
+  sequelize
+  .sync()
+  .then(() => {
       health.connected = true;
       handlers.forkSuccessHandling();
-    }
-  });
+  })
+  .catch(() => handlers.dbErrorHandling(err, handlers.forkErrorHandling));
 
   // Export models
   return {
