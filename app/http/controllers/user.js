@@ -98,8 +98,6 @@ module.exports = function (UserHandle) {
 
       UserHandle.updateUser(email, userInfo, function (err, user) {
         if (err || !user) {
-          console.log("QWERQWERQWERQWERQWER");
-          console.log(err);
           metrics.increment("user.update.error");
           return res.status(404).json({
             error: err || "User not found for email: " + email

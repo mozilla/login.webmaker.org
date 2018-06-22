@@ -211,12 +211,10 @@ module.exports = function (sequelize, env) {
     updateUser: function (email, data, callback) {
       this.getUserByEmail(email, function (err, user) {
         if (err) {
-          console.log(err);
           return callback(err);
         }
 
         if (!user) {
-          console.log("wat");
           return callback("User not found!");
         }
 
