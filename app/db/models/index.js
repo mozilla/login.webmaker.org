@@ -210,13 +210,13 @@ module.exports = function (sequelize, env) {
      */
     updateUser: function (email, data, callback) {
       this.getUserByEmail(email, function (err, user) {
-        var error;
-
         if (err) {
+          console.log(err);
           return callback(err);
         }
 
         if (!user) {
+          console.log("wat");
           return callback("User not found!");
         }
 
@@ -225,15 +225,10 @@ module.exports = function (sequelize, env) {
           user[key] = data[key];
         });
 
-        error = user.validate();
-        if (error) {
-          return callback(error);
-        }
-
-        user
-          .save()
-          .then(() => callback())
-          .catch((err) => callback(err));
+        user.validate()
+          .then(() => user.save())
+          .then((user) => callback(null, user))
+          .catch(error => callback(error));
       });
     },
 
