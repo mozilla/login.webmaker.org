@@ -67,7 +67,7 @@ var userTracer = (function () {
  */
 
 function startServer(done) {
-  var sqlDbCheck = false; 
+  var sqlDbCheck = false;
 
   // Spin-up the server as a child process
   child = fork("app.js", null, {});
