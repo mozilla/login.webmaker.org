@@ -67,7 +67,7 @@ var userTracer = (function () {
  */
 
 function startServer(done) {
-  var sqlDbCheck = false;
+  var sqlDbCheck = false; 
 
   // Spin-up the server as a child process
   child = fork("app.js", null, {});
@@ -79,7 +79,7 @@ function startServer(done) {
     }
     if (msg === "sqlNoConnection") {
       console.log("MySQL database not connected! Tests will fail.");
-      child.kill();
+      child.kill("SIGKILL");
       process.exit(1);
     }
     if (sqlDbCheck) {
@@ -88,7 +88,7 @@ function startServer(done) {
   });
   child.on("error", function (err) {
     console.error(err);
-    child.kill();
+    child.kill("SIGKILL");
   });
 }
 
