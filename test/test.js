@@ -79,7 +79,7 @@ function startServer(done) {
     }
     if (msg === "sqlNoConnection") {
       console.log("MySQL database not connected! Tests will fail.");
-      child.kill("SIGKILL");
+      child.kill();
       process.exit(1);
     }
     if (sqlDbCheck) {
@@ -88,15 +88,19 @@ function startServer(done) {
   });
   child.on("error", function (err) {
     console.error(err);
-    child.kill("SIGKILL");
+    child.kill();
   });
 }
 
 function stopServer(done) {
+  console.log("Server Stopping");
   // Delete test users & kill process
+  child.on("close", (code, signal) => {
+    console.log(`subprocess closed ${code} ${signal}`);
+    done();
+  });
   userTracer.userCleanup(function () {
     child.kill();
-    done();
   });
 }
 
