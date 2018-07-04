@@ -114,7 +114,7 @@ describe("Login 3", function () {
           uid: "fakeuser",
           appURL: "https://webmaker.org"
         })
-        .expect("Content-Type", "text/plain")
+        .expect("Content-Type", "text/plain; charset=utf-8")
         .expect(404)
         .end(done);
     });
@@ -129,7 +129,7 @@ describe("Login 3", function () {
           uid: "fakeuser@example.com",
           appURL: "https://webmaker.org"
         })
-        .expect("Content-Type", "text/plain")
+        .expect("Content-Type", "text/plain; charset=utf-8")
         .expect(404)
         .end(done);
     });

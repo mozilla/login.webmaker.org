@@ -6,6 +6,7 @@ var assert = require("assert"),
   request = require("request"),
   now = Date.now(),
   env = require("../config/environment"),
+  Sequelize = require("sequelize"),
   ModelController = require("../app/db")(env).Models,
   child,
   hostAuth = "http://" + env.get("ALLOWED_USERS").split(",")[0] + "@" + env.get("APP_HOSTNAME").split("//")[1];
@@ -78,7 +79,7 @@ function startServer(done) {
     }
     if (msg === "sqlNoConnection") {
       console.log("MySQL database not connected! Tests will fail.");
-      child.kill();
+      child.kill("SIGKILL");
       process.exit(1);
     }
     if (sqlDbCheck) {
@@ -87,15 +88,19 @@ function startServer(done) {
   });
   child.on("error", function (err) {
     console.error(err);
-    child.kill();
+    child.kill("SIGKILL");
   });
 }
 
 function stopServer(done) {
+  console.log("Server Stopping");
   // Delete test users & kill process
-  userTracer.userCleanup(function () {
-    child.kill();
+  child.on("close", (code, signal) => {
+    console.log(`subprocess closed ${code} ${signal}`);
     done();
+  });
+  userTracer.userCleanup(function () {
+    child.kill("SIGKILL");
   });
 }
 
@@ -155,6 +160,21 @@ function unique() {
 /**
  * Unit tests
  */
+
+before(done => {
+  let dbEnv = env.get("DB");
+  let dbOptions = env.get("DBOPTIONS");
+  try {
+    let sequelize = new Sequelize(dbEnv.database, dbEnv.username, dbEnv.password, dbOptions);
+    require("../app/db/models")(sequelize, env);
+    sequelize
+      .sync()
+      .then(() => done())
+      .catch(done);
+  } catch (error) {
+    done(error);
+  }
+});
 
 describe("PUT /user/:id (update)", function () {
   before(function (done) {

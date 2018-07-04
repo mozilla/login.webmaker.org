@@ -15,7 +15,7 @@ function isNotBlacklisted(str) {
  * Exports
  */
 module.exports = function (sequelize, DataTypes) {
-  return sequelize.define("User", {
+  var User = sequelize.define("User", {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -156,35 +156,36 @@ module.exports = function (sequelize, DataTypes) {
     charset: "utf8",
     collate: "utf8_general_ci",
     getterMethods: {
-      avatar: function () {
+      avatar() {
         return "https://secure.gravatar.com/avatar/" +
           md5(this.getDataValue("email")) +
           "?d=" + defaultGravatar;
       },
-      emailHash: function () {
+      emailHash() {
         return md5(this.getDataValue("email"));
       },
-      displayName: function () {
+      displayName() {
         return this.getDataValue("fullName");
-      }
-    },
-    instanceMethods: {
-      serializeForSession: function () {
-        return {
-          avatar: this.avatar,
-          email: this.email,
-          emailHash: this.emailHash,
-          id: this.id,
-          isAdmin: this.isAdmin,
-          isMentor: this.isMentor,
-          isSuperMentor: this.isSuperMentor,
-          prefLocale: this.prefLocale,
-          sendEventCreationEmails: this.sendEventCreationEmails,
-          sendCoorganizerNotificationEmails: this.sendCoorganizerNotificationEmails,
-          sendMentorRequestEmails: this.sendMentorRequestEmails,
-          username: this.username
-        };
       }
     }
   });
+
+  User.prototype.serializeForSession = function () {
+    return {
+      avatar: this.avatar,
+      email: this.email,
+      emailHash: this.emailHash,
+      id: this.id,
+      isAdmin: this.isAdmin,
+      isMentor: this.isMentor,
+      isSuperMentor: this.isSuperMentor,
+      prefLocale: this.prefLocale,
+      sendEventCreationEmails: this.sendEventCreationEmails,
+      sendCoorganizerNotificationEmails: this.sendCoorganizerNotificationEmails,
+      sendMentorRequestEmails: this.sendMentorRequestEmails,
+      username: this.username
+    };
+  };
+
+  return User;
 };

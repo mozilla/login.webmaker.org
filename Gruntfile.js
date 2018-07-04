@@ -17,6 +17,10 @@ module.exports = function (grunt) {
     "app/db/**/*.js"
   ];
 
+  // Override mofo-style
+  jshintrc.esversion = 6;
+  delete jscsrc.esnext;
+
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
 

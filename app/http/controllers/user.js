@@ -9,21 +9,21 @@ module.exports = function (UserHandle) {
   function userCallback(err, user, query, res) {
     if (err) {
       metrics.increment("user.get.error");
-      res.json(500, {
+      res.status(500).json({
         error: err
       });
       return;
     }
 
     if (!user) {
-      res.json(404, {
+      res.status(404).json({
         error: err || "User not found for ID: " + query
       });
       return;
     }
 
     metrics.increment("user.get.success");
-    res.json({
+    res.status(200).json({
       user: user
     });
   }
@@ -31,14 +31,14 @@ module.exports = function (UserHandle) {
   function usersCallback(err, users, type, res) {
     if (err) {
       metrics.increment("user.getBy" + type + ".error");
-      res.json(500, {
+      res.status(500).json({
         error: err
       });
       return;
     }
 
     metrics.increment("user.getBy" + type + ".success");
-    res.json({
+    res.status(200).json({
       users: users
     });
   }
@@ -99,14 +99,14 @@ module.exports = function (UserHandle) {
       UserHandle.updateUser(email, userInfo, function (err, user) {
         if (err || !user) {
           metrics.increment("user.update.error");
-          return res.json(404, {
+          return res.status(404).json({
             error: err || "User not found for email: " + email
           });
         }
         if (req.session.user) {
           req.session.user = user;
         }
-        return res.json(200, {
+        return res.status(200).json({
           user: user
         });
       });
@@ -119,7 +119,7 @@ module.exports = function (UserHandle) {
       UserHandle.getUserByEmail(email, function (err, user) {
         if (err || !user) {
           metrics.increment("user.get.error");
-          return res.json(404, {
+          return res.status(404).json({
             error: err || "User not found for email: " + email
           });
         }
@@ -128,21 +128,21 @@ module.exports = function (UserHandle) {
         UserHandle.deleteUser(email, function (err) {
           if (err) {
             metrics.increment("user.delete.error");
-            res.json(500, {
+            res.status(500).json({
               error: err
             });
             return;
           }
 
           metrics.increment("user.delete.success");
-          res.json(200);
+          res.status(200).json();
         });
       });
     },
 
     hydrate: function (req, res) {
       if (!req.body || !Array.isArray(req.body)) {
-        return res.json(400, {
+        return res.status(400).json({
           error: "Invalid request body"
         });
       }
@@ -154,7 +154,7 @@ module.exports = function (UserHandle) {
 
       UserHandle.getAllWithEmails(emails, function (err, users) {
         if (err || !users) {
-          return res.json(500, {
+          return res.status(500).json({
             error: "There was an error hydrating the data"
           });
         }
@@ -168,7 +168,7 @@ module.exports = function (UserHandle) {
           };
         });
 
-        res.json(200, responseObject);
+        res.status(200).json(responseObject);
       });
     }
   };

@@ -40,17 +40,14 @@ module.exports.verifyTokenForUser = function (modelsController) {
 
 module.exports.updateUser = function (modelsController) {
   return function (req, res, next) {
-    res.locals.user.updateAttributes({
-      verified: true,
-      lastLoggedIn: new Date()
-    }, ["verified", "lastLoggedIn"]).done(function (err) {
-      if (err) {
-        return res.json({
-          error: "Login database error"
-        });
-      }
-      process.nextTick(next);
-    });
+    res.locals.user.update({
+        verified: true,
+        lastLoggedIn: new Date().toISOString()
+      })
+      .then(() => process.nextTick(next))
+      .catch(() => res.json({
+        error: "Login database error"
+      }));
   };
 };
 
@@ -85,7 +82,7 @@ module.exports.setUser = function (modelsController) {
       })
       .then(function (user) {
         if (!user) {
-          return res.send(404);
+          return res.sendStatus(404);
         }
         res.locals.user = user;
         process.nextTick(next);
