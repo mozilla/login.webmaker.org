@@ -1,20 +1,9 @@
 env:
   - CXX=g++-4.8
 language: node_js
-services:
-  - mysql
 node_js:
   - '8'
 sudo: false
-env:
-  - DB_HOST=127.0.0.1
-    DB_USERNAME="root"
-    DB_PASSWORD=""
-    DB_DATABASE="webmaker_test"
-    DBOPTIONS_PORT=3306
-    DBOPTIONS_DIALECT="mysql"
-before_install:
-  - mysql -e 'CREATE DATABASE webmaker_test;'
 addons:
   apt:
     sources:
